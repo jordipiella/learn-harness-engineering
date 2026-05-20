@@ -1,4 +1,4 @@
-[English](https://walkinglabs.github.io/learn-harness-engineering/en/) · [中文](https://walkinglabs.github.io/learn-harness-engineering/zh/) · [Русский](https://walkinglabs.github.io/learn-harness-engineering/ru/) · [Tiếng Việt](https://walkinglabs.github.io/learn-harness-engineering/vi/) · **한국어** · [Oʻzbekcha](https://walkinglabs.github.io/learn-harness-engineering/uz/)
+[English](https://walkinglabs.github.io/learn-harness-engineering/en/) · [Español](https://walkinglabs.github.io/learn-harness-engineering/es/) · [中文](https://walkinglabs.github.io/learn-harness-engineering/zh/) · [Русский](https://walkinglabs.github.io/learn-harness-engineering/ru/) · [Tiếng Việt](https://walkinglabs.github.io/learn-harness-engineering/vi/) · **한국어** · [Oʻzbekcha](https://walkinglabs.github.io/learn-harness-engineering/uz/)
 
 # Learn Harness Engineering
 
