@@ -21,9 +21,13 @@ yarn-error.log*
 pnpm-debug.log*
 
 # build caches / outputs
+dist/
+build/
 .vitepress/cache/
 .vitepress/dist/
+.vitepress/.temp/
 docs/.vitepress/cache/
 docs/.vitepress/dist/
+docs/.vitepress/.temp/
 *.tsbuildinfo
 artifacts/

@@ -80,6 +80,43 @@ const enSkillItems = [
   { text: "Skills Overview", link: "/en/skills/" }
 ];
 
+const esLectureItems = [
+  { text: "Bienvenida", link: "/es/" },
+  { text: "Por qué los agents capaces siguen fallando", link: "/es/lectures/lecture-01-why-capable-agents-still-fail/" },
+  { text: "Qué es realmente un harness", link: "/es/lectures/lecture-02-what-a-harness-actually-is/" },
+  { text: "Por qué el repositorio debe convertirse en el sistema de registro", link: "/es/lectures/lecture-03-why-the-repository-must-become-the-system-of-record/" },
+  { text: "Por qué falla un único archivo gigante de instrucciones", link: "/es/lectures/lecture-04-why-one-giant-instruction-file-fails/" },
+  { text: "Por qué las tareas largas pierden continuidad", link: "/es/lectures/lecture-05-why-long-running-tasks-lose-continuity/" },
+  { text: "Por qué la inicialización necesita su propia fase", link: "/es/lectures/lecture-06-why-initialization-needs-its-own-phase/" },
+  { text: "Por qué los agents se exceden y no terminan", link: "/es/lectures/lecture-07-why-agents-overreach-and-under-finish/" },
+  { text: "Por qué las listas de funcionalidades son primitivas del harness", link: "/es/lectures/lecture-08-why-feature-lists-are-harness-primitives/" },
+  { text: "Por qué los agents declaran victoria demasiado pronto", link: "/es/lectures/lecture-09-why-agents-declare-victory-too-early/" },
+  { text: "Por qué las pruebas end-to-end cambian los resultados", link: "/es/lectures/lecture-10-why-end-to-end-testing-changes-results/" },
+  { text: "Por qué la observabilidad pertenece al interior del harness", link: "/es/lectures/lecture-11-why-observability-belongs-inside-the-harness/" },
+  { text: "Por qué cada sesión debe dejar un estado limpio", link: "/es/lectures/lecture-12-why-every-session-must-leave-a-clean-state/" }
+];
+
+const esProjectItems = [
+  { text: "Bienvenida", link: "/es/projects/" },
+  { text: "Solo prompt frente a reglas primero", link: "/es/projects/project-01-baseline-vs-minimal-harness/" },
+  { text: "Espacio de trabajo legible por agents", link: "/es/projects/project-02-agent-readable-workspace/" },
+  { text: "Continuidad entre sesiones", link: "/es/projects/project-03-multi-session-continuity/" },
+  { text: "Feedback en runtime y control de alcance", link: "/es/projects/project-04-incremental-indexing/" },
+  { text: "Autoverificación y separación de roles", link: "/es/projects/project-05-grounded-qa-verification/" },
+  { text: "Harness completo", link: "/es/projects/project-06-runtime-observability-and-debugging/" }
+];
+
+const esResourceItems = [
+  { text: "Resumen", link: "/es/resources/" },
+  { text: "Plantillas", link: "/es/resources/templates/" },
+  { text: "Referencia", link: "/es/resources/reference/" },
+  { text: "Paquete avanzado", link: "/es/resources/openai-advanced/" }
+];
+
+const esSkillItems = [
+  { text: "Resumen de habilidades", link: "/es/skills/" }
+];
+
 const viLectureItems = [
   { text: "Chào mừng", link: "/vi/" },
   { text: "Tại sao các Agent mạnh vẫn thất bại", link: "/vi/lectures/lecture-01-why-capable-agents-still-fail/" },
@@ -329,6 +366,43 @@ export default withMermaid(
           darkModeSwitchLabel: "主题",
           lightModeSwitchTitle: "切换到浅色模式",
           darkModeSwitchTitle: "切换到深色模式",
+          socialLinks: [{ icon: "github", link: githubRepoTreeLink }]
+        }
+      },
+      es: {
+        label: "Español",
+        lang: "es",
+        link: "/es/",
+        themeConfig: {
+          nav: [
+            { text: "Lecciones", link: esLectureItems[1].link, activeMatch: '^/es/(lectures/.*)?$' },
+            { text: "Proyectos", link: esProjectItems[0].link, activeMatch: '^/es/projects/' },
+            { text: "Biblioteca", link: "/es/resources/", activeMatch: '^/es/resources/' },
+            { text: "Habilidades", link: "/es/skills/", activeMatch: '^/es/skills/' },
+            { text: "Probar Harness ↗", link: "https://github.com/walkinglabs/learn-harness-engineering/blob/main/docs/es/resources/templates/index.md", target: "_blank", rel: "noopener noreferrer" }
+          ],
+          sidebar: {
+            '/es/projects/': [{ text: "Proyectos", items: esProjectItems }],
+            '/es/resources/': [{ text: "Biblioteca de recursos", items: esResourceItems }],
+            '/es/skills/': [{ text: "Habilidades", items: esSkillItems }],
+            '/es/': [{ text: "Lecciones", items: esLectureItems }]
+          },
+          outline: {
+            level: [2, 3],
+            label: "En esta página"
+          },
+          docFooter: {
+            prev: "Anterior",
+            next: "Siguiente"
+          },
+          lastUpdated: {
+            text: "Última actualización"
+          },
+          returnToTopLabel: "Volver arriba",
+          sidebarMenuLabel: "Menú",
+          darkModeSwitchLabel: "Tema",
+          lightModeSwitchTitle: "Cambiar a modo claro",
+          darkModeSwitchTitle: "Cambiar a modo oscuro",
           socialLinks: [{ icon: "github", link: githubRepoTreeLink }]
         }
       },
