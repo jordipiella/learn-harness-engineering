@@ -60,3 +60,8 @@ Each project's starter/solution is a complete copy of the Electron app at that e
 ## Bilingual Content
 
 All content exists in both English and Chinese. Documentation lives in shared `docs/lectures/` and `docs/projects/` dirs (content is bilingual within each file). Resources have separate `docs/resources/en/` and `docs/resources/zh/` directories. Keep both in sync.
+
+<!-- SPECKIT START -->
+For additional context about technologies to be used, project structure,
+shell commands, and other important information, read the current plan
+<!-- SPECKIT END -->
