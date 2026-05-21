@@ -1,8 +1,8 @@
-# Limpio Estado Checklist
+# Checklist de estado limpio
 
-- [ ] The standard startup ruta still works.
-- [ ] The standard verificación ruta still ejecuta.
-- [ ] Current progress is recorded in the progress log.
-- [ ] Feature estado reflects what is actually passing versus unverified.
-- [ ] No half-finished paso is left undocumented.
-- [ ] The siguiente sesión can continue without manual repair.
+- [ ] La ruta estándar de arranque sigue funcionando.
+- [ ] La ruta estándar de verificación sigue ejecutándose.
+- [ ] El progreso actual está registrado en el log de progreso.
+- [ ] El estado de funcionalidades refleja qué pasa realmente y qué sigue sin verificar.
+- [ ] No queda ningún paso a medio hacer sin documentar.
+- [ ] La siguiente sesión puede continuar sin reparación manual.

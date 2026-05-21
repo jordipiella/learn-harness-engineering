@@ -1,40 +1,39 @@
 # QUALITY_SCORE.md
 
-This document tracks whether the repositorio is getting stronger or weaker over
-time.
+Este documento rastrea si el repositorio se está fortaleciendo o debilitando con el tiempo.
 
-## Grading Scale
+## Escala de calificación
 
-- `A`: verified, legible, stable, límites enforced
-- `B`: working with minor gaps
-- `C`: partially working, notable confusion or instability
-- `D`: broken, unsafe, or structurally unclear
+- `A`: verificado, legible, estable, límites impuestos.
+- `B`: funcional con huecos menores.
+- `C`: parcialmente funcional, confusión o inestabilidad notable.
+- `D`: roto, inseguro o estructuralmente poco claro.
 
-## Product Domains
+## Dominios de producto
 
-| Domain | Grade | Verification | Agent Legibility | Prueba Stability | Key Gaps | Last Updated |
-|--------|-------|-------------|-----------------|---------------|----------|-------------|
+| Dominio | Calificación | Verificación | Legibilidad para agents | Estabilidad de pruebas | Huecos clave | Última actualización |
+|---------|--------------|--------------|-------------------------|------------------------|--------------|----------------------|
 | `[domain-a]` | - | - | - | - | - | - |
 | `[domain-b]` | - | - | - | - | - | - |
 | `[domain-c]` | - | - | - | - | - | - |
 
-## Architectural Capas
+## Capas arquitectónicas
 
-| Capa | Grade | Boundary Enforcement | Agent Legibility | Key Gaps | Last Updated |
-|-------|-------|---------------------|-----------------|----------|-------------|
+| Capa | Calificación | Enforcement de límites | Legibilidad para agents | Huecos clave | Última actualización |
+|------|--------------|------------------------|-------------------------|--------------|----------------------|
 | Types | - | - | - | - | - |
 | Services | - | - | - | - | - |
 | Runtime | - | - | - | - | - |
 | UI | - | - | - | - | - |
 
-## Benchmark Snapshots
+## Snapshots de benchmark
 
-| Date | Harness Variant | Finalización Rate | Retries | Defects Before Revisión | Notes |
-|------|-----------------|----------------|--------|-----------------------|------|
+| Fecha | Variante de harness | Tasa de finalización | Reintentos | Defectos antes de revisión | Notas |
+|-------|---------------------|----------------------|------------|----------------------------|-------|
 | YYYY-MM-DD | `[baseline / improved / simplified]` | - | - | - | - |
 
-## Simplification Log
+## Log de simplificación
 
-| Date | Component Removed | Outcome | Decision |
-|------|-------------------|---------|----------|
+| Fecha | Componente eliminado | Resultado | Decisión |
+|-------|----------------------|-----------|----------|
 | YYYY-MM-DD | `[component]` | `[degraded / unchanged]` | `[restore / keep removed]` |

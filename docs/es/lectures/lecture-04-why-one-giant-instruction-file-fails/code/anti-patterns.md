@@ -1,7 +1,7 @@
-# Instrucción Archivo Anti-Patterns
+# Antipatrones de archivos de instrucciones
 
-- Putting all repositorio knowledge into one archivo
-- Repeating the mismo rule in multiple places
-- Encoding obsolete reglas that nobody audits
-- Escritura conditional instrucciones so específico that they rarely apply
-- Embedding long herramienta manuals into the startup contexto
+- Poner todo el conocimiento del repositorio en un solo archivo
+- Repetir la misma regla en varios lugares
+- Codificar reglas obsoletas que nadie audita
+- Escribir instrucciones condicionales tan específicas que rara vez aplican
+- Incrustar manuales largos de herramientas en el contexto de arranque

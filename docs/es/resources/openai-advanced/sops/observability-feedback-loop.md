@@ -1,44 +1,41 @@
-# SOP: Observability Feedback Loop
+# SOP: bucle de feedback de observabilidad
 
-Usar this SOP when debugging is slow, agents keep claiming éxito without
-evidence, or runtime behavior is harder to inspect than the código itself.
+Usa este SOP cuando depurar sea lento, los agents sigan afirmando éxito sin evidencia o el comportamiento de runtime sea más difícil de inspeccionar que el código.
 
 ## Objetivo
 
-Give the agent a local feedback loop over logs, metrics, traces, and runnable
-workloads so it can reason from execution, not only from código inspection.
+Dar al agent un bucle local de feedback sobre logs, métricas, trazas y workloads ejecutables para que razone desde la ejecución, no solo desde inspección de código.
 
-## Minimum Stack
+## Stack mínimo
 
-- application emits estructurado logs
-- application emits metrics and traces when feasible
-- local fan-out or collection capa
-- query interfaces for logs, metrics, and traces
-- repeatable workload or usuario journey to rerun after each cambio
+- la aplicación emite logs estructurados
+- la aplicación emite métricas y trazas cuando sea viable
+- capa local de fan-out o recolección
+- interfaces de consulta para logs, métricas y trazas
+- workload o recorrido de usuario repetible para reejecutar tras cada cambio
 
-## Execution SOP
+## SOP de ejecución
 
-1. Define the golden runtime journeys that matter most.
-2. Añadir estructurado logs to startup and the critical ruta.
-3. Añadir metrics for latency, fallo counts, or queue depth where useful.
-4. Añadir traces or timing markers for slow or multi-step flows.
-5. Hacer the signals queryable from the local dev entorno.
-6. Give the agent one repeatable workload or scenario to rerun.
-7. Require the loop: query -> correlate -> reason -> implement -> restart ->
-   rerun -> verificar.
+1. Define los recorridos dorados de runtime que más importan.
+2. Añade logs estructurados al arranque y a la ruta crítica.
+3. Añade métricas de latencia, conteos de fallos o profundidad de cola donde sea útil.
+4. Añade trazas o marcas de tiempo para flujos lentos o multipaso.
+5. Haz que las señales sean consultables desde el entorno local de desarrollo.
+6. Da al agent un workload o escenario repetible que pueda reejecutar.
+7. Exige el bucle: consultar -> correlacionar -> razonar -> implementar -> reiniciar -> reejecutar -> verificar.
 
-## Depurar Session Checklist
+## Checklist de sesión de depuración
 
-- What falló?
-- Which signal proves the fallo?
-- Which capa owns the fallo?
-- What changed after the arreglar?
-- Did the app restart cleanly?
-- Did the mismo workload pass after rerun?
+- ¿Qué falló?
+- ¿Qué señal prueba el fallo?
+- ¿Qué capa posee el fallo?
+- ¿Qué cambió después de la corrección?
+- ¿La app reinició limpiamente?
+- ¿El mismo workload pasó tras reejecutar?
 
-## Definition Of Terminado
+## Definition Of Done
 
-- The agent can explain a fallo mode from runtime evidence.
-- The mismo workload can be rerun after each cambio.
-- Restart and rerun are part of the normal tarea loop.
-- Reliability signals are documented in `docs/RELIABILITY.md`.
+- El agent puede explicar un modo de fallo desde evidencia de runtime.
+- El mismo workload puede reejecutarse después de cada cambio.
+- Reiniciar y reejecutar son parte del loop normal de tarea.
+- Las señales de fiabilidad están documentadas en `docs/RELIABILITY.md`.

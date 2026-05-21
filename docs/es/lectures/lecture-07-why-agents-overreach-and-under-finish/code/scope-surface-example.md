@@ -1,17 +1,17 @@
-# Scope Surface Ejemplo
+# Ejemplo de superficie de scope
 
 Tarea:
 
-- Añadir indexing to the Electron knowledge app
+- Añadir indexing a la app Electron de base de conocimiento
 
-Bad alcance shape:
+Mala forma de scope:
 
 - “Implement indexing”
 
-Better alcance shape:
+Mejor forma de scope:
 
 - Parse imported documents
 - Split documents into chunks
 - Persist chunk metadata
 - Expose indexing status in the UI
-- Añadir a reindex action
+- Add a reindex action

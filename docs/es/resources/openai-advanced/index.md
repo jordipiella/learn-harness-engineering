@@ -1,24 +1,20 @@
-# OpenAI Paquete avanzado
+# Paquete avanzado de OpenAI
 
-This carpeta packages the more opinionated repositorio shape described in
-OpenAI's "Harness ingeniería: leveraging Codex in an agent-first world"
-article into listo para copiar inicial archivos.
+Esta carpeta empaqueta la forma de repositorio más opinada descrita en el artículo de OpenAI "Harness engineering: leveraging Codex in an agent-first world" como archivos iniciales listos para copiar.
 
-Usar this pack when the minimal harness is no longer enough and your repositorio
-now needs:
+Usa este paquete cuando el harness mínimo ya no baste y tu repositorio necesite:
 
-- a short routing-style `AGENTS.md`
-- durable system-of-record docs inside the repo
-- active and completed execution plans
-- explícito product, reliability, security, and frontend policy archivos
-- calidad scoring by product domain and architectural capa
-- model-friendly referencia material carpetas
-- standard operating procedures for arquitectura, knowledge capture, and runtime validation
+- un `AGENTS.md` corto con estilo de enrutador
+- documentos duraderos de sistema de registro dentro del repo
+- planes de ejecución activos y completados
+- archivos explícitos de política de producto, fiabilidad, seguridad y frontend
+- puntuación de calidad por dominio de producto y capa arquitectónica
+- carpetas de material de referencia legible por el modelo
+- procedimientos operativos estándar para arquitectura, captura de conocimiento y validación en runtime
 
-## Included Inicial Layout
+## Layout inicial incluido
 
-The inicial pack under [`repo-template/`](./repo-template/index.md) mirrors the
-estructura below:
+El paquete inicial en [`repo-template/`](./repo-template/index.md) replica esta estructura:
 
 ```text
 AGENTS.md
@@ -49,35 +45,29 @@ docs/
 └── SECURITY.md
 ```
 
-## How To Adopt It
+## Cómo adoptarlo
 
-1. Empezar from the minimal pack if your repo is still small.
-2. Copy the archivos in [`repo-template/`](./repo-template/index.md) into your
-   own repositorio once you need stronger estructura.
-3. Keep `AGENTS.md` short. Treat it as a router into the deeper docs, not as an
-   encyclopedia.
-4. Update the calidad, reliability, and plan docs as part of normal work, not
-   as a separate cleanup day.
-5. Keep generated artifacts and external references explícito so agents can find
-   them without relying on chat history.
+1. Empieza por el paquete mínimo si tu repo aún es pequeño.
+2. Copia los archivos de [`repo-template/`](./repo-template/index.md) a tu propio repositorio cuando necesites una estructura más fuerte.
+3. Mantén `AGENTS.md` corto. Trátalo como un enrutador hacia documentación más profunda, no como una enciclopedia.
+4. Actualiza los documentos de calidad, fiabilidad y planes como parte del trabajo normal, no como un día separado de limpieza.
+5. Mantén explícitos los artefactos generados y las referencias externas para que los agents puedan encontrarlos sin depender del historial de chat.
 
-## SOP Biblioteca
+## Biblioteca de SOP
 
-The [`sops/`](./sops/index.md) carpeta turns the article's diagrams into
-step-by-step operating procedures:
+La carpeta [`sops/`](./sops/index.md) convierte los diagramas del artículo en procedimientos operativos paso a paso:
 
-- layered domain arquitectura setup
-- encode unseen knowledge into the repositorio
-- local observabilidad stack and feedback-loop flujo de trabajo
-- Chrome DevTools validation loop for UI work
+- configuración de arquitectura de dominio por capas
+- codificación de conocimiento invisible dentro del repositorio
+- stack local de observabilidad y workflow de bucle de feedback
+- bucle de validación con Chrome DevTools para trabajo de UI
 
-## Diseño Principles
+## Principios de diseño
 
-- Short entrypoint, deeper linked docs
-- Repository as sistema de registro
-- Mechanical checks beat remembered reglas
-- Plans and calidad history live beside the código
-- Cleanup and simplification are first-class responsibilities
+- Entrada corta, documentos enlazados más profundos.
+- Repositorio como sistema de registro.
+- Los checks mecánicos ganan a las reglas recordadas.
+- Los planes y el historial de calidad viven junto al código.
+- Limpieza y simplificación son responsabilidades de primer nivel.
 
-This pack is intentionally opinionated, but it should still be adapted to your
-proyecto rather than copied blindly.
+Este paquete es intencionalmente opinado, pero aun así debe adaptarse a tu proyecto en vez de copiarse a ciegas.

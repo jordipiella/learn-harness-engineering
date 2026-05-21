@@ -1,18 +1,18 @@
-# Underspecified Tarea Ejemplo
+# Ejemplo de tarea insuficientemente especificada
 
-Construir a desktop knowledge base app with AI question answering.
+Construir una app de base de conocimiento de escritorio con preguntas y respuestas mediante IA.
 
 Constraints:
 
 - None specified
-- No startup comando given
-- No carpeta estructura guidance
-- No datos modelo defined
-- No explícito finalización criterios
+- No startup command given
+- No folder structure guidance
+- No data model defined
+- No explicit completion criteria
 
-Typical outcomes from this kind of prompt:
+Resultados típicos de este tipo de prompt:
 
-- the agent invents a estructura ad hoc
-- the app may compile but not empezar consistently
-- the UI may appear before there is any usable ingest/query ruta
-- the agent often stops after cosmetic éxito
+- el agent inventa una estructura ad hoc
+- la app puede compilar, pero no arrancar de forma consistente
+- la UI puede aparecer antes de que exista una ruta usable de ingest/query
+- el agent suele detenerse tras un éxito cosmético

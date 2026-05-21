@@ -1,8 +1,8 @@
-# Evaluador Rúbrica Ejemplo
+# Ejemplo de rúbrica de evaluador
 
-Usar 1-5 scoring for each dimension:
+Usa puntuación de 1 a 5 para cada dimensión:
 
 - Grounding: are answers clearly tied to imported sources?
-- Citation calidad: are the source references visible and específico?
-- Functionality: can the usuario completo the question-answer flow?
-- Product coherence: does the flujo de trabajo feel integrated?
+- Citation quality: are the source references visible and specific?
+- Functionality: can the user complete the question-answer flow?
+- Product coherence: does the workflow feel integrated?

@@ -1,25 +1,25 @@
-[Versión en chino →](../../../zh/projects/project-06-runtime-observability-and-debugging/)
+[中文版本 →](../../../zh/projects/project-06-runtime-observability-and-debugging/)
 
-> Related lecciones: [Lección 11. Hacer the agent's runtime observable](./../../lectures/lecture-11-why-observability-belongs-inside-the-harness/index.md) · [Lección 12. Limpio traspaso at the end of every sesión](./../../lectures/lecture-12-why-every-session-must-leave-a-clean-state/index.md)
-> Plantilla archivos: [plantillas/](https://github.com/walkinglabs/learn-harness-engineering/blob/main/docs/es/resources/templates/)
+> Lecciones relacionadas: [Lección 11. Haz observable el runtime del agent](./../../lectures/lecture-11-why-observability-belongs-inside-the-harness/index.md) · [Lección 12. Traspaso limpio al final de cada sesión](./../../lectures/lecture-12-why-every-session-must-leave-a-clean-state/index.md)
+> Archivos de plantilla: [templates/](https://github.com/walkinglabs/learn-harness-engineering/blob/main/docs/es/resources/templates/)
 
-# Proyecto 06. Construir a Completo Agent Harness (Capstone)
+# Proyecto 06. Construye un harness completo para agents (capstone)
 
-## What You Do
+## Qué haces
 
-This is the capstone proyecto. Assemble everything learned in the first five proyectos, ejecutar a full benchmark, then do a cleanup pass to verificar calidad is maintainable.
+Este es el proyecto final. Ensamblas todo lo aprendido en los cinco primeros proyectos, ejecutas un benchmark completo y luego haces una pasada de limpieza para verificar que la calidad es mantenible.
 
-Usar a fixed multi-feature tarea set covering the completo product slice: document import, indexing, citation-based Q&A, runtime observabilidad, and readable restartable repo estado. First ejecutar with weak harness baseline, then with your strongest harness, then a cleanup and re-run. Finally, do a harness ablation experiment — remove one component at a time and see which ones actually matter.
+Usa un conjunto fijo de tareas multi-feature que cubra el corte completo del producto: importación de documentos, indexación, Q&A con citas, observabilidad en runtime y estado de repositorio legible y reiniciable. Primero ejecuta con un baseline de harness débil, luego con tu harness más fuerte, después limpia y vuelve a ejecutar. Por último, haz un experimento de ablación del harness: elimina un componente cada vez y observa cuáles importan realmente.
 
 ## Herramientas
 
-- Claude Código or Codex
+- Claude Code o Codex
 - Git
 - Node.js + Electron
-- Calidad document plantilla
-- Evaluador rúbrica
-- All harness components accumulated from the first five proyectos
+- Plantilla de documento de calidad
+- Rúbrica de evaluator
+- Todos los componentes de harness acumulados en los cinco primeros proyectos
 
-## Harness Mechanism
+## Mecanismo de harness
 
-Completo harness: all mechanisms + observabilidad + ablation study
+Harness completo: todos los mecanismos + observabilidad + estudio de ablación

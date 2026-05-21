@@ -1,117 +1,118 @@
-[Versión en chino →](../../../zh/lectures/lecture-01-why-capable-agents-still-fail/)
+[中文版本 →](../../../zh/lectures/lecture-01-why-capable-agents-still-fail/)
 
-> Ejemplos de código: [código/](https://github.com/walkinglabs/learn-harness-engineering/blob/main/docs/es/lectures/lecture-01-why-capable-agents-still-fail/code/)
+> Ejemplos de código: [code/](https://github.com/walkinglabs/learn-harness-engineering/blob/main/docs/es/lectures/lecture-01-why-capable-agents-still-fail/code/)
 > Proyecto práctico: [Proyecto 01. Prompt-only vs. reglas primero](./../../projects/project-01-baseline-vs-minimal-harness/index.md)
 
 # Lección 01. Modelos potentes no significan ejecución fiable
 
-You consider yourself well-traveled in the AI world — Claude Pro subscription, GPT-4o API key, SWE-bench leaderboard numbers memorized. One day you finally hand a real proyecto to an AI agent, brimming with confidence. The resultado? It añade a feature but breaks the pruebas, arregla a bug but introduces two more, ejecuta for 20 minutes and proudly declares "terminado" — and you look at the código and it's not what you asked for at all.
+Conoces bien el mundo de la IA: tienes una suscripción a Claude Pro, una clave de API de GPT-4o y te sabes de memoria los números de SWE-bench. Un día decides por fin entregar un proyecto real a un AI agent con plena confianza. ¿El resultado? Añade una funcionalidad pero rompe las pruebas, arregla un bug pero introduce dos más, trabaja durante 20 minutos y declara orgullosamente que ha terminado. Luego miras el código y no es lo que pediste.
 
-Your first instinct? "This modelo isn't good enough. Time to upgrade." Hold on. Before you reach for your wallet, consider that the problema might not be the modelo at all.
+Tu primer impulso puede ser: "este modelo no es lo bastante bueno; toca actualizar". Espera. Antes de abrir la cartera, considera que quizá el problema no sea el modelo.
 
-Let's look at some numbers. As of late 2025, the strongest agents de programación on SWE-bench Verified achieve roughly 50-60%. And that's on carefully selected tareas with claro issue descriptions and existing prueba cases. Move to your diario development entorno — vago requirements, no existing pruebas, implícito business reglas scattered everywhere — and that number only goes down.
+Mira algunos números. A finales de 2025, los agents de programación más fuertes en SWE-bench Verified rondan el 50-60%. Y eso ocurre en tareas cuidadosamente seleccionadas, con descripciones claras y pruebas existentes. Si lo llevas a tu entorno diario de desarrollo, con requisitos vagos, reglas de negocio implícitas y pocas pruebas, ese porcentaje solo baja.
 
-But behind these numbers lies a counterintuitive truth.
+Pero detrás de esos números hay una verdad poco intuitiva.
 
 ## El mismo caballo, destinos distintos
 
-Anthropic ran a controlled experiment. Mismo prompt ("construir a 2D retro game maker"), mismo modelo (Opus 4.5). First ejecutar: bare, no soporte — 20 minutes, $9, the game's core funcionalidades didn't work at all. Second ejecutar: full harness (planificador + generador + evaluador three-agent arquitectura) — 6 hours, $200, the game was playable.
+Anthropic ejecutó un experimento controlado: mismo prompt ("construye un creador de juegos retro 2D"), mismo modelo (Opus 4.5). Primera ejecución: sin soporte, sin harness. Tras 20 minutos y 9 dólares, las funciones centrales del juego no funcionaban. Segunda ejecución: con un harness completo, formado por planner, generator y evaluator. Tras 6 horas y 200 dólares, el juego era jugable.
 
-They didn't cambio the modelo. Opus 4.5 was still Opus 4.5. What changed was the saddle.
+No cambiaron el modelo. Opus 4.5 seguía siendo Opus 4.5. Lo que cambió fue la silla de montar.
 
-OpenAI's 2025 harness ingeniería article puts it plainly: Codex in a well-harnessed repositorio goes from "unreliable" to "fiable." Note their wording — not "a bit better," but a qualitative shift. Like a thoroughbred: you can ride it without a saddle, but you won't go far, won't go fast, and falling off is no surprise. The harness is that saddle — **everything in the ingeniería infrastructure outside the modelo weights.**
+El artículo de OpenAI de 2025 sobre Harness Engineering lo formula de forma directa: Codex, en un repositorio bien preparado con harness, pasa de "unreliable" a "reliable". No dicen "un poco mejor", sino un cambio cualitativo. Como con un purasangre: puedes montarlo sin silla, pero no llegarás lejos, no irás rápido y caerte no debería sorprenderte. El harness es esa silla: **toda la infraestructura de ingeniería que rodea al modelo y que no forma parte de sus pesos.**
 
 ## Dónde se atascan realmente los agents
 
-So what specifically goes incorrecto?
+¿Qué falla exactamente?
 
-The most common: you never clearly defined the tarea. You say "añadir a search feature," and the agent's comprensión is completely diferente from yours — search what? Full-text or estructurado? Pagination? Highlighting? You didn't specify, so the agent guesses. A correcto guess is luck; a incorrecto one costs more to arreglar than being específico would have cost in the first place. It's like walking into a restaurant and telling the chef "I'll have fish" — whether you get it braised, steamed, or in a hot pot is entirely up to chance.
+Lo más habitual es que la tarea nunca se definiera con claridad. Dices "añade búsqueda" y la interpretación del agent puede ser completamente distinta a la tuya: ¿búsqueda de qué?, ¿texto completo o campos estructurados?, ¿paginación?, ¿resaltado de resultados? Si no lo especificas, el agent adivina. Si acierta, es suerte; si falla, arreglarlo suele costar más que haber sido específico desde el principio. Es como entrar en un restaurante y pedir "pescado": que llegue guisado, al vapor o en una sopa queda al azar.
 
-Even when you do specify, the proyecto has implícito architectural conventions the agent doesn't know. Your equipo standardized on SQLAlchemy 2.0 syntax, but the agent escribe 1.x código by default. All API endpoints must usar OAuth 2.0 authentication, but that rule only exists in your head and a Slack message from three months ago. The agent can't see these — it's not that it doesn't want to comply, it literally doesn't know these reglas exist.
+Incluso cuando especificas bien la tarea, el proyecto tiene convenciones arquitectónicas implícitas que el agent no conoce. Tu equipo usa sintaxis de SQLAlchemy 2.0, pero el agent escribe código 1.x por defecto. Todos los endpoints deben usar OAuth 2.0, pero esa regla solo está en tu cabeza y en un mensaje de Slack de hace tres meses. El agent no puede verla; no es que no quiera cumplirla, es que literalmente no sabe que existe.
 
-The entorno is a trap too. Incomplete dev entorno, faltante dependencies, incorrecto herramienta versions. The agent burns precious contexto window on `pip install` fallos and Node version mismatches instead of solving your real tarea. Like hiring a skilled carpenter but forgetting to proporcionar a hammer, nails, or a level workbench — no matter how talented, they can't do the job.
+El entorno también puede ser una trampa. Dependencias incompletas, versiones de herramientas incorrectas, configuración de desarrollo a medias. El agent gasta una parte preciosa de la ventana de contexto en fallos de `pip install` y conflictos de versión de Node en lugar de resolver la tarea real. Es como contratar a un carpintero excelente y no darle martillo, clavos ni banco de trabajo.
 
-Even more common: there's simply no way to verificar. No pruebas, no lint, or verificación comandos never communicated to the agent. The agent escribe código, looks at it, decides it's fine, says "terminado." It's like asking a student to submit homework with no answer key — they think they got it right, but when you grade it there's a pile of errors. Anthropic also observed an interesting phenomenon: when agents sense contexto is ejecutando low, they rush to finish, skip verificación, and choose a simple solución over the optimal one. They call it "contexto anxiety" — the mismo thing that happens when you realize time is almost up on an exam and empezar randomly guessing on the remaining multiple-choice questions.
+Otro caso muy común: no hay forma de verificar. No hay pruebas, no hay lint, o nunca se comunicaron al agent los comandos de verificación. El agent escribe código, lo mira, decide que parece correcto y dice "terminado". Es como pedir a un estudiante que entregue un examen sin clave de respuestas: cree que lo hizo bien, pero al corregirlo aparecen errores. Anthropic observó además un fenómeno interesante: cuando los agents perciben que el contexto se agota, aceleran, saltan verificación y eligen una solución simple antes que una óptima. Lo llaman "ansiedad de contexto"; es lo mismo que ocurre cuando queda poco tiempo en un examen y empiezas a marcar respuestas al azar.
 
-Long tareas spanning sesións are even worse — all discoveries from the anterior sesión are lost, and every new sesión has to re-explore the proyecto estructura and re-understand the código organization. Agents without persistent estado see fallo rates spike sharply on tareas exceeding 30 minutes.
+Las tareas largas que cruzan sesiones empeoran todavía más. Los descubrimientos de la sesión anterior se pierden y cada nueva sesión debe volver a explorar la estructura del proyecto y entender la organización del código. Sin estado persistente, las tasas de fallo suben bruscamente cuando una tarea supera los 30 minutos.
 
 ## Terminología clave
 
-With these scenarios in mind, these concepts are no longer just jargon:
+Con estos escenarios en mente, estos conceptos dejan de ser jerga:
 
-- **Capability Gap**: The huge gulf between modelo performance on benchmarks and performance on real tareas. A 50-60% pass rate on SWE-bench Verified means nearly half of real issues can't be resolved.
-- **Harness**: Everything outside the modelo — instrucciones, herramientas, entorno, gestión de estado, feedback de verificación. If it's not modelo weights, it's harness. What we've been calling the "saddle."
-- **Harness-Induced Fallo**: The modelo has enough capability, but the execution entorno has structural defects. Anthropic's controlled experiment already proved this.
-- **Verification Gap**: The gap between the agent's confidence in its salida and real correctness. The agent says "I'm terminado" when it's not terminado — this is the most common fallo mode.
-- **Diagnostic Loop**: Execute, observe fallo, attribute to a específico harness capa, arreglar that capa, re-execute. This is the core methodology of harness ingeniería.
-- **Definición de Terminado**: A set of machine-verifiable condiciones — pruebas pass, lint is limpio, type checks pass. Without an explícito definition of terminado, the agent will invent its own.
+- **Brecha de capacidad**: la distancia entre el rendimiento de un modelo en benchmarks y su rendimiento en tareas reales. Un 50-60% en SWE-bench Verified significa que casi la mitad de los issues reales no se resuelven.
+- **Harness**: todo lo que está fuera del modelo: instrucciones, herramientas, entorno, gestión de estado y feedback de verificación. Si no son pesos del modelo, forma parte del harness. Es la "silla" de la analogía.
+- **Fallo inducido por el harness**: el modelo tiene capacidad suficiente, pero el entorno de ejecución tiene defectos estructurales. El experimento controlado de Anthropic lo demuestra.
+- **Brecha de verificación**: la distancia entre la confianza declarada por el agent y la corrección real. El agent dice "he terminado" cuando no ha terminado; este es el modo de fallo más común.
+- **Bucle diagnóstico**: ejecutar, observar el fallo, atribuirlo a una capa concreta del harness, corregir esa capa y volver a ejecutar. Es el método central de Harness Engineering.
+- **Definición de Terminado**: conjunto de condiciones verificables por máquina: pruebas en verde, lint limpio, type checks correctos. Sin una definición explícita, el agent inventará la suya.
 
 ## Cuando algo falla, arregla primero el harness
 
-Core principle: **When things fail, don't swap the modelo first — check the harness.** If the mismo modelo tiene éxito on similar, well-structured tareas, assume it's a harness problema. It's like a car breaking down — you don't immediately suspect the engine. You check if it's out of gas first.
+Principio central: **cuando algo falla, no cambies primero el modelo; revisa el harness.** Si el mismo modelo funciona en tareas parecidas y bien estructuradas, asume que el problema está en el harness. Es como un coche averiado: no sospechas inmediatamente del motor; primero miras si tiene gasolina.
 
-Concrete pasos:
+Pasos concretos:
 
-**Attribute every fallo to a específico capa.** Don't just say "the modelo sucks." Ask: was the tarea unclear? Was contexto insufficient? Were there no verificación methods? Map each fallo to one of the five fallo capas (tarea specification, contexto provision, execution entorno, feedback de verificación, gestión de estado). Construir this habit, and you'll find "the modelo isn't good enough" appearing less and less in your logs.
+**Atribuye cada fallo a una capa concreta.** No digas simplemente "el modelo es malo". Pregunta: ¿la tarea era ambigua?, ¿faltaba contexto?, ¿no había métodos de verificación? Mapea cada fallo a una de las cinco capas: especificación de tarea, provisión de contexto, entorno de ejecución, feedback de verificación y gestión de estado. Si construyes ese hábito, verás que "el modelo no es suficiente" aparece cada vez menos en tus registros.
 
-**Escribir an explícito Definición de Terminado for every tarea.** Don't say "añadir a search feature." Say:
+**Escribe una Definición de Terminado explícita para cada tarea.** No digas "añade búsqueda". Di:
+
+```text
+Criterios de finalización:
+- Nuevo endpoint GET /api/search?q=xxx
+- Soporta paginación, con 20 elementos por defecto
+- Los resultados incluyen fragmentos resaltados
+- Todo el código nuevo pasa pytest
+- El type checking pasa (mypy --strict)
 ```
-Completion criteria:
-- New endpoint GET /api/search?q=xxx
-- Supports pagination, default 20 items
-- Results include highlighted snippets
-- All new code passes pytest
-- Type checking passes (mypy --strict)
-```
 
-**Crear an AGENTS.md archivo.** Put it in the repo root to tell the agent the proyecto's tech stack, architectural conventions, and verificación comandos. This is the first paso in harness ingeniería and the highest-ROI paso you can take. One `AGENTS.md` archivo might be more effective than upgrading to a more expensive modelo — I'm not joking.
+**Crea un archivo AGENTS.md.** Ponlo en la raíz del repositorio para explicar al agent el stack, las convenciones arquitectónicas y los comandos de verificación. Es el primer paso de Harness Engineering y una de las acciones con mejor retorno. Un solo `AGENTS.md` puede ser más eficaz que pagar por un modelo más caro; no es una broma.
 
-**Construir a bucle diagnóstico.** Don't treat fallos as "the modelo being dumb again." Treat them as signals that your harness has a defect. Each fallo, identify the capa, arreglar it, never fail that way again. After a few rounds, your harness gets stronger and agent performance stabilizes. Like road repair — every pothole you fill hace the siguiente stretch smoother.
+**Construye un bucle diagnóstico.** No trates los fallos como "otra vez el modelo haciendo tonterías". Trátalos como señales de que tu harness tiene un defecto. En cada fallo, identifica la capa, corrígela y evita que vuelva a ocurrir. Tras unas cuantas rondas, el harness se fortalece y el rendimiento del agent se estabiliza. Como reparar una carretera: cada bache que tapas hace más suave el siguiente tramo.
 
-**Quantify improvements.** Keep a simple log: did each tarea succeed or fail, and which capa caused the fallo. After a few rounds you'll see which capa is the bottleneck — focus your energy there.
+**Cuantifica las mejoras.** Lleva un registro sencillo: si cada tarea tuvo éxito o falló, y qué capa causó el fallo. Después de varias rondas verás cuál es el cuello de botella y podrás concentrar ahí la energía.
 
 ## El experimento del millón de líneas
 
-OpenAI ran an aggressive experiment in 2025: usar Codex to construir a completo internal product from an empty git repositorio. Five months later, the repo had roughly one million lines of código — application logic, infrastructure, tooling, documentation, internal dev herramientas — all agent-generated. Three engineers drove Codex, opening and merging about 1,500 PRs. An average of 3.5 PRs per person per day.
+OpenAI ejecutó en 2025 un experimento agresivo: usar Codex para construir un producto interno completo desde un repositorio vacío. Cinco meses después, el repo tenía alrededor de un millón de líneas de código: lógica de aplicación, infraestructura, tooling, documentación y herramientas internas, todo generado por agents. Tres ingenieros dirigieron Codex, abrieron y fusionaron unas 1.500 PRs, con una media de 3,5 PRs por persona y día.
 
-The key constraint: **humans never escribir código directly.** This wasn't a gimmick — it was designed to force the equipo to figure out what cambios when the engineer's primary job is no longer escritura código, but designing entornos, expressing intent, and construyendo feedback loops.
+La restricción clave era esta: **los humanos nunca escribían código directamente.** No era un truco; estaba diseñado para forzar al equipo a descubrir qué cambia cuando el trabajo principal del ingeniero deja de ser escribir código y pasa a ser diseñar entornos, expresar intención y construir bucles de feedback.
 
-Early progress was slower than expected. Not because Codex wasn't capaz, but because the entorno wasn't completo enough — the agent lacked necessary herramientas, abstractions, and internal structures to advance high-level objectives. The engineers' work became: breaking large objetivos into small construyendo blocks (diseño, código, revisión, prueba), letting the agent assemble them, then usando those blocks to unlock more complex tareas. When something falló, the arreglar was almost never "try harder" — it was "what capability is the agent faltante, and how do we hacer it both understandable and executable?"
+Al principio, el progreso fue más lento de lo esperado. No porque Codex no fuera capaz, sino porque el entorno no estaba lo bastante completo: al agent le faltaban herramientas, abstracciones y estructuras internas para avanzar en objetivos de alto nivel. El trabajo de los ingenieros pasó a ser dividir metas grandes en bloques pequeños (diseño, código, revisión, prueba), dejar que el agent los ensamblara y usar esos bloques para desbloquear tareas más complejas. Cuando algo fallaba, la solución casi nunca era "inténtalo con más fuerza"; era "¿qué capacidad le falta al agent y cómo la hacemos comprensible y ejecutable?".
 
-This experiment directly proves this lección's core thesis: **the mismo modelo produces fundamentally diferente salida in a bare entorno versus one with a completo harness.** The modelo didn't cambio. The entorno did.
+Este experimento demuestra directamente la tesis central de la lección: **el mismo modelo produce resultados fundamentalmente distintos en un entorno desnudo y en un entorno con un harness completo.** El modelo no cambió. Cambió el entorno.
 
-> Fuente: [OpenAI: Harness ingeniería: leveraging Codex in an agent-first world](https://openai.com/index/harness-engineering/)
+> Fuente: [OpenAI: Harness engineering: leveraging Codex in an agent-first world](https://openai.com/index/harness-engineering/)
 
 ## Un ejemplo más cercano
 
-A equipo usado Claude Sonnet to añadir a new API endpoint to a mid-sized Python web app (FastAPI + PostgreSQL + Redis, ~15,000 lines of código).
+Un equipo usó Claude Sonnet para añadir un endpoint a una aplicación Python de tamaño medio (FastAPI + PostgreSQL + Redis, unas 15.000 líneas).
 
-Initially they gave only one sentence: "añadir usuario preferences endpoints under `/api/v2/usuarios`." The resultado? The agent spent 40% of its contexto window exploring the repo estructura, produced código that looked reasonable but didn't follow the proyecto's error handling patterns, usado old SQLAlchemy syntax, and declared finalización while the endpoint had runtime errors. The siguiente sesión had to redo all the discovery work.
+Al principio solo dieron una frase: "añade endpoints de preferencias de usuario bajo `/api/v2/users`". ¿El resultado? El agent gastó un 40% de su ventana de contexto explorando la estructura del repo, produjo código que parecía razonable pero no seguía los patrones de manejo de errores del proyecto, usó sintaxis antigua de SQLAlchemy y declaró la tarea terminada aunque el endpoint fallaba en runtime. La siguiente sesión tuvo que repetir todo el trabajo de descubrimiento.
 
-Later they added `AGENTS.md` (describing proyecto arquitectura and tech stack versions), explícito verificación comandos (`pytest pruebas/api/v2/ && python -m mypy src/`), and arquitectura decision records. The mismo modelo succeeded in all three independent ejecuta, with ~60% better contexto efficiency.
+Más tarde añadieron `AGENTS.md` con la arquitectura y versiones del stack, comandos explícitos de verificación (`pytest tests/api/v2/ && python -m mypy src/`) y registros de decisiones arquitectónicas. El mismo modelo tuvo éxito en tres ejecuciones independientes, con alrededor de un 60% más de eficiencia de contexto.
 
-They didn't cambio the modelo. They changed the harness.
+No cambiaron el modelo. Cambiaron el harness.
 
 ## Ideas clave
 
-- Modelo capability and execution reliability are diferente things. A thoroughbred still needs a good saddle.
-- When things fail, check the harness first, then the modelo. Swapping modelos is the most expensive option — and often it's not even a modelo problema.
-- Every fallo is a signal: your harness has a structural defect. Find it, arreglar it.
-- Five defense capas: tarea specification, contexto provision, execution entorno, feedback de verificación, gestión de estado. Check them systematically, like a doctor ruling out the most common causes first.
-- One `AGENTS.md` archivo might be more effective than upgrading to a more expensive modelo. Seriously.
+- Capacidad del modelo y fiabilidad de ejecución son cosas distintas. Un purasangre sigue necesitando una buena silla.
+- Cuando algo falla, revisa primero el harness y después el modelo. Cambiar de modelo es la opción más cara y a menudo ni siquiera resuelve el problema.
+- Cada fallo es una señal: tu harness tiene un defecto estructural. Encuéntralo y arréglalo.
+- Cinco capas defensivas: especificación de tarea, provisión de contexto, entorno de ejecución, feedback de verificación y gestión de estado. Revísalas de forma sistemática.
+- Un `AGENTS.md` puede ser más eficaz que actualizar a un modelo más caro. En serio.
 
 ## Lecturas adicionales
 
-- [OpenAI: Harness Ingeniería — Leveraging Codex in an Agent-First World](https://openai.com/index/harness-engineering/)
+- [OpenAI: Harness Engineering — Leveraging Codex in an Agent-First World](https://openai.com/index/harness-engineering/)
 - [Anthropic: Effective Harnesses for Long-Running Agents](https://www.anthropic.com/engineering/effective-harnesses-for-long-running-agents)
-- [HumanLayer: Skill Issue — Harness Ingeniería for Coding Agents](https://humanlayer.dev/articles/harness-engineering-for-coding-agents/)
+- [HumanLayer: Skill Issue — Harness Engineering for Coding Agents](https://humanlayer.dev/articles/harness-engineering-for-coding-agents/)
 - [SWE-bench Leaderboard](https://www.swebench.com/)
-- [Thoughtworks Technology Radar: Harness Ingeniería](https://www.thoughtworks.com/radar)
+- [Thoughtworks Technology Radar: Harness Engineering](https://www.thoughtworks.com/radar)
 
 ## Ejercicios
 
-1. **Comparación experiment**: Pick a codebase you know well and a non-trivial modification tarea. First, ejecutar the agent with no harness soporte and record fallos. Then añadir an `AGENTS.md` with explícito verificación comandos and ejecutar again with the mismo agent. Comparar resultados, attributing each fallo to one of the five defense capas.
+1. **Experimento comparativo**: elige un codebase que conozcas bien y una modificación no trivial. Primero ejecuta el agent sin soporte de harness y registra los fallos. Luego añade un `AGENTS.md` con comandos explícitos de verificación y vuelve a ejecutar con el mismo agent. Compara resultados y atribuye cada fallo a una de las cinco capas defensivas.
 
-2. **Verification gap measurement**: Pick 5 coding tareas. After each tarea, record whether the agent claims finalización, then verificar real correctness with independent pruebas. Calculate the proportion of times the agent claims terminado when it's actually not terminado — that's your verificación gap. Then think: what verificación comandos would reduce this proportion?
+2. **Medición de la brecha de verificación**: elige 5 tareas de programación. Después de cada una, registra si el agent afirma haber terminado y verifica la corrección real con pruebas independientes. Calcula la proporción de veces que el agent dice "terminado" cuando en realidad no lo está: esa es tu brecha de verificación. Luego piensa qué comandos de verificación reducirían esa proporción.
 
-3. **Diagnostic loop práctica**: Find a tarea where the agent repeatedly falla in your proyecto. Ejecutar once, record the fallo. Attribute it to one of the five capas. Arreglar that capa. Ejecutar again. Repeat three to five rounds, recording improvements each time.
+3. **Práctica de bucle diagnóstico**: busca una tarea en la que el agent falle repetidamente en tu proyecto. Ejecuta una vez y registra el fallo. Atribúyelo a una de las cinco capas. Corrige esa capa. Ejecuta de nuevo. Repite entre tres y cinco rondas y registra las mejoras.

@@ -1,43 +1,43 @@
-[Versión en chino →](../../../zh/lectures/lecture-02-what-a-harness-actually-is/)
+[中文版本 →](../../../zh/lectures/lecture-02-what-a-harness-actually-is/)
 
-> Ejemplos de código: [código/](https://github.com/walkinglabs/learn-harness-engineering/blob/main/docs/es/lectures/lecture-02-what-a-harness-actually-is/code/)
+> Ejemplos de código: [code/](https://github.com/walkinglabs/learn-harness-engineering/blob/main/docs/es/lectures/lecture-02-what-a-harness-actually-is/code/)
 > Proyecto práctico: [Proyecto 01. Prompt-only vs. reglas primero](./../../projects/project-01-baseline-vs-minimal-harness/index.md)
 
-# Lección 02. What Harness Actually Means
+# Lección 02. Qué significa realmente un harness
 
-The word "harness" gets thrown around a lot in agent de programación con IA circles, but honestly, most people mean "a prompt archivo" when they say harness. That's not a harness. It's like opening a restaurant with nothing but ingredients — no stove, no knives, no recipes, no plating flujo de trabajo. That's not a restaurant. That's a refrigerator.
+La palabra "harness" se usa mucho en círculos de agents de programación con IA, pero muchas veces la gente quiere decir simplemente "un archivo de prompt". Eso no es un harness. Es como abrir un restaurante con solo ingredientes: sin fogón, sin cuchillos, sin recetas y sin flujo de emplatado. Eso no es un restaurante; es una nevera.
 
-This lección gives you a precise, actionable harness definition. Not an academic abstraction, but a framework you can usar today: a harness consists of five subsystems, each with claro responsibilities and evaluation criterios.
+Esta lección te da una definición precisa y accionable de harness. No una abstracción académica, sino un marco que puedes usar hoy: un harness consta de cinco subsistemas, cada uno con responsabilidades y criterios de evaluación claros.
 
-## Empezar with an Analogy
+## Empieza con una analogía
 
-Imagine you're a newly hired engineer dropped into a proyecto with zero documentation. No README, no comments in the código, nobody tells you how to ejecutar pruebas, CI config is buried somewhere. Can you escribir good código? Maybe — if you're smart enough and patient enough. But you'll spend enormous time on "figuring out what this proyecto is about" rather than "solving the problema."
+Imagina que eres un ingeniero recién contratado y te sueltan en un proyecto sin documentación. No hay README, no hay comentarios en el código, nadie te dice cómo ejecutar pruebas y la configuración de CI está enterrada en algún sitio. ¿Puedes escribir buen código? Tal vez, si eres suficientemente paciente. Pero gastarás una enorme cantidad de tiempo entendiendo "de qué va este proyecto" en lugar de resolver el problema.
 
-An AI agent faces the exact mismo situation. And it's worse — you can at least ask a colleague. The agent can only see archivos you put in front of it and comandos it can execute. It can't tap someone on the shoulder and ask "hey, which version of the ORM does this proyecto usar?"
+Un AI agent afronta exactamente la misma situación, y peor: tú al menos puedes preguntar a un compañero. El agent solo ve los archivos que le pones delante y los comandos que puede ejecutar. No puede tocarle el hombro a alguien y preguntar "¿qué versión del ORM usa este proyecto?".
 
-OpenAI frames the core principle as "the repo IS the spec" — all necessary contexto should be in the repositorio, delivered through estructurado instrucción archivos, explícito verificación comandos, and claro directory organization. Anthropic's agents de larga duración documentation emphasizes estado persistence, explícito recovery paths, and estructurado progress tracking. The two companies focus on diferente aspects, but they're saying the mismo thing: **everything in the ingeniería infrastructure outside the modelo determines how much of the modelo's capability actually gets realized.**
+OpenAI formula el principio central como "the repo IS the spec": todo el contexto necesario debe estar en el repositorio, entregado mediante archivos de instrucciones estructurados, comandos explícitos de verificación y una organización clara de directorios. La documentación de Anthropic sobre agents de larga duración enfatiza persistencia de estado, rutas explícitas de recuperación y seguimiento estructurado de progreso. Se centran en aspectos distintos, pero dicen lo mismo: **todo lo que hay en la infraestructura de ingeniería fuera del modelo determina cuánta capacidad del modelo se realiza realmente.**
 
-Look at some herramientas you already know:
+Mira herramientas que ya conoces:
 
-**Claude Código** embodies harness thinking. It reads `CLAUDE.md` from your repo (recipe shelf), can ejecutar shell comandos (knife rack), executes in your local entorno (stove), maintains sesión history (prep station), and can ejecutar pruebas and see resultados (calidad check window). But if you don't tell it how to ejecutar pruebas, the calidad check window is broken — nobody knows whether the dish is fully cooked.
+**Claude Code** encarna esta forma de pensar. Lee `CLAUDE.md` del repo (estantería de recetas), puede ejecutar comandos de shell (juego de cuchillos), trabaja en tu entorno local (fogón), mantiene historial de sesión (mesa de preparación) y puede ejecutar pruebas y ver resultados (ventana de control de calidad). Pero si no le dices cómo ejecutar las pruebas, la ventana de control está rota: nadie sabe si el plato está bien cocinado.
 
-**Cursor** follows similar logic. Its `.cursorrules` archivo is the recipe shelf, the terminal is the knife rack, it reads your proyecto estructura and lint config for the stove. But Cursor's gestión de estado is relatively weak — close the IDE and reopen it, and the anterior contexto is gone.
+**Cursor** sigue una lógica parecida. Su archivo `.cursorrules` es la estantería de recetas, el terminal es el juego de cuchillos y la estructura del proyecto más la configuración de lint forman parte del fogón. Pero su gestión de estado es relativamente débil: cierras el IDE, lo abres de nuevo y el contexto anterior desaparece.
 
-**Codex** (OpenAI's agent de programación) uses git worktrees to isolate each tarea's runtime entorno, paired with a local observabilidad stack (logs, metrics, traces), so every cambio is verified in an independent entorno. In repos with `AGENTS.md` and claro verificación comandos, it performs far better than in "bare" repos.
+**Codex**, el agent de programación de OpenAI, usa git worktrees para aislar el entorno de runtime de cada tarea y lo combina con observabilidad local (logs, métricas, trazas), de modo que cada cambio se verifica en un entorno independiente. En repos con `AGENTS.md` y comandos claros de verificación, rinde mucho mejor que en repos desnudos.
 
-**AutoGPT** is the cautionary tale — lack of estructurado gestión de estado leads to contexto accumulation in long tareas, and lack of precise feedback mechanisms causes the agent to loop. Many people say AutoGPT "doesn't work," but really it's AutoGPT's harness that doesn't work — give a chef a broken stove and even the best ingredients won't produce a meal.
+**AutoGPT** es la advertencia: la falta de gestión estructurada de estado acumula contexto en tareas largas, y la falta de feedback preciso hace que el agent entre en bucles. Mucha gente dice que AutoGPT "no funciona", pero en realidad lo que no funciona es su harness. Dale a un chef un fogón roto y ni los mejores ingredientes producirán una comida.
 
-## Core Concepts
+## Conceptos centrales
 
-- **What is a harness**: Everything in the ingeniería infrastructure outside the modelo weights. OpenAI distills the engineer's core job into three things: designing entornos, expressing intent, and construyendo feedback loops. Anthropic calls their Claude Agent SDK a "general-purpose agent harness."
-- **The repo is the single fuente de verdad**: Anything the agent can't see, for all practical purposes, doesn't exist. OpenAI treats the repo as the "sistema de registro" — all necessary contexto must live there, through estructurado archivos and claro directory organization.
-- **Give a map, not a manual**: OpenAI's experience — `AGENTS.md` should be a directory página, not an encyclopedia. Around 100 lines is enough. If it doesn't fit, split it into the `docs/` directory and let the agent leer on demand.
-- **Constrain, don't micromanage**: A good harness uses executable reglas to constrain the agent, rather than enumerating instrucciones one by one. OpenAI says "enforce invariants, don't micromanage implementation"; Anthropic found that agents confidently praise their own work, and the solución is to separate "the person who does the work" from "the person who checks the work."
-- **Remove components one at a time**: To quantify the value of each harness component, remove them one at a time and see which removal causes the biggest performance drop. Anthropic usado this método and found that as modelos get stronger, some components stop being critical — but new ones always emerge.
+- **Qué es un harness**: todo lo que hay en la infraestructura de ingeniería fuera de los pesos del modelo. OpenAI resume el trabajo central del ingeniero en tres cosas: diseñar entornos, expresar intención y construir bucles de feedback. Anthropic llama a su Claude Agent SDK un "general-purpose agent harness".
+- **El repo es la fuente de verdad**: todo lo que el agent no puede ver, en la práctica, no existe. OpenAI trata el repo como sistema de registro: el contexto necesario debe vivir ahí, mediante archivos estructurados y organización clara.
+- **Da un mapa, no un manual**: según la experiencia de OpenAI, `AGENTS.md` debe ser una página de directorio, no una enciclopedia. Unas 100 líneas suelen bastar. Si no cabe, divídelo en `docs/` y deja que el agent lea bajo demanda.
+- **Restringe, no microgestiones**: un buen harness usa reglas ejecutables para restringir al agent, no una lista interminable de instrucciones. OpenAI lo formula como "enforce invariants, don't micromanage implementation"; Anthropic observó que los agents elogian con confianza su propio trabajo, y la solución es separar a quien hace el trabajo de quien lo revisa.
+- **Elimina componentes de uno en uno**: para cuantificar el valor de cada componente del harness, quítalos de uno en uno y mide qué retirada causa la mayor caída de rendimiento. Anthropic usó este método y vio que, a medida que los modelos mejoran, algunos componentes dejan de ser críticos, pero siempre aparecen otros nuevos.
 
-## The Five-Subsystem Harness Modelo
+## El modelo de harness de cinco subsistemas
 
-Back to the kitchen analogy. A completo kitchen has five functional areas, and a harness has five subsystems:
+Volvamos a la cocina. Una cocina completa tiene cinco áreas funcionales, y un harness tiene cinco subsistemas:
 
 ```mermaid
 flowchart LR
@@ -49,16 +49,17 @@ flowchart LR
     Checks --> Agent
 ```
 
-**Instrucción subsystem (recipe shelf)**: Crear `AGENTS.md` (or `CLAUDE.md`) containing a proyecto resumen and purpose (one sentence), tech stack and versions (Python 3.11, FastAPI 0.100+, PostgreSQL 15), first-run comandos (`hacer setup`, `hacer prueba`), non-negotiable hard constraints ("All APIs must usar OAuth 2.0"), and links to more detailed documentation.
+**Subsistema de instrucciones (estantería de recetas)**: crea `AGENTS.md` o `CLAUDE.md` con una visión general del proyecto, propósito en una frase, stack y versiones, comandos de primera ejecución (`make setup`, `make test`), restricciones no negociables ("All APIs must use OAuth 2.0") y enlaces a documentación más detallada.
 
-**Herramienta subsystem (knife rack)**: Ensure the agent has sufficient herramienta access. Don't disable shell for "security" — if the agent can't even ejecutar `pip install`, how is it supposed to work? But don't open everything either — follow least-privilege principles.
+**Subsistema de herramientas (juego de cuchillos)**: asegúrate de que el agent tiene acceso suficiente a herramientas. No desactives shell por "seguridad" si luego esperas que pueda ejecutar `pip install`. Pero tampoco abras todo: aplica mínimo privilegio.
 
-**Entorno subsystem (stove)**: Hacer the entorno estado self-describing. Usar `pyproject.toml` or `package.json` to lock dependencies, `.nvmrc` or `.python-version` for runtime versions, Docker or devcontainers for reproducibility.
+**Subsistema de entorno (fogón)**: haz que el estado del entorno se describa a sí mismo. Usa `pyproject.toml` o `package.json` para fijar dependencias, `.nvmrc` o `.python-version` para versiones de runtime, y Docker o devcontainers para reproducibilidad.
 
-**Estado subsystem (prep station)**: Long tareas need progress tracking. Usar a simple `PROGRESS.md` archivo recording: what's terminado, what's in progress, what's blocked. Update before each sesión ends, leer when the siguiente sesión starts.
+**Subsistema de estado (mesa de preparación)**: las tareas largas necesitan seguimiento de progreso. Usa un `PROGRESS.md` simple que registre qué está hecho, qué está en curso y qué está bloqueado. Actualízalo antes de terminar cada sesión y léelo al empezar la siguiente.
 
-**Feedback subsystem (calidad check window)**: This is the highest-ROI subsystem. Explicitly lista verificación comandos in `AGENTS.md`:
-```
+**Subsistema de feedback (ventana de control de calidad)**: suele ser el subsistema con mayor retorno. Lista explícitamente comandos de verificación en `AGENTS.md`:
+
+```text
 Verification commands:
 - Tests: pytest tests/ -x
 - Type check: mypy src/ --strict
@@ -66,44 +67,44 @@ Verification commands:
 - Full verification: make check (includes all above)
 ```
 
-Faltante any subsystem is like faltante a functional area in the kitchen — you can still cook, but it's always awkward.
+Si falta un subsistema, es como si faltara una zona funcional en la cocina: puedes cocinar, pero siempre será torpe.
 
-**Diagnosing harness calidad**: Usar "isometric modelo control." Keep the modelo fixed, remove subsystems one at a time, measure which removal causes the biggest performance drop. That's your bottleneck — focus your effort there. Like finding the bottleneck in a kitchen: take away the recipe shelf and see how much slower things get, shut off the stove and see the impact.
+**Diagnosticar la calidad del harness**: usa control de modelo isométrico. Mantén fijo el modelo, elimina subsistemas de uno en uno y mide qué eliminación causa la mayor caída de rendimiento. Ese es tu cuello de botella. Es como buscar el cuello de botella en una cocina: quita la estantería de recetas, mide cuánto se ralentiza todo; apaga el fogón y mira el impacto.
 
-## A Equipo's Real Story
+## Historia real de un equipo
 
-A equipo usado GPT-4o on a TypeScript + React frontend app (~20,000 lines of código). They went through four stages — essentially adding kitchen equipment one piece at a time:
+Un equipo usó GPT-4o en una app frontend TypeScript + React de unas 20.000 líneas. Pasaron por cuatro etapas, añadiendo equipamiento de cocina pieza a pieza:
 
-**Stage 1 — Empty kitchen**: Only a basic proyecto description in README. 1 out of 5 ejecuta succeeded (20%). Main fallos: chose incorrecto package manager (npm vs yarn), didn't follow component naming conventions, couldn't ejecutar pruebas.
+**Etapa 1: cocina vacía**. Solo había una descripción básica del proyecto en el README. Tuvo éxito 1 de 5 ejecuciones (20%). Fallos principales: eligió mal el package manager (npm frente a yarn), no siguió convenciones de nombres de componentes y no pudo ejecutar pruebas.
 
-**Stage 2 — Recipe shelf installed**: Added `AGENTS.md` with tech stack versions, naming conventions, key arquitectura decisions. Éxito rate rose to 60%. Remaining fallos were mainly entorno issues and faltante verificación.
+**Etapa 2: estantería de recetas instalada**. Añadieron `AGENTS.md` con versiones del stack, convenciones de nombres y decisiones arquitectónicas clave. La tasa de éxito subió al 60%. Los fallos restantes eran sobre todo de entorno y verificación faltante.
 
-**Stage 3 — Calidad check window opened**: Listed verificación comandos in `AGENTS.md`: `yarn prueba && yarn lint && yarn construir`. Éxito rate rose to 80%.
+**Etapa 3: ventana de control de calidad abierta**. Añadieron comandos de verificación en `AGENTS.md`: `yarn test && yarn lint && yarn build`. La tasa de éxito subió al 80%.
 
-**Stage 4 — Prep station ready**: Introduced progress archivo plantillas where agents recorded completed and incomplete work each ejecutar. Éxito rate stabilized at 80-100%.
+**Etapa 4: mesa de preparación lista**. Introdujeron plantillas de progreso donde los agents registraban trabajo completado e incompleto en cada ejecución. La tasa de éxito se estabilizó entre 80% y 100%.
 
-Four iterations, the modelo didn't cambio at all, éxito rate went from 20% to near 100%. That's the power of harness ingeniería. You didn't buy more expensive ingredients — you just organized the kitchen properly.
+Cuatro iteraciones, sin cambiar el modelo, y la tasa de éxito pasó del 20% a casi el 100%. Esa es la fuerza de Harness Engineering: no compraron ingredientes más caros; organizaron bien la cocina.
 
 ## Ideas clave
 
-- Harness = Instrucciones + Herramientas + Entorno + Estado + Feedback. Five subsystems, like a kitchen's five functional areas — all essential.
-- If it's not modelo weights, it's harness. Your harness determines how much modelo capability gets realized.
-- Among the five subsystems, the feedback subsystem usually has the lowest investment and highest return. Get your verificación comandos right first — the calidad check window is the most worthwhile upgrade.
-- Usar "isometric modelo control" to quantify each subsystem's marginal contribution — don't go by gut feeling.
-- Harness rots like código does. Audit regularly, pay down harness debt like you pay down technical debt.
+- Harness = instrucciones + herramientas + entorno + estado + feedback. Cinco subsistemas, como cinco áreas funcionales de una cocina.
+- Si no son pesos del modelo, es harness. El harness determina cuánta capacidad del modelo se materializa.
+- De los cinco subsistemas, feedback suele tener la menor inversión y el mayor retorno. Ajusta primero los comandos de verificación.
+- Usa control de modelo isométrico para medir la contribución marginal de cada subsistema.
+- El harness se degrada como el código. Audítalo con regularidad y paga deuda de harness igual que pagas deuda técnica.
 
 ## Lecturas adicionales
 
-- [OpenAI: Harness Ingeniería](https://openai.com/index/harness-engineering/)
+- [OpenAI: Harness Engineering](https://openai.com/index/harness-engineering/)
 - [Anthropic: Effective Harnesses for Long-Running Agents](https://www.anthropic.com/engineering/effective-harnesses-for-long-running-agents)
-- [HumanLayer: Harness Ingeniería for Coding Agents](https://humanlayer.dev/articles/harness-engineering-for-coding-agents/)
+- [HumanLayer: Harness Engineering for Coding Agents](https://humanlayer.dev/articles/harness-engineering-for-coding-agents/)
 - [SWE-agent: Agent-Computer Interfaces](https://github.com/princeton-nlp/SWE-agent)
-- [Thoughtworks: Harness Ingeniería on Technology Radar](https://www.thoughtworks.com/radar)
+- [Thoughtworks: Harness Engineering on Technology Radar](https://www.thoughtworks.com/radar)
 
 ## Ejercicios
 
-1. **Five-tuple harness audit**: Take a proyecto where you usar an AI agent and do a completo audit usando the five-tuple framework. Score each subsystem 1-5. Find the lowest-scoring subsystem, spend 30 minutes improving it, then observe the cambio in agent performance.
+1. **Auditoría de harness en cinco partes**: toma un proyecto donde uses un AI agent y audítalo con el marco de cinco subsistemas. Puntúa cada subsistema de 1 a 5. Mejora durante 30 minutos el subsistema con peor puntuación y observa el cambio en rendimiento.
 
-2. **Isometric modelo control experiment**: Pick one modelo and one challenging tarea. Sequentially remove instrucciones (delete AGENTS.md), remove feedback (don't proporcionar verificación comandos), remove estado (no progress archivos) — remove only one at a time and measure the performance drop. Based on resultados, rank subsystem importance for your proyecto.
+2. **Experimento de control de modelo isométrico**: elige un modelo y una tarea difícil. Quita instrucciones, feedback o estado de uno en uno y mide la caída de rendimiento. Ordena la importancia de los subsistemas para tu proyecto.
 
-3. **Affordance analysis**: Find a scenario where the agent in your proyecto "wants to do something but can't" (e.g., knows it should usar parameterized queries but doesn't know your proyecto's ORM patterns). Analyze whether this is a Gulf of Execution (doesn't know how) or Gulf of Evaluation (doesn't know if it's right), then diseño a harness improvement to bridge it.
+3. **Análisis de affordance**: busca un caso donde el agent "quiere hacer algo pero no puede" (por ejemplo, sabe que debería usar consultas parametrizadas pero desconoce los patrones ORM del proyecto). Decide si es un Gulf of Execution o un Gulf of Evaluation y diseña una mejora de harness para cerrarlo.

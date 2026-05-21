@@ -1,15 +1,15 @@
 # AGENTS.md
 
-## Empezar Here
+## Start Here
 
-- Leer `docs/ARCHITECTURE.md`
-- Leer `docs/PRODUCT.md`
-- Usar `npm ejecutar dev` to empezar the app
-- Usar `npm ejecutar check` before marking work completo
+- Read `docs/ARCHITECTURE.md`
+- Read `docs/PRODUCT.md`
+- Use `npm run dev` to start the app
+- Use `npm run check` before marking work complete
 
-## Hard Reglas
+## Hard Rules
 
-- Do not cambio Electron main/preload/renderer límites without lectura
+- Do not change Electron main/preload/renderer boundaries without reading
   `docs/ARCHITECTURE.md`
-- Do not mark a feature completo without verificación
-- Leave a limpio estado for the siguiente sesión
+- Do not mark a feature complete without verification
+- Leave a clean state for the next session

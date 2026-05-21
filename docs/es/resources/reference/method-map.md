@@ -1,19 +1,19 @@
-# Método Map
+# Mapa de método
 
-This table maps the most common long-running coding-agent fallo modes to the
-artifact or operating rule that usually arregla them first.
+Esta tabla conecta los modos de fallo más comunes en tareas largas con coding agents
+con el artefacto o regla operativa que suele corregirlos primero.
 
-| Fallo mode | What it looks like in práctica | Primary arreglar | Supporting artifact |
+| Modo de fallo | Cómo se ve en la práctica | Corrección principal | Artefacto de apoyo |
 | --- | --- | --- | --- |
-| Cold-start confusion | A new sesión spends most of its time rediscovering setup and status | Hacer the repositorio the sistema de registro | `claude-progress.md` |
-| Scope sprawl | The agent starts several funcionalidades and finishes none of them cleanly | Restrict active alcance | `feature_list.json` |
-| Premature finalización | The agent claims terminado after código edits but before runnable proof | Bind finalización to evidence | `clean-state-checklist.md` |
-| Fragile startup | Every sesión re-learns how to boot the proyecto | Standardize setup and verificación | `init.sh` |
-| Weak traspaso | The siguiente sesión cannot tell what is verified, broken, or siguiente | End with an explícito traspaso | `sesión-traspaso.md` |
-| Subjective revisión | Revisión calidad depends on taste or memory | Score salida with fixed categories | `evaluator-rubric.md` |
+| Confusión de arranque | Una sesión nueva pasa la mayor parte del tiempo redescubriendo setup y estado | Convertir el repositorio en el sistema de registro | `claude-progress.md` |
+| Expansión de alcance | El agent empieza varias funcionalidades y no termina ninguna limpiamente | Restringir el alcance activo | `feature_list.json` |
+| Finalización prematura | El agent declara que terminó después de editar código, pero antes de aportar evidencia ejecutable | Vincular la finalización a evidencia | `clean-state-checklist.md` |
+| Arranque frágil | Cada sesión vuelve a aprender cómo iniciar el proyecto | Estandarizar setup y verificación | `init.sh` |
+| Traspaso débil | La siguiente sesión no sabe qué está verificado, roto o pendiente | Terminar con un traspaso explícito | `session-handoff.md` |
+| Revisión subjetiva | La calidad de la revisión depende del gusto o la memoria | Puntuar la salida con categorías fijas | `evaluator-rubric.md` |
 
-## Operating Principle
+## Principio operativo
 
-Añadir the smallest artifact that directly addresses the observed fallo mode.
-Avoid solving every reliability problema by dumping more text into one global
-instrucción archivo.
+Añade el artefacto más pequeño que responda directamente al modo de fallo observado.
+Evita resolver todos los problemas de fiabilidad acumulando más texto en un único
+archivo global de instrucciones.

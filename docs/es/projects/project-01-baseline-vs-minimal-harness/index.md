@@ -1,25 +1,25 @@
-[Versión en chino →](../../../zh/projects/project-01-baseline-vs-minimal-harness/)
+[中文版本 →](../../../zh/projects/project-01-baseline-vs-minimal-harness/)
 
-> Related lecciones: [Lección 01. Potente modelos don't mean fiable execution](./../../lectures/lecture-01-why-capable-agents-still-fail/index.md) · [Lección 02. What harness actually means](./../../lectures/lecture-02-what-a-harness-actually-is/index.md)
-> Plantilla archivos: [plantillas/](https://github.com/walkinglabs/learn-harness-engineering/blob/main/docs/es/resources/templates/)
+> Lecciones relacionadas: [Lección 01. Modelos potentes no significan ejecución fiable](./../../lectures/lecture-01-why-capable-agents-still-fail/index.md) · [Lección 02. Qué significa realmente un harness](./../../lectures/lecture-02-what-a-harness-actually-is/index.md)
+> Archivos de plantilla: [templates/](https://github.com/walkinglabs/learn-harness-engineering/blob/main/docs/es/resources/templates/)
 
-# Proyecto 01. Solo prompt frente a reglas primero: How Much Difference Does It Hacer
+# Proyecto 01. Prompt-only frente a reglas primero: cuánto cambia el resultado
 
-## What You Do
+## Qué haces
 
-Construir a minimal Electron knowledge-base app shell — a window with a document lista on the left, a Q&A panel on the right, and a local datos directory. The tarea itself is not complex. What's complex is how you get the agent to completo it.
+Construyes una shell mínima de app Electron tipo base de conocimiento: una ventana con lista de documentos a la izquierda, un panel de Q&A a la derecha y un directorio local de datos. La tarea no es compleja. Lo complejo es cómo consigues que el agent la complete.
 
-You ejecutar it twice. First time: just a prompt, no preparation. Second time: `AGENTS.md`, `init.sh`, `feature_list.json` pre-placed in the repo. Then comparar.
+La ejecutas dos veces. Primera vez: solo un prompt, sin preparación. Segunda vez: con `AGENTS.md`, `init.sh` y `feature_list.json` colocados previamente en el repo. Luego comparas.
 
-The core of this proyecto is not escritura código — it's figuring out how big the gap is between "spend 15 minutes preparing reglas first" and "just let the agent go."
+El núcleo del proyecto no es escribir código, sino medir la diferencia entre "dedicar 15 minutos a preparar reglas primero" y "dejar que el agent arranque sin más".
 
 ## Herramientas
 
-- Claude Código or Codex (pick one, usar it for both ejecuta)
-- Git (manage branches and comparar)
-- Node.js + Electron (proyecto stack)
-- A timer (record each ejecutar's duration)
+- Claude Code o Codex (elige uno y úsalo en ambas ejecuciones)
+- Git (para gestionar ramas y comparar)
+- Node.js + Electron (stack del proyecto)
+- Un temporizador (para registrar la duración de cada ejecución)
 
-## Harness Mechanism
+## Mecanismo de harness
 
-Minimal harness: `AGENTS.md` + `init.sh` + `feature_list.json`
+Harness mínimo: `AGENTS.md` + `init.sh` + `feature_list.json`

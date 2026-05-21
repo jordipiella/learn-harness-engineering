@@ -1,37 +1,35 @@
-# Initializer Agent Playbook
+# Playbook del initializer agent
 
-Usar this playbook for the first serious sesión in a repositorio, before
-incremental feature work begins.
+Usa este playbook para la primera sesión seria en un repositorio, antes de empezar trabajo incremental de funcionalidades.
 
 ## Objetivo
 
-Crear a stable operating surface so later sesións can implement behavior
-without re-deriving startup comandos, current status, or tarea límites.
+Crear una superficie operativa estable para que las sesiones posteriores puedan implementar comportamiento sin volver a derivar comandos de arranque, estado actual ni límites de tarea.
 
-## Required Outputs
+## Salidas requeridas
 
-The initializer should leave behind at least these artifacts:
+El initializer debería dejar al menos estos artefactos:
 
-- a root instrucción archivo such as `AGENTS.md` or `CLAUDE.md`
-- a machine-readable feature surface such as `feature_list.json`
-- a durable progress artifact such as `claude-progress.md`
-- a standard startup helper such as `init.sh`
-- an initial safe commit that captures the baseline scaffold
+- un archivo raíz de instrucciones como `AGENTS.md` o `CLAUDE.md`
+- una superficie de funcionalidades legible por máquina como `feature_list.json`
+- un artefacto duradero de progreso como `claude-progress.md`
+- un helper estándar de arranque como `init.sh`
+- un commit inicial seguro que capture el andamiaje baseline
 
 ## Checklist
 
-1. Define the standard startup ruta.
-2. Define the standard verificación ruta.
-3. Crear the progress log and record the starting estado.
-4. Decompose the work into explícito funcionalidades with statuses.
-5. Crear the first limpio baseline commit.
+1. Define la ruta estándar de arranque.
+2. Define la ruta estándar de verificación.
+3. Crea el log de progreso y registra el estado inicial.
+4. Descompón el trabajo en funcionalidades explícitas con estados.
+5. Crea el primer commit baseline limpio.
 
-## Éxito Prueba
+## Prueba de éxito
 
-A fresh sesión with no prior chat contexto should be able to answer:
+Una sesión fresca sin contexto de chat previo debería poder responder:
 
-- what this repositorio does
-- how to empezar it
-- how to verificar it
-- what is unfinished
-- what the siguiente best paso is
+- qué hace este repositorio
+- cómo arrancarlo
+- cómo verificarlo
+- qué está incompleto
+- cuál es el siguiente mejor paso

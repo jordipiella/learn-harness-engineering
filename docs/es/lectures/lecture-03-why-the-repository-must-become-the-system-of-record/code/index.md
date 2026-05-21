@@ -1,7 +1,7 @@
-# Código for Lección 03
+# Código de la Lección 03
 
-Usar this carpeta for ejemplos of:
+Usa esta carpeta para ejemplos de:
 
 - agent-readable repo structures
-- docs as sistema de registro
-- bad vs good knowledge placement
+- docs como sistema de registro
+- mala y buena ubicación del conocimiento

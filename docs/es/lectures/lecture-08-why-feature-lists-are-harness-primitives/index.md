@@ -1,79 +1,80 @@
 [Versión en chino →](../../../zh/lectures/lecture-08-why-feature-lists-are-harness-primitives/)
 
-> Ejemplos de código: [código/](https://github.com/walkinglabs/learn-harness-engineering/blob/main/docs/es/lectures/lecture-08-why-feature-lists-are-harness-primitives/code/)
-> Proyecto práctico: [Proyecto 04. Runtime feedback and alcance control](./../../projects/project-04-incremental-indexing/index.md)
+> Ejemplos de código: [code/](https://github.com/walkinglabs/learn-harness-engineering/blob/main/docs/es/lectures/lecture-08-why-feature-lists-are-harness-primitives/code/)
+> Proyecto práctico: [Proyecto 04. Runtime feedback and scope control](./../../projects/project-04-incremental-indexing/index.md)
 
-# Lección 08. Usar Feature Lists to Constrain What the Agent Does
+# Lección 08. Usar listas de funcionalidades para acotar lo que hace el agent
 
-You ask an agent to construir an e-commerce site. After it finishes, it tells you "terminado." You look at the código — usuario authentication works, but the checkout button in the shopping cart does nothing, and the payment flow isn't connected at all. The problema: you never told it what "terminado" means, so it usado its own standard — "I wrote a lot of código and it looks fairly completo."
+Le pides a un agent que construya un sitio de e-commerce. Cuando termina, te dice "hecho". Miras el código: la autenticación de usuarios funciona, pero el botón de checkout del carrito no hace nada y el flujo de pago no está conectado. El problema: nunca le dijiste qué significa "hecho", así que usó su propio estándar: "he escrito bastante código y parece bastante completo".
 
- Feature lists, in many people's eyes, are just a memo — escribir things down so you don't forget, then toss it aside. But in the harness world, a lista de funcionalidades isn't a memo for humans — it's the backbone of the entire harness. The scheduler relies on it to pick tareas, the verifier relies on it to judge finalización, the traspaso reporter relies on it to generate summaries. Break the backbone and the whole body is paralyzed.
+Para mucha gente, las listas de funcionalidades son solo un apunte: escribe cosas para no olvidarlas y luego déjalas a un lado. Pero en el mundo de los harnesses, una lista de funcionalidades no es una nota para humanos; es la columna vertebral del harness entero. El planificador depende de ella para elegir tareas, el verificador para juzgar finalización y el informe de handoff para generar resúmenes. Si rompes la columna, todo el cuerpo queda paralizado.
 
-Both Anthropic and OpenAI emphasize: **artifacts must be externalized.** Feature estado must live in a machine-readable archivo in the repo, not in no estructurado conversation text.
+Anthropic y OpenAI enfatizan lo mismo: **los artefactos deben externalizarse**. El estado de las funcionalidades debe vivir en un archivo legible por máquina dentro del repo, no en texto conversacional no estructurado.
 
-## Agents Don't Know What "Terminado" Means
+## Los agents no saben qué significa "hecho"
 
-Neither Claude Código nor Codex automatically knows what you mean by "terminado." You say "añadir a shopping cart feature," and the modelo's interpretation might be "escribir a Cart component and an addToCart método." But you meant "the usuario can browse products, añadir to cart, and completo checkout end-to-end." This comprensión gap persists without a lista de funcionalidades. The agent uses its own implícito standard — usually "the código has no obvious syntax errors." What you need is end-to-end behavioral verificación. Like asking a friend to buy you fruit — you say "get some fruit" and they come back with lemons. Their fruit and your fruit are not the mismo fruit.
+Ni Claude Code ni Codex saben automáticamente qué quieres decir con "hecho". Dices "añade un carrito de compra", y la interpretación del modelo puede ser "escribir un componente `Cart` y un método `addToCart`". Pero tú querías "el usuario puede navegar productos, añadirlos al carrito y completar el checkout end-to-end". Esta brecha de comprensión persiste si no hay una lista de funcionalidades. El agent usa su estándar implícito, normalmente "el código no tiene errores de sintaxis obvios". Lo que necesitas es verificación de comportamiento end-to-end. Como pedirle a alguien que compre fruta y que vuelva con limones: su idea de fruta y la tuya no eran la misma.
 
-Look at this common progress note:
+Mira esta nota de progreso común:
 
-```
+```text
 Did user auth, shopping cart mostly done, still need payments
 ```
-Can a new agent sesión answer these questions from this note? What does "mostly terminado" mean? Which pruebas did the cart pass? What's blocking payments? The answer to all is "nobody knows." Like telling your doctor "my stomach hurts, been okay lately" — what medicine can they prescribe?
 
-The resultado: the new sesión spends 20 minutes inferring proyecto estado, and may re-implement completed funcionalidades. Anthropic's ingeniería datos shows that good progress records reduce sesión startup diagnostic time by 60-80%.
+¿Puede una nueva sesión de agent responder estas preguntas a partir de esa nota? ¿Qué significa "mostly done"? ¿Qué pruebas pasó el carrito? ¿Qué bloquea los pagos? La respuesta a todo es "nadie lo sabe". Es como decirle al médico "me duele el estómago, últimamente bien": ¿qué tratamiento puede decidir con eso?
 
-## Feature Estado Machine
+Resultado: la sesión nueva dedica 20 minutos a inferir el estado del proyecto y puede reimplementar funcionalidades ya completadas. Los datos de ingeniería de Anthropic muestran que buenos registros de progreso reducen el tiempo de diagnóstico al inicio de sesión entre un 60% y un 80%.
+
+## Máquina de estados de funcionalidades
 
 ```mermaid
 flowchart LR
-    Feature["One feature row"] --> Behavior["Behavior<br/>for example: POST /cart/items returns 201"]
-    Feature --> Check["Verification command<br/>the exact check to run"]
-    Feature --> State["State<br/>not_started / active / blocked / passing"]
+    Feature["Una fila de funcionalidad"] --> Behavior["Comportamiento<br/>por ejemplo: POST /cart/items devuelve 201"]
+    Feature --> Check["Comando de verificación<br/>la comprobación exacta a ejecutar"]
+    Feature --> State["Estado<br/>not_started / active / blocked / passing"]
 
-    Behavior --> Complete["Only with all three fields<br/>is the feature row usable"]
+    Behavior --> Complete["Solo con los tres campos<br/>la fila es usable"]
     Check --> Complete
     State --> Complete
 ```
 
 ```mermaid
 flowchart LR
-    List["feature_list.json / features.md"] --> Scheduler["Pick the next not_started item"]
-    Scheduler --> Agent["Agent works on that one item"]
-    Agent --> Verifier["Run that item's verification command"]
-    Verifier -->|pass| Passing["Mark it passing<br/>and write the evidence"]
-    Verifier -->|fail| Active["Keep it active"]
-    Verifier -->|dependency issue| Blocked["Mark it blocked"]
-    Passing --> Handoff["Update handoff note<br/>and current progress"]
+    List["feature_list.json / features.md"] --> Scheduler["Elegir el siguiente elemento not_started"]
+    Scheduler --> Agent["El agent trabaja en ese único elemento"]
+    Agent --> Verifier["Ejecutar su comando de verificación"]
+    Verifier -->|pasa| Passing["Marcar como passing<br/>y escribir la evidencia"]
+    Verifier -->|falla| Active["Mantenerlo active"]
+    Verifier -->|problema de dependencia| Blocked["Marcarlo blocked"]
+    Passing --> Handoff["Actualizar nota de handoff<br/>y progreso actual"]
     Active --> Agent
 ```
 
-## Core Concepts
+## Conceptos clave
 
-- **Feature lists are harness primitives**: Not "optional planning herramientas," but foundational datos structures that all other harness components depend on. Like database table structures — you can't say "let's skip primary keys."
-- **Triple estructura**: Each feature item is a `(behavior description, verificación comando, current estado)` triple. Faltante any element hace the item incomplete.
-- **Estado machine modelo**: Each feature item has four states — `not_started`, `active`, `blocked`, `passing`. Estado transitions are controlled by the harness, not freely changed by the agent.
-- **Pass-state gating**: The only way a feature moves from `active` to `passing` is by verificación comando executing successfully. This is irreversible — once `passing`, it can't go back. Like passing an exam means you passed, you can't retroactively cambio the score.
-- **Single fuente de verdad**: All information about "what needs to be terminado" must derive from one lista de funcionalidades. No contradictions between the lista de funcionalidades and conversation history.
-- **Back-pressure**: The number of funcionalidades that haven't passed yet is the pressure the harness exerts on the agent. Zero pressure = proyecto completo.
+- **Las listas de funcionalidades son primitivas de harness**: no son "herramientas opcionales de planificación", sino estructuras de datos fundamentales de las que dependen otros componentes del harness. Como las estructuras de tablas de una base de datos: no puedes decir "saltemos las claves primarias".
+- **Estructura triple**: cada elemento de funcionalidad es una terna `(descripción de comportamiento, comando de verificación, estado actual)`. Si falta cualquier elemento, la entrada está incompleta.
+- **Modelo de máquina de estados**: cada funcionalidad tiene cuatro estados: `not_started`, `active`, `blocked`, `passing`. Las transiciones de estado las controla el harness, no las cambia libremente el agent.
+- **Pass-state gating**: la única forma de que una funcionalidad pase de `active` a `passing` es que el comando de verificación se ejecute correctamente. Es irreversible: una vez `passing`, no vuelve atrás.
+- **Fuente única de verdad**: toda la información sobre "qué hay que hacer" debe derivarse de una lista de funcionalidades. Sin contradicciones entre la lista y el historial de conversación.
+- **Back-pressure**: el número de funcionalidades que aún no han pasado es la presión que ejerce el harness sobre el agent. Presión cero = proyecto completo.
 
-## Why Feature Lists Must Be "Primitives"
+## Por qué las listas de funcionalidades deben ser "primitivas"
 
-Documents are for humans to leer; primitives are for sistemas to execute. Documents can be ignored; primitives can't be bypassed.
+Los documentos son para que los lean humanos; las primitivas son para que las ejecuten sistemas. Los documentos pueden ignorarse; las primitivas no deberían poder saltarse.
 
-Think of it like database trigger constraints vs. application-layer checks: the former is enforced by the database engine, no SQL can skip it; the latter depends on application código correctness and can be accidentally bypassed. Feature lists as harness primitives are Specifically, the lista de funcionalidades serves four harness components:
+Piensa en la diferencia entre restricciones de triggers de base de datos y comprobaciones en la capa de aplicación: las primeras las impone el motor de base de datos y ningún SQL puede saltárselas; las segundas dependen de que el código de aplicación sea correcto y pueden omitirse por accidente. Como primitivas de harness, las listas de funcionalidades sirven específicamente a cuatro componentes:
 
-1. **Scheduler**: Reads states, picks the siguiente `not_started` feature. Like a factory producción planning system.
-2. **Verifier**: Executes verificación comandos, decides whether to allow estado transitions. Like calidad inspection.
-3. **Handoff reporter**: Automatically generates sesión traspaso summaries from the lista de funcionalidades. Like an automatic shift-change report.
-4. **Progress tracker**: Tallies estado distribution, proporciona proyecto health metrics. Like a dashboard.
+1. **Planificador**: lee estados y elige la siguiente funcionalidad `not_started`. Como un sistema de planificación de producción en fábrica.
+2. **Verificador**: ejecuta comandos de verificación y decide si permite transiciones de estado. Como control de calidad.
+3. **Informe de handoff**: genera automáticamente resúmenes de cambio de sesión a partir de la lista de funcionalidades.
+4. **Seguimiento de progreso**: cuenta la distribución de estados y aporta métricas de salud del proyecto. Como un dashboard.
 
-## How to Do It Right
+## Cómo hacerlo bien
 
-### 1. Define a Minimal Feature Lista Format
+### 1. Definir un formato mínimo de lista de funcionalidades
 
-You don't need a complex system — a estructurado Markdown or JSON archivo works. The key is every entry must have the triple:
+No necesitas un sistema complejo: un archivo Markdown estructurado o JSON sirve. Lo esencial es que cada entrada tenga la terna:
 
 ```json
 {
@@ -85,13 +86,13 @@ You don't need a complex system — a estructurado Markdown or JSON archivo work
 }
 ```
 
-### 2. Let the Harness Control Estado Transitions
+### 2. Dejar que el harness controle las transiciones de estado
 
-The agent can't directly cambio a feature's estado to `passing`. It can only submit a verificación request; the harness executes the verificación comando and decides whether to allow the transition. This is "pass-state gating."
+El agent no puede cambiar directamente el estado de una funcionalidad a `passing`. Solo puede solicitar verificación; el harness ejecuta el comando y decide si permite la transición. Esto es `pass-state gating`.
 
-### 3. Escribir the Reglas in CLAUDE.md
+### 3. Escribir las reglas en `CLAUDE.md`
 
-```
+```text
 ## Feature List Rules
 - Feature list file: /docs/features.md
 - Only one feature active at a time
@@ -99,39 +100,39 @@ The agent can't directly cambio a feature's estado to `passing`. It can only sub
 - Don't modify feature list states yourself — the verification script updates them automatically
 ```
 
-### 4. Calibrate Granularity
+### 4. Calibrar la granularidad
 
-Each feature item should be alcanced to "completable in one sesión." Too broad and it won't finish; too narrow and the gestión overhead grows. "Usuario can añadir items to cart" is good granularity. "Implement the shopping cart" is too broad. "Crear the name field on the Cart modelo" is too narrow. Like cutting a steak — not the whole piece, and not ground meat.
+Cada elemento de funcionalidad debería tener scope de "completable en una sesión". Demasiado amplio y no se terminará; demasiado estrecho y el coste de gestión crece. "El usuario puede añadir artículos al carrito" tiene buena granularidad. "Implementar el carrito" es demasiado amplio. "Crear el campo `name` en el modelo `Cart`" es demasiado estrecho. Como cortar un filete: ni la pieza entera ni carne picada.
 
-## Real-World Case
+## Caso real
 
-An e-commerce platform with 10 funcionalidades. Two tracking approaches compared:
+Una plataforma de e-commerce con 10 funcionalidades comparó dos enfoques de seguimiento:
 
-**Memo mode**: Agent uses no estructurado notes. After 3 sesións, notes become "did usuario auth and product lista, shopping cart mostly terminado but has errores, payments not iniciado." New sesión needs 20 minutes to infer estado, ultimately re-implements completed funcionalidades. Like your shopping lista saying "milk, bread, and that thing" — at the store, you still don't know what to buy.
+**Modo nota**: el agent usa notas no estructuradas. Después de 3 sesiones, las notas dicen "did user auth and product list, shopping cart mostly done but has bugs, payments not started". Una nueva sesión necesita 20 minutos para inferir el estado y termina reimplementando funcionalidades completadas. Como una lista de compra que dice "leche, pan y esa cosa": en la tienda sigues sin saber qué comprar.
 
-**Backbone mode**: Every feature has a claro estado and verificación comando. New sesión reads the lista de funcionalidades and in 3 minutes knows: F01-F05 are `passing`, F06 is `active`, F07-F10 are `not_started`. Picks up from F06 directly, zero rework.
+**Modo columna vertebral**: cada funcionalidad tiene un estado claro y un comando de verificación. La nueva sesión lee la lista y en 3 minutos sabe: F01-F05 están `passing`, F06 está `active`, F07-F10 están `not_started`. Retoma directamente desde F06, sin retrabajo.
 
-Quantified resultado: proyectos usando estructurado lista de funcionalidadess show 45% higher feature finalización rate than free-form tracking, with zero duplicate implementations.
+Resultado cuantificado: los proyectos con listas estructuradas de funcionalidades muestran una tasa de finalización un 45% mayor que los proyectos con seguimiento libre, con cero implementaciones duplicadas.
 
 ## Ideas clave
 
-- **Feature lists are the harness's backbone**, not memos for humans. Scheduler, verifier, and traspaso reporter all depend on them.
-- **Every feature item must have the triple**: behavior description + verificación comando + current estado. Faltante one element hace it incomplete — like a three-legged stool faltante a leg.
-- **Estado transitions are controlled by the harness** — the agent can't cambio states on its own. Passing verificación = the only upgrade ruta.
-- **The lista de funcionalidades is the proyecto's single fuente de verdad** — all "what to do" information derives from one lista.
-- **Calibrate granularity to "completable in one sesión."**
+- **Las listas de funcionalidades son la columna vertebral del harness**, no notas para humanos. Planificador, verificador e informe de handoff dependen de ellas.
+- **Cada elemento debe tener la terna**: descripción de comportamiento + comando de verificación + estado actual. Si falta uno, está incompleto.
+- **El harness controla las transiciones de estado**: el agent no cambia estados por su cuenta. Pasar verificación es el único camino de ascenso.
+- **La lista de funcionalidades es la fuente única de verdad del proyecto**: toda la información de "qué hacer" deriva de una lista.
+- **Calibra la granularidad a "completable en una sesión"**.
 
 ## Lecturas adicionales
 
-- [Construyendo Effective Agents - Anthropic](https://www.anthropic.com/research/building-effective-agents) — Explicitly identifies lista de funcionalidades as the "core datos estructura" for controlling agent alcance
-- [Harness Ingeniería - OpenAI](https://openai.com/index/harness-engineering/) — Emphasizes the principle of "externalizing artifacts"
-- [Diseño by Contract - Bertrand Meyer](https://www.goodreads.com/book/show/130439.Object_Oriented_Software_Construction) — Contract diseño principles, the theoretical foundation of lista de funcionalidadess
-- [How Google Pruebas Software](https://www.goodreads.com/book/show/13563030-how-google-tests-software) — Prueba pyramid and behavioral specification ingeniería practices
+- [Building Effective Agents - Anthropic](https://www.anthropic.com/research/building-effective-agents) — identifica explícitamente la lista de funcionalidades como la "estructura de datos central" para controlar el scope del agent.
+- [Harness Engineering - OpenAI](https://openai.com/index/harness-engineering/) — enfatiza el principio de "externalizar artefactos".
+- [Design by Contract - Bertrand Meyer](https://www.goodreads.com/book/show/130439.Object_Oriented_Software_Construction) — principios de diseño por contrato, base teórica de las listas de funcionalidades.
+- [How Google Tests Software](https://www.goodreads.com/book/show/13563030-how-google-tests-software) — pirámide de pruebas y prácticas de ingeniería de especificación conductual.
 
 ## Ejercicios
 
-1. **Feature Lista Diseño**: Define a minimal lista de funcionalidades JSON schema. Include: id, behavior description, verificación comando, current estado, evidence referencia. Usar it to describe a real proyecto with 5 funcionalidades.
+1. **Diseño de lista de funcionalidades**: define un esquema JSON mínimo para listas de funcionalidades. Incluye id, descripción de comportamiento, comando de verificación, estado actual y referencia de evidencia. Úsalo para describir un proyecto real con 5 funcionalidades.
 
-2. **Verification Strictness Comparación**: Pick 3 funcionalidades and diseño both a "loose" verificación (e.g., "código has no syntax errors") and a "strict" verificación (e.g., "end-to-end prueba passes"). Comparar false positive rate under each approach.
+2. **Comparación de estrictitud de verificación**: elige 3 funcionalidades y diseña una verificación "laxa", por ejemplo "el código no tiene errores de sintaxis", y una verificación "estricta", por ejemplo "la prueba end-to-end pasa". Compara la tasa de falsos positivos de cada enfoque.
 
-3. **Single Fuente Principle Audit**: Revisión an existing agent proyecto and check for alcance information that contradicts the lista de funcionalidades (implícito requirements in conversations, TODO comments in código, etc.). Diseño a plan to unify all information into the lista de funcionalidades.
+3. **Auditoría del principio de fuente única**: revisa un proyecto existente con agents y busca información de scope que contradiga la lista de funcionalidades, como requisitos implícitos en conversaciones o comentarios TODO en el código. Diseña un plan para unificar toda la información en la lista de funcionalidades.

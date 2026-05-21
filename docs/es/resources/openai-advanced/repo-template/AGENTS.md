@@ -1,61 +1,55 @@
 # AGENTS.md
 
-This repositorio is optimized for long-running coding-agent work. Keep this archivo
-short. Usar it as the routing capa into the system-of-record docs, not as a
-giant instrucción dump.
+Este repositorio está optimizado para trabajo de larga duración con coding agents. Mantén este archivo corto. Úsalo como capa de enrutamiento hacia los documentos de sistema de registro, no como un volcado gigante de instrucciones.
 
-## Startup Flujo de trabajo
+## Workflow de arranque
 
-Before changing código:
+Antes de cambiar código:
 
-1. Confirm the repo root with `pwd`.
-2. Leer `ARCHITECTURE.md` for the current system map and hard dependency reglas.
-3. Leer `docs/QUALITY_SCORE.md` to see which domains or capas are weakest.
-4. Leer `docs/PLANS.md`, then open the active plan you are working from.
-5. Leer the relevant product spec in `docs/product-specs/`.
-6. Ejecutar the standard bootstrap and verificación ruta for this repo.
-7. If baseline verificación is failing, repair the baseline before adding alcance.
+1. Confirma la raíz del repo con `pwd`.
+2. Lee `ARCHITECTURE.md` para ver el mapa actual del sistema y las reglas duras de dependencias.
+3. Lee `docs/QUALITY_SCORE.md` para ver qué dominios o capas son más débiles.
+4. Lee `docs/PLANS.md` y abre el plan activo desde el que vas a trabajar.
+5. Lee la especificación de producto relevante en `docs/product-specs/`.
+6. Ejecuta la ruta estándar de bootstrap y verificación de este repo.
+7. Si la verificación baseline falla, repara el baseline antes de añadir scope.
 
-## Routing Map
+## Mapa de enrutamiento
 
-- `ARCHITECTURE.md`: domain map, capa modelo, dependency reglas
-- `docs/design-docs/index.md`: diseño decisions and core beliefs
-- `docs/product-specs/index.md`: current product behaviors and acceptance targets
-- `docs/PLANS.md`: plan lifecycle and execution-plan policy
-- `docs/QUALITY_SCORE.md`: product-domain and capa health
-- `docs/RELIABILITY.md`: runtime signals, benchmarks, and restart expectations
-- `docs/SECURITY.md`: secrets, sandbox, datos, and external-action reglas
-- `docs/FRONTEND.md`: UI constraints, diseño system reglas, accessibility checks
+- `ARCHITECTURE.md`: mapa de dominios, modelo de capas y reglas de dependencias.
+- `docs/design-docs/index.md`: decisiones de diseño y creencias centrales.
+- `docs/product-specs/index.md`: comportamientos actuales de producto y objetivos de aceptación.
+- `docs/PLANS.md`: ciclo de vida de planes y política de planes de ejecución.
+- `docs/QUALITY_SCORE.md`: salud de dominios de producto y capas.
+- `docs/RELIABILITY.md`: señales de runtime, benchmarks y expectativas de reinicio.
+- `docs/SECURITY.md`: reglas de secretos, sandbox, datos y acciones externas.
+- `docs/FRONTEND.md`: restricciones de UI, reglas de design system y checks de accesibilidad.
 
-## Working Contract
+## Contrato de trabajo
 
-- Work from one bounded plan or feature slice at a time.
-- Do not mark work terminado from código inspection alone; runnable evidence is
-  required.
-- If you cambio behavior, update the matching product, plan, or reliability
-  docs in the mismo sesión.
-- If you see repeated revisión feedback, promote it into a mechanical rule, check,
-  or linter instead of re-explaining it in chat.
-- Keep generated material in `docs/generated/` and source references in
-  `docs/references/`.
-- Prefer adding small, current docs over growing this archivo.
+- Trabaja desde un único plan acotado o slice de funcionalidad cada vez.
+- No marques trabajo como terminado solo por inspección de código; hace falta evidencia ejecutable.
+- Si cambias comportamiento, actualiza el documento de producto, plan o fiabilidad correspondiente en la misma sesión.
+- Si ves feedback de revisión repetido, promuévelo a regla mecánica, check o linter en vez de volver a explicarlo en chat.
+- Mantén el material generado en `docs/generated/` y las referencias fuente en `docs/references/`.
+- Prefiere añadir documentos pequeños y actuales antes que hacer crecer este archivo.
 
-## Definition Of Terminado
+## Definition Of Done
 
-A cambio is terminado only when all of the following are true:
+Un cambio está terminado solo cuando todo esto es cierto:
 
-- target behavior is implemented
-- required verificación actually ran
-- evidence is linked from the relevant plan or calidad document
-- affected docs remain current
-- the repositorio can restart cleanly from the standard startup ruta
+- el comportamiento objetivo está implementado
+- la verificación requerida se ejecutó realmente
+- la evidencia está enlazada desde el plan o documento de calidad relevante
+- los documentos afectados siguen actualizados
+- el repositorio puede reiniciarse limpiamente desde la ruta estándar de arranque
 
-## End Of Session
+## Fin de sesión
 
-Before ending a sesión:
+Antes de terminar una sesión:
 
-1. Update the active execution plan.
-2. Update `docs/QUALITY_SCORE.md` if any domain or capa meaningfully changed.
-3. Record new debt in `docs/exec-plans/tech-debt-tracker.md` if you deferred it.
-4. Move terminado plans to `docs/exec-plans/completed/` when appropriate.
-5. Leave the repo in a restartable estado with a claro siguiente action.
+1. Actualiza el plan de ejecución activo.
+2. Actualiza `docs/QUALITY_SCORE.md` si algún dominio o capa cambió de forma significativa.
+3. Registra deuda nueva en `docs/exec-plans/tech-debt-tracker.md` si la pospusiste.
+4. Mueve planes terminados a `docs/exec-plans/completed/` cuando corresponda.
+5. Deja el repo en estado reiniciable con una siguiente acción clara.

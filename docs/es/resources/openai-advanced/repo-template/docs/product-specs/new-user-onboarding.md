@@ -1,26 +1,26 @@
-# New Usuario Onboarding
+# Onboarding de usuario nuevo
 
 ## Objetivo
 
-Describe the first-run experience a new usuario should have.
+Describe la experiencia de primera ejecución que debería tener un usuario nuevo.
 
-## Entry Condiciones
+## Condiciones de entrada
 
-- `[estado before the flow starts]`
+- `[state before the flow starts]`
 
-## Usuario Flow
+## Flujo de usuario
 
-1. `[paso one]`
-2. `[paso two]`
-3. `[paso three]`
+1. `[step one]`
+2. `[step two]`
+3. `[step three]`
 
-## Acceptance Criterios
+## Criterios de aceptación
 
 - `[observable outcome]`
 - `[observable outcome]`
 - `[observable outcome]`
 
-## Fallo States
+## Estados de fallo
 
-- `[recoverable error and usuario feedback]`
-- `[blocked estado and fallback]`
+- `[recoverable error and user feedback]`
+- `[blocked state and fallback]`

@@ -1,5 +1,3 @@
-# Completed Plans
+# Planes completados
 
-Move terminado plans here instead of deleting them. Completed plans are part of
-the repositorio memory surface and help later agent ejecuta entender why the código
-looks the way it does.
+Mueve aquí los planes terminados en vez de borrarlos. Los planes completados forman parte de la superficie de memoria del repositorio y ayudan a ejecuciones posteriores de agents a entender por qué el código tiene la forma que tiene.

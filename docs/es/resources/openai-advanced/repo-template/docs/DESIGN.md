@@ -1,28 +1,25 @@
 # DESIGN.md
 
-This archivo is the diseño entrypoint. Keep it brief and usar it to route into the
-more detailed archivos under `docs/design-docs/`.
+Este archivo es la entrada de diseño. Mantenlo breve y úsalo para enrutar hacia los archivos más detallados en `docs/design-docs/`.
 
-## Purpose
+## Propósito
 
-Record durable product and system diseño decisions that should survive beyond a
-single chat, sprint, or reviewer memory.
+Registrar decisiones duraderas de producto y diseño de sistema que deben sobrevivir a un chat, sprint o memoria de reviewer.
 
-## Leer This When
+## Leer cuando
 
-- you need the current diseño philosophy
-- you are about to introduce a new pattern
-- you need to know which diseño decisions are settled versus still open
+- necesites la filosofía de diseño actual
+- vayas a introducir un patrón nuevo
+- necesites saber qué decisiones de diseño están cerradas y cuáles siguen abiertas
 
-## Canonical Diseño Docs
+## Docs de diseño canónicos
 
-- `docs/design-docs/index.md`: index of accepted, proposed, and deprecated docs
-- `docs/design-docs/core-beliefs.md`: project-wide agent-first beliefs
+- `docs/design-docs/index.md`: índice de documentos aceptados, propuestos y deprecados.
+- `docs/design-docs/core-beliefs.md`: creencias agent-first de todo el proyecto.
 
-## Diseño Reglas
+## Reglas de diseño
 
-- Keep diseño docs small and current.
-- Prefer one doc per decision area.
-- Link diseño docs from plans and specs when a cambio depends on them.
-- If a diseño rule becomes operationally critical, promote it into an automated
-  check or update `ARCHITECTURE.md`.
+- Mantén los docs de diseño pequeños y actualizados.
+- Prefiere un documento por área de decisión.
+- Enlaza docs de diseño desde planes y specs cuando un cambio dependa de ellos.
+- Si una regla de diseño se vuelve operativamente crítica, promuévela a check automatizado o actualiza `ARCHITECTURE.md`.

@@ -1,37 +1,37 @@
-# Proyecto 05: Evaluador Loops and Three-Role Upgrades
+# Proyecto 05: Bucles de evaluador y mejoras de tres roles
 
-Measure how role separation (single role, generador plus evaluador, planificador plus generador plus evaluador) cambios implementation calidad.
+Mide cómo la separación de roles (rol único, generator más evaluator, planner más generator más evaluator) cambia la calidad de implementación.
 
-## Directory Guía
+## Guía de directorios
 
-| Directory | Meaning |
+| Directorio | Significado |
 |------|------|
-| `inicial/` | **Starting point**: based on the P4 solución, with multi-turn QA history still to implement. |
-| `solución/single-role/` | **Variant A**: one agent does all work (planning, implementation, and self-review). Baseline calidad. |
-| `solución/gen-eval/` | **Variant B**: generador plus evaluador pattern. Higher calidad, with revision evidence. |
-| `solución/plan-gen-eval/` | **Variant C**: planificador plus generador plus evaluador. Highest calidad, with a sprint contract and scoring criterios. |
+| `starter/` | **Punto de partida**: basado en la solución de P4, con historial QA multi-turn todavía por implementar. |
+| `solution/single-role/` | **Variante A**: un solo agent hace todo el trabajo: planificación, implementación y autorrevisión. Calidad base. |
+| `solution/gen-eval/` | **Variante B**: patrón generator más evaluator. Mayor calidad, con evidencia de revisión. |
+| `solution/plan-gen-eval/` | **Variante C**: planner más generator más evaluator. Máxima calidad, con sprint contract y criterios de puntuación. |
 
-## How to Usar
+## Cómo usarlo
 
 ```sh
-# Run each of the three variants independently
-cd solution/single-role && npm install  # single-role mode
-cd solution/gen-eval && npm install     # generator plus evaluator mode
-cd solution/plan-gen-eval && npm install # full three-role mode
+# Ejecuta cada una de las tres variantes de forma independiente
+cd solution/single-role && npm install  # modo single-role
+cd solution/gen-eval && npm install     # modo generator plus evaluator
+cd solution/plan-gen-eval && npm install # modo completo de tres roles
 
-# Compare the three variants:
-# - Code quality (evaluator-rubric.md score)
-# - Number of defects found
-# - Amount of rework required
+# Compara las tres variantes:
+# - Calidad del código (puntuación en evaluator-rubric.md)
+# - Número de defectos encontrados
+# - Cantidad de retrabajo requerido
 ```
 
-## Funcionalidades Covered
+## Funcionalidades cubiertas
 
-- Multi-turn QA history (conversational UI)
+- Historial QA multi-turn (UI conversacional)
 - Sprint contract
-- Evaluador rúbrica tuning
+- Ajuste de rúbrica de evaluator
 
-## Related Lecciones
+## Lecciones relacionadas
 
 - [Lección 09: Por qué los agents declaran victoria demasiado pronto](../../docs/es/lectures/lecture-09-why-agents-declare-victory-too-early/index.md)
 - [Lección 10: Por qué las pruebas end-to-end cambian los resultados](../../docs/es/lectures/lecture-10-why-end-to-end-testing-changes-results/index.md)

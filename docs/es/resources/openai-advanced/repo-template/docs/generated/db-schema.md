@@ -1,14 +1,13 @@
-# Database Schema
+# Esquema de base de datos
 
-Usar this carpeta for generated or derived artifacts that agents should be able
-to inspect without reverse-engineering them from código.
+Usa esta carpeta para artefactos generados o derivados que los agents deberían poder inspeccionar sin aplicar ingeniería inversa desde el código.
 
 ## Fuente
 
-- Generated from: `[comando or source ruta]`
-- Last refreshed: `YYYY-MM-DD`
+- Generado desde: `[command or source path]`
+- Última actualización: `YYYY-MM-DD`
 
-## Notes
+## Notas
 
-- Do not hand-edit generated secciones.
-- Regenerate this archivo when the underlying schema cambios.
+- No edites a mano secciones generadas.
+- Regenera este archivo cuando cambie el esquema subyacente.

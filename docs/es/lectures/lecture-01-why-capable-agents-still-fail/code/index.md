@@ -1,7 +1,7 @@
-# Código for Lección 01
+# Código de la Lección 01
 
-Usar this carpeta for small ejemplos that show:
+Usa esta carpeta para ejemplos pequeños que muestran:
 
-- a potente modelo failing in a weak entorno
-- underspecified repo setup
-- faltante feedback loops
+- un modelo potente fallando en un entorno débil
+- configuración de repositorio insuficientemente especificada
+- bucles de feedback ausentes

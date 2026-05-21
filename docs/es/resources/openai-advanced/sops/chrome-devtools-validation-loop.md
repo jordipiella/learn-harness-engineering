@@ -1,51 +1,48 @@
-# SOP: Chrome DevTools Validation Loop
+# SOP: bucle de validación con Chrome DevTools
 
-Usar this SOP when UI work depends on real runtime interaction and screenshots,
-DOM estado, and console salida matter more than código inspection alone.
+Usa este SOP cuando el trabajo de UI dependa de interacción real en runtime y los screenshots, estado del DOM y salida de consola importen más que la inspección de código.
 
 ## Objetivo
 
-Turn UI validation into a repeatable interaction loop the agent can ejecutar until
-the journey is limpio.
+Convertir la validación de UI en un bucle de interacción repetible que el agent pueda ejecutar hasta que el recorrido esté limpio.
 
-## Core Loop
+## Bucle central
 
-1. Select the target página or app instance.
-2. Claro stale console noise.
-3. Capture the BEFORE estado.
-4. Trigger the UI ruta.
-5. Observe runtime events during interaction.
-6. Capture the AFTER estado.
-7. Apply the arreglar and restart the app if needed.
-8. Re-run validation until the journey is limpio.
+1. Selecciona la página objetivo o instancia de app.
+2. Limpia ruido obsoleto de consola.
+3. Captura el estado BEFORE.
+4. Activa la ruta de UI.
+5. Observa eventos de runtime durante la interacción.
+6. Captura el estado AFTER.
+7. Aplica la corrección y reinicia la app si hace falta.
+8. Reejecuta la validación hasta que el recorrido esté limpio.
 
-## Required Inputs
+## Entradas requeridas
 
-- a stable startup comando
-- a reproducible UI journey
-- a way to snapshot DOM, console, or screenshots
-- a rule for what counts as "limpio"
+- un comando estable de arranque
+- un recorrido de UI reproducible
+- una forma de capturar DOM, consola o screenshots
+- una regla de qué cuenta como "limpio"
 
-## Execution SOP
+## SOP de ejecución
 
-1. Escribir the target journey in the active plan.
-2. Define éxito in observable terms: text present, button enabled, error gone,
-   console limpio, request succeeded.
-3. Snapshot the initial estado before interaction.
-4. Trigger exactly one ruta at a time.
-5. Record runtime events, DOM cambios, and visible salida.
-6. If the journey falla, arreglar the smallest responsible capa and restart.
-7. Re-run the mismo ruta and comparar BEFORE/AFTER evidence.
+1. Escribe el recorrido objetivo en el plan activo.
+2. Define éxito en términos observables: texto presente, botón habilitado, error ausente, consola limpia, request correcta.
+3. Captura snapshot del estado inicial antes de interactuar.
+4. Activa exactamente una ruta cada vez.
+5. Registra eventos de runtime, cambios de DOM y salida visible.
+6. Si el recorrido falla, corrige la capa responsable más pequeña y reinicia.
+7. Reejecuta la misma ruta y compara evidencia BEFORE/AFTER.
 
-## Limpio Criterios
+## Criterios de limpieza
 
-- intended visible estado is present
-- unexpected errors are absent
-- console noise is understood or cleared
-- rerunning the mismo ruta gives the mismo resultado
+- el estado visible previsto está presente
+- no hay errores inesperados
+- el ruido de consola está entendido o limpio
+- reejecutar la misma ruta da el mismo resultado
 
-## Repo Artifacts To Update
+## Artefactos del repo a actualizar
 
-- active execution plan
-- `docs/RELIABILITY.md` if the journey becomes a golden ruta
-- product spec if the visible behavior changed
+- plan de ejecución activo
+- `docs/RELIABILITY.md` si el recorrido se convierte en ruta dorada
+- especificación de producto si cambió el comportamiento visible

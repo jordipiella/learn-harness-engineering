@@ -1,6 +1,6 @@
-# Harness Components Ejemplo
+# Ejemplo de componentes de harness
 
-For a agent de programación working in a local repositorio:
+Para un agent de programación que trabaja en un repositorio local:
 
 - Modelo:
   the LLM itself
@@ -8,14 +8,14 @@ For a agent de programación working in a local repositorio:
 - Harness:
   - system prompt
   - AGENTS.md
-  - bash herramienta
-  - archivo leer/escribir herramientas
+  - herramienta bash
+  - herramientas de lectura/escritura de archivos
   - git access
   - local filesystem
   - startup scripts
-  - prueba comandos
+  - comandos de prueba
   - stop hooks
   - lint checks
-  - evaluador loop
+  - bucle de evaluador
 
-If you cambio any of the above harness pieces, you cambio the effective agent.
+Si cambias cualquiera de estas piezas del harness, cambias el agent efectivo.

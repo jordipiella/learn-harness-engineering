@@ -1,226 +1,226 @@
-# Plantilla Guía
+# Guía de plantillas
 
-These plantillas are ready to copy into your own proyecto. Each one serves a específico purpose in the agent's flujo de trabajo. Edit the contents to match your proyecto's comandos, paths, feature names, and verificación pasos.
+Estas plantillas están listas para copiarlas en tu propio proyecto. Cada una cumple una función concreta dentro del workflow del agent. Ajusta el contenido para que coincida con los comandos, rutas, nombres de funcionalidades y pasos de verificación de tu proyecto.
 
-## How to Get Iniciado
+## Cómo empezar
 
-Copy these four archivos into your proyecto root first:
+Copia primero estos cuatro archivos en la raíz de tu proyecto:
 
-1. `AGENTS.md` or `CLAUDE.md`
+1. `AGENTS.md` o `CLAUDE.md`
 2. `init.sh`
 3. `claude-progress.md`
 4. `feature_list.json`
 
-Añadir the remaining archivos as your proyecto grows.
+Añade los demás archivos a medida que el proyecto crezca.
 
 ---
 
 ## AGENTS.md
 
-The root instrucción archivo. This is the first thing the agent reads when it starts a sesión. It defines the operating reglas: what to do before escritura código, how to work, and how to wrap up.
+Archivo raíz de instrucciones. Es lo primero que lee el agent cuando empieza una sesión. Define las reglas operativas: qué hacer antes de escribir código, cómo trabajar y cómo cerrar.
 
-**How to usar it:**
+**Cómo usarlo:**
 
-- Copy to your proyecto root directory
-- Replace the startup flujo de trabajo pasos with your real proyecto paths and comandos
-- Adjust the working reglas to match your equipo's conventions
-- Keep the definition of terminado sección — it's the most important part
+- Cópialo en la raíz de tu proyecto
+- Sustituye los pasos del workflow de arranque por rutas y comandos reales de tu proyecto
+- Ajusta las reglas de trabajo a las convenciones de tu equipo
+- Mantén la sección de Definición de Terminado: es la parte más importante
 
-**What it does for the agent:**
+**Qué aporta al agent:**
 
-- Tells it to leer progress and feature estado before starting work
-- Forces it to work on one feature at a time
-- Requires evidence before marking anything as terminado
-- Defines what a limpio end-of-sesión looks like
+- Le pide leer progreso y estado de funcionalidades antes de empezar
+- Le obliga a trabajar en una sola funcionalidad cada vez
+- Exige evidencia antes de marcar algo como terminado
+- Define cómo debe verse un cierre limpio de sesión
 
-Usar `AGENTS.md` for Codex or other agents. Usar `CLAUDE.md` if you're working with Claude Código — the estructura is the mismo, just formatted for Claude's instrucción style.
+Usa `AGENTS.md` para Codex u otros agents. Usa `CLAUDE.md` si trabajas con Claude Code; la estructura es la misma, adaptada al estilo de instrucciones de Claude.
 
 ## init.sh
 
-The startup script. Ejecuta dependency installation, verificación, and prints the empezar comando — all in one shot.
+Script de arranque. Instala dependencias, ejecuta verificación e imprime el comando de inicio en una sola pasada.
 
-**How to usar it:**
+**Cómo usarlo:**
 
-- Copy to your proyecto root
-- Edit these three variables at the top:
-  - `INSTALL_CMD` — your dependency install comando (e.g. `npm install`, `pip install -r requirements.txt`)
-  - `VERIFY_CMD` — your basic verificación comando (e.g. `npm prueba`, `pytest`)
-  - `START_CMD` — your dev server empezar comando (e.g. `npm ejecutar dev`)
-- Hacer it executable: `chmod +x init.sh`
+- Cópialo en la raíz del proyecto
+- Edita estas tres variables al principio:
+  - `INSTALL_CMD`: comando para instalar dependencias (por ejemplo, `npm install`, `pip install -r requirements.txt`)
+  - `VERIFY_CMD`: comando básico de verificación (por ejemplo, `npm test`, `pytest`)
+  - `START_CMD`: comando para iniciar el servidor de desarrollo (por ejemplo, `npm run dev`)
+- Hazlo ejecutable: `chmod +x init.sh`
 
-**What it does:**
+**Qué hace:**
 
-1. Prints the current directory (so you can confirm it's ejecutando in the right place)
-2. Installs dependencies
-3. Ejecuta the verificación comando
-4. Prints the empezar comando (or ejecuta it if `RUN_START_COMMAND=1` is set)
+1. Imprime el directorio actual para confirmar que se ejecuta en el lugar correcto
+2. Instala dependencias
+3. Ejecuta el comando de verificación
+4. Imprime el comando de inicio, o lo ejecuta si `RUN_START_COMMAND=1` está definido
 
-If verificación falla, the agent should stop and arreglar the baseline before doing anything else.
+Si la verificación falla, el agent debe detenerse y corregir el baseline antes de hacer cualquier otra cosa.
 
 ## claude-progress.md
 
-The progress log. Every sesión escribe to this archivo, and every new sesión reads it first.
+Registro de progreso. Cada sesión escribe en este archivo y cada sesión nueva lo lee primero.
 
-**How to usar it:**
+**Cómo usarlo:**
 
-- Copy to your proyecto root
-- Fill in the "Current Verified Estado" sección with your proyecto's info
-- After each sesión, update the sesión record
+- Cópialo en la raíz del proyecto
+- Rellena la sección "Current Verified State" con información de tu proyecto
+- Después de cada sesión, actualiza el registro de sesión
 
-**What each field means:**
+**Qué significa cada campo:**
 
-- **Current Verified Estado** — the single fuente de verdad for where the proyecto stands
-  - `Repository root directory` — where the proyecto lives
-  - `Standard startup ruta` — the comando to get the proyecto ejecutando
-  - `Standard verificación ruta` — the comando to ejecutar pruebas
-  - `Highest priority unfinished feature` — what the siguiente sesión should work on
-  - `Current blocker` — anything that's stuck
-- **Session Record** — one entry per sesión
-  - `Objetivo` — what you planned to do
-  - `Completed` — what actually got terminado
-  - `Verification ejecutar` — what pruebas were executed
-  - `Evidence recorded` — what proof was captured
-  - `Commits` — what was committed
-  - `Known risks` — what might be broken
-  - `Siguiente best action` — where the siguiente sesión should empezar
+- **Current Verified State**: fuente de verdad sobre el estado del proyecto
+  - `Repository root directory`: dónde vive el proyecto
+  - `Standard startup path`: comando para arrancar el proyecto
+  - `Standard verification path`: comando para ejecutar pruebas
+  - `Highest priority unfinished feature`: qué debe trabajar la siguiente sesión
+  - `Current blocker`: cualquier bloqueo activo
+- **Session Record**: una entrada por sesión
+  - `Goal`: qué se planeaba hacer
+  - `Completed`: qué se completó realmente
+  - `Verification run`: qué pruebas se ejecutaron
+  - `Evidence recorded`: qué evidencia se capturó
+  - `Commits`: qué se commiteó
+  - `Known risks`: qué podría estar roto
+  - `Next best action`: por dónde debe empezar la siguiente sesión
 
 ## feature_list.json
 
-The feature tracker. A machine-readable lista of every feature the agent needs to implement, along with its status, verificación pasos, and evidence.
+Tracker de funcionalidades. Lista legible por máquina de cada funcionalidad que el agent debe implementar, junto con su estado, pasos de verificación y evidencia.
 
-**How to usar it:**
+**Cómo usarlo:**
 
-- Copy to your proyecto root
-- Replace the ejemplo funcionalidades with your own
-- Each feature needs:
-  - `id` — a short unique identifier
-  - `priority` — integer, lower = higher priority
-  - `area` — which part of the app (e.g. "chat", "import", "search")
-  - `title` — short description
-  - `user_visible_behavior` — what the usuario should see when it works
-  - `status` — one of `not_started`, `in_progress`, `blocked`, `passing`
-  - `verificación` — step-by-step instrucciones to confirm it works
-  - `evidence` — recorded proof that verificación passed (filled in by the agent)
-  - `notes` — any extra contexto
+- Cópialo en la raíz del proyecto
+- Sustituye las funcionalidades de ejemplo por las tuyas
+- Cada funcionalidad necesita:
+  - `id`: identificador corto y único
+  - `priority`: entero; cuanto menor, mayor prioridad
+  - `area`: parte de la app (por ejemplo, "chat", "import", "search")
+  - `title`: descripción breve
+  - `user_visible_behavior`: qué debería ver el usuario cuando funcione
+  - `status`: uno de `not_started`, `in_progress`, `blocked`, `passing`
+  - `verification`: instrucciones paso a paso para confirmar que funciona
+  - `evidence`: prueba registrada de que la verificación pasó, rellenada por el agent
+  - `notes`: contexto adicional
 
-**Status reglas:**
+**Reglas de estado:**
 
-- `not_started` — hasn't been touched
-- `in_progress` — the one feature currently being worked on (only one at a time)
-- `blocked` — can't proceed due to a documented issue
-- `passing` — verificación passed and evidence is recorded
+- `not_started`: todavía no se ha tocado
+- `in_progress`: la única funcionalidad en la que se trabaja ahora
+- `blocked`: no se puede avanzar por un bloqueo documentado
+- `passing`: la verificación pasó y la evidencia está registrada
 
-The agent should only have one feature in `in_progress` at any time.
+El agent solo debe tener una funcionalidad en `in_progress` al mismo tiempo.
 
-## sesión-traspaso.md
+## session-handoff.md
 
-A compact traspaso note between sesións. Usar this when a sesión ends and you want the siguiente one to pick up quickly.
+Nota compacta de traspaso entre sesiones. Úsala cuando una sesión termina y quieres que la siguiente retome con rapidez.
 
-**How to usar it:**
+**Cómo usarlo:**
 
-- Copy to your proyecto root
-- Fill it out at the end of each sesión (or have the agent fill it out)
+- Cópialo en la raíz del proyecto
+- Rellénalo al final de cada sesión, o pide al agent que lo rellene
 
-**What each sección covers:**
+**Qué cubre cada sección:**
 
-- **Currently verified** — what's confirmed working and what verificación was ejecutar
-- **Cambios this sesión** — what código or infrastructure changed
-- **Still broken or unverified** — known issues and risky areas
-- **Siguiente best action** — what the siguiente sesión should do, and what not to touch
-- **Comandos** — startup, verificación, and depurar comandos for rápido referencia
+- **Currently verified**: qué está confirmado como funcional y qué verificación se ejecutó
+- **Changes this session**: qué código o infraestructura cambió
+- **Still broken or unverified**: problemas conocidos y áreas de riesgo
+- **Next best action**: qué debe hacer la siguiente sesión y qué no debe tocar
+- **Commands**: comandos de arranque, verificación y depuración para referencia rápida
 
-This archivo is optional for small sesións. It becomes important when sesións are long or when the proyecto has multiple active areas.
+Este archivo es opcional en sesiones pequeñas. Se vuelve importante cuando las sesiones son largas o el proyecto tiene varias áreas activas.
 
 ## clean-state-checklist.md
 
-A checklist to ejecutar through before ending each sesión. Hace sure the repo is in a good estado for the siguiente sesión to empezar cleanly.
+Checklist para recorrer antes de cerrar una sesión. Asegura que el repo queda en buen estado para que la siguiente sesión empiece limpiamente.
 
-**How to usar it:**
+**Cómo usarlo:**
 
-- Copy to your proyecto root
-- Ejecutar through it before you close a sesión
-- The agent should also check these items as part of its end-of-sesión routine
+- Cópialo en la raíz del proyecto
+- Revísalo antes de cerrar una sesión
+- El agent también debe comprobar estos puntos como parte de su rutina de cierre
 
-**What it checks:**
+**Qué comprueba:**
 
-- Standard startup still works
-- Standard verificación still ejecuta
-- Progress log is updated
-- Feature lista reflects real estado (no false `passing` entries)
-- No half-finished work left unrecorded
-- Siguiente sesión can continue without manual arregla
+- El arranque estándar sigue funcionando
+- La verificación estándar sigue ejecutándose
+- El registro de progreso está actualizado
+- La lista de funcionalidades refleja el estado real, sin falsos `passing`
+- No queda trabajo a medias sin registrar
+- La siguiente sesión puede continuar sin arreglos manuales
 
 ## evaluator-rubric.md
 
-A scorecard for reviewing agent salida calidad. Usar this after a sesión or at proyecto milestones to evaluate whether the work meets the bar.
+Tarjeta de puntuación para revisar la calidad de salida del agent. Úsala después de una sesión o en hitos del proyecto para evaluar si el trabajo alcanza el nivel esperado.
 
-**How to usar it:**
+**Cómo usarlo:**
 
-- Copy to your proyecto root
-- After a sesión (or a set of sesións), score the agent's work across six dimensions
-- Each dimension is scored 0-2
+- Cópialo en la raíz del proyecto
+- Después de una sesión, o de un conjunto de sesiones, puntúa el trabajo del agent en seis dimensiones
+- Cada dimensión se puntúa de 0 a 2
 
-**The six dimensions:**
+**Las seis dimensiones:**
 
-1. **Correctness** — does the implementation match the target behavior?
-2. **Verification** — were the required checks actually ejecutar, with evidence?
-3. **Scope discipline** — did the agent stay within the selected feature?
-4. **Reliability** — does the resultado survive a restart or re-run?
-5. **Maintainability** — is the código and documentation claro enough for the siguiente sesión?
-6. **Handoff readiness** — can a new sesión continue usando only repo artifacts?
+1. **Correctness**: ¿la implementación coincide con el comportamiento objetivo?
+2. **Verification**: ¿se ejecutaron las comprobaciones requeridas, con evidencia?
+3. **Scope discipline**: ¿el agent se mantuvo dentro de la funcionalidad seleccionada?
+4. **Reliability**: ¿el resultado sobrevive a un reinicio o una nueva ejecución?
+5. **Maintainability**: ¿el código y la documentación son lo bastante claros para la siguiente sesión?
+6. **Handoff readiness**: ¿una sesión nueva puede continuar usando solo artefactos del repo?
 
-**Conclusion options:**
+**Opciones de conclusión:**
 
-- Accept — meets the bar
-- Revise — needs arregla before accepting
-- Block — fundamental issues that need to be resolved first
+- Accept: alcanza el nivel esperado
+- Revise: necesita correcciones antes de aceptarse
+- Block: hay problemas fundamentales que deben resolverse primero
 
-**Important: the evaluador needs tuning.** Out of the box, agents are poor self-judges — they identify issues then talk themselves into approving. You will need to iterate:
+**Importante: el evaluator necesita calibración.** De fábrica, los agents suelen juzgarse mal a sí mismos: detectan problemas y luego se convencen de aprobar. Debes iterar:
 
-1. Ejecutar the evaluador on a completed sprint.
-2. Comparar its scores against your own human judgment.
-3. Where they diverge, hacer the rúbrica more específico about pass/fail criterios.
-4. Re-run and check alignment.
-5. Repeat until the evaluador consistently matches human revisión.
+1. Ejecuta el evaluator sobre un sprint completado.
+2. Compara sus puntuaciones con tu juicio humano.
+3. Donde diverjan, vuelve la rúbrica más específica sobre criterios de aprobado/fallo.
+4. Ejecuta de nuevo y comprueba alineación.
+5. Repite hasta que el evaluator coincida de forma consistente con la revisión humana.
 
-Plan for 3-5 tuning rounds. Record each cambio so you can track what improved alignment.
+Planifica de 3 a 5 rondas de calibración. Registra cada cambio para saber qué mejoró la alineación.
 
 ## quality-document.md
 
-A calidad snapshot that grades each product domain and architectural capa in your proyecto. Tracks codebase health over time, not just individual sesión salida.
+Instantánea de calidad que puntúa cada dominio de producto y capa arquitectónica del proyecto. Sigue la salud del codebase a lo largo del tiempo, no solo la salida de una sesión.
 
-**How to usar it:**
+**Cómo usarlo:**
 
-- Copy to your proyecto root
-- Before starting a sesión: leer it to entender where the codebase is weakest
-- After a sesión: update grades based on what changed
-- Over time: comparar snapshots to see which harness cambios actually improved codebase health
+- Cópialo en la raíz del proyecto
+- Antes de una sesión: léelo para entender dónde está más débil el codebase
+- Después de una sesión: actualiza las notas según lo que cambió
+- Con el tiempo: compara instantáneas para ver qué cambios de harness mejoraron realmente la salud del codebase
 
-**What it grades:**
+**Qué puntúa:**
 
-- **Product domains** (e.g., document import, Q&A flow, indexing): each domain gets a grade (A-D) across verificación status, agent legibility, prueba stability, and key gaps
-- **Architectural capas** (e.g., main proceso, preload, renderer, services): each capa gets a grade for boundary enforcement and agent legibility
+- **Dominios de producto** (por ejemplo, importación de documentos, flujo Q&A, indexación): cada dominio recibe una nota A-D en estado de verificación, legibilidad para agents, estabilidad de pruebas y brechas clave
+- **Capas arquitectónicas** (por ejemplo, main process, preload, renderer, services): cada capa recibe una nota por enforcement de límites y legibilidad para agents
 
-**Why it matters:**
+**Por qué importa:**
 
-The evaluador rúbrica scores individual agent outputs. The calidad document scores the codebase itself. They answer diferente questions:
+La rúbrica del evaluator puntúa salidas individuales del agent. El documento de calidad puntúa el codebase. Responden preguntas distintas:
 
-- Evaluador rúbrica: "Did the agent do good work this sesión?"
-- Calidad document: "Is the proyecto getting stronger or weaker over time?"
+- Rúbrica del evaluator: "¿el agent hizo buen trabajo en esta sesión?"
+- Documento de calidad: "¿el proyecto se está volviendo más fuerte o más frágil con el tiempo?"
 
-**When to update:**
+**Cuándo actualizarlo:**
 
-- After each significant sesión
-- Before benchmark comparisons
-- After cleanup or simplification passes
-- When onboarding a new agent or modelo to the proyecto
+- Después de cada sesión significativa
+- Antes de comparaciones de benchmark
+- Después de pasadas de limpieza o simplificación
+- Al incorporar un nuevo agent o modelo al proyecto
 
-**Harness simplification tie-in:**
+**Conexión con simplificación del harness:**
 
-The calidad document also supports harness simplification. Every harness component encodes an assumption about what the modelo cannot do. As modelos improve, these assumptions go stale. To check whether a component is still needed:
+El documento de calidad también ayuda a simplificar el harness. Cada componente del harness codifica una suposición sobre lo que el modelo no puede hacer. A medida que los modelos mejoran, esas suposiciones envejecen. Para comprobar si un componente sigue siendo necesario:
 
-1. Take a calidad document snapshot.
-2. Remove one harness component.
-3. Ejecutar the benchmark tarea suite.
-4. Take another snapshot.
-5. Comparar — if grades didn't drop, the component was overhead. If they did, restore it.
+1. Toma una instantánea del documento de calidad.
+2. Elimina un componente del harness.
+3. Ejecuta la suite de tareas de benchmark.
+4. Toma otra instantánea.
+5. Compara: si las notas no bajan, el componente era sobrecarga; si bajan, restáuralo.

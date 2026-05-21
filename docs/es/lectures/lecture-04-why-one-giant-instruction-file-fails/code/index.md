@@ -1,7 +1,7 @@
-# Código for Lección 04
+# Código de la Lección 04
 
-Usar this carpeta for ejemplos of:
+Usa esta carpeta para ejemplos de:
 
-- monolithic instrucción archivos
+- archivos de instrucciones monolíticos
 - short entrypoints
 - progressive disclosure patterns

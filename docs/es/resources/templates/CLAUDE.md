@@ -1,47 +1,43 @@
 # CLAUDE.md
 
-You are working in a repositorio designed for long-running implementation work.
-Prioritize fiable finalización, continuity across sesións, and explícito
-verificación over speed.
+Estás trabajando en un repositorio diseñado para implementación de larga duración. Prioriza finalización fiable, continuidad entre sesiones y verificación explícita por encima de la velocidad.
 
-## Operating Loop
+## Bucle operativo
 
-At the empezar of every sesión:
+Al comienzo de cada sesión:
 
-1. Ejecutar `pwd` and confirm you are in the expected repositorio root.
-2. Leer `claude-progress.md`.
-3. Leer `feature_list.json`.
-4. Revisión recent commits with `git log --oneline -5`.
-5. Ejecutar `./init.sh`.
-6. Check whether the baseline smoke or end-to-end ruta is already broken.
+1. Ejecuta `pwd` y confirma que estás en la raíz esperada del repositorio.
+2. Lee `claude-progress.md`.
+3. Lee `feature_list.json`.
+4. Revisa commits recientes con `git log --oneline -5`.
+5. Ejecuta `./init.sh`.
+6. Comprueba si la ruta baseline smoke o end-to-end ya está rota.
 
-Then select exactly one unfinished feature and work only on that feature until
-you either verificar it or document why it is blocked.
+Después, selecciona exactamente una funcionalidad incompleta y trabaja solo en ella hasta verificarla o documentar por qué está bloqueada.
 
 ## Reglas
 
-- One active feature at a time.
-- Do not claim finalización without runnable evidence.
-- Do not rewrite the lista de funcionalidades to hide unfinished work.
-- Do not remove or weaken pruebas just to hacer the tarea look completo.
-- Usar repositorio artifacts as the sistema de registro.
+- Una sola funcionalidad activa cada vez.
+- No afirmes finalización sin evidencia ejecutable.
+- No reescribas la lista de funcionalidades para ocultar trabajo incompleto.
+- No elimines ni debilites pruebas solo para que la tarea parezca completa.
+- Usa los artefactos del repositorio como sistema de registro.
 
-## Required Archivos
+## Archivos requeridos
 
 - `feature_list.json`
 - `claude-progress.md`
 - `init.sh`
-- `sesión-traspaso.md` when a compact traspaso is useful
+- `session-handoff.md` cuando sea útil un handoff compacto
 
-## Finalización Gate
+## Puerta de finalización
 
-A feature can move to `passing` only after the required verificación tiene éxito
-and the resultado is recorded.
+Una funcionalidad solo puede pasar a `passing` después de que la verificación requerida tenga éxito y el resultado quede registrado.
 
-## Before You Stop
+## Antes de parar
 
-1. Update the progress log.
-2. Update the feature estado.
-3. Record what is still broken or unverified.
-4. Commit once the repositorio is safe to resume.
-5. Leave a limpio restart ruta for the siguiente sesión.
+1. Actualiza el log de progreso.
+2. Actualiza el estado de la funcionalidad.
+3. Registra qué sigue roto o sin verificar.
+4. Haz commit cuando el repositorio sea seguro para retomar.
+5. Deja una ruta de reinicio limpia para la siguiente sesión.
