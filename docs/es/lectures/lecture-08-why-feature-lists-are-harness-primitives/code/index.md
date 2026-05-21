@@ -1,8 +1,8 @@
-# Código for Lección 08
+# Código de la Lección 08
 
-Usar this carpeta for ejemplos of:
+Usa esta carpeta para ejemplos de:
 
 - pass-state gating
-- end-to-end verificación
-- weak vs potente finalización criterios
-- evaluator-loop ejemplos
+- verificación end-to-end
+- criterios de finalización débiles frente a fuertes
+- ejemplos de bucle de evaluador

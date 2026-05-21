@@ -1,11 +1,11 @@
-# System of Record Checklist
+# Checklist de sistema de registro
 
-Can a fresh agent discover the following from the repo alone?
+¿Puede un agent fresco descubrir lo siguiente usando solo el repo?
 
-- What product is being built?
-- What the app should do for usuarios?
-- How the codebase is organized?
-- How the app starts?
-- How health is checked?
-- What work is currently in progress?
-- What calidad standards matter?
+- ¿Qué producto se está construyendo?
+- ¿Qué debe hacer la app para los usuarios?
+- ¿Cómo está organizado el codebase?
+- ¿Cómo arranca la app?
+- ¿Cómo se comprueba su salud?
+- ¿Qué trabajo está actualmente en curso?
+- ¿Qué estándares de calidad importan?

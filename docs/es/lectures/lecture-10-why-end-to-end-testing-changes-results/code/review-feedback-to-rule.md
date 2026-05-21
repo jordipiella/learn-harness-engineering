@@ -1,10 +1,10 @@
-# Ejemplo: Turning Revisión Feedback into a Rule
+# Ejemplo: convertir feedback de revisión en una regla
 
-Repeated revisión comment:
+Comentario de revisión repetido:
 
-> Do not call filesystem utilities from the renderer. Usar the preload bridge.
+> Do not call filesystem utilities from the renderer. Use the preload bridge.
 
 Promoted harness rule:
 
-- añadir a lint or import rule preventing `fs` usage in renderer código
-- añadir remediation text explaining the preload boundary
+- add a lint or import rule preventing `fs` usage in renderer code
+- add remediation text explaining the preload boundary

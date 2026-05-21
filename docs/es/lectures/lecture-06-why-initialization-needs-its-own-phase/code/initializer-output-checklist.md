@@ -1,7 +1,7 @@
-# Initializer Salida Checklist
+# Checklist de salida del initializer
 
-- Is there a canonical startup comando?
-- Is there a canonical verificación comando?
-- Is there a first progress artifact?
-- Is there a stable first commit?
-- Is there a visible feature surface for later ejecuta?
+- ¿Hay un comando canónico de arranque?
+- ¿Hay un comando canónico de verificación?
+- ¿Hay un primer artefacto de progreso?
+- ¿Hay un primer commit estable?
+- ¿Hay una superficie de funcionalidades visible para ejecuciones posteriores?

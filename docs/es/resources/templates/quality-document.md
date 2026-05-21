@@ -1,43 +1,43 @@
-# Calidad Document
+# Documento de calidad
 
-A calidad snapshot for each product domain and architectural capa. Both agents and humans can usar this document to quickly entender where the codebase is potente and where it needs work.
+Snapshot de calidad para cada dominio de producto y capa arquitectónica. Tanto agents como humanos pueden usar este documento para entender rápidamente dónde el codebase es fuerte y dónde necesita trabajo.
 
-**Update cadence:** After each significant sesión, or before starting a new phase of work.
+**Cadencia de actualización:** después de cada sesión significativa o antes de empezar una nueva fase de trabajo.
 
-**Grading scale:**
+**Escala de calificación:**
 
-- **A**: All verificación passing, limpio arquitectura, agent-legible, stable pruebas
-- **B**: Verification passing, mostly limpio, minor gaps in legibility or prueba coverage
-- **C**: Partially working, known gaps, some código areas hard for agents to entender
-- **D**: Not working, or major structural issues
+- **A**: toda la verificación pasa, arquitectura limpia, legible para agents, pruebas estables.
+- **B**: verificación pasando, mayormente limpio, huecos menores de legibilidad o cobertura de pruebas.
+- **C**: parcialmente funcional, huecos conocidos, algunas áreas de código difíciles de entender para agents.
+- **D**: no funcional o con problemas estructurales importantes.
 
 ---
 
-## Product Domains
+## Dominios de producto
 
-| Domain | Grade | Verification | Agent Legibility | Prueba Stability | Key Gaps | Last Updated |
-|--------|-------|-------------|-----------------|---------------|----------|-------------|
-| Document Import | - | - | - | - | - | - |
-| Document Gestión | - | - | - | - | - | - |
-| Document Indexing | - | - | - | - | - | - |
-| Q&A Flow | - | - | - | - | - | - |
-| Grounded Answers | - | - | - | - | - | - |
+| Dominio | Calificación | Verificación | Legibilidad para agents | Estabilidad de pruebas | Huecos clave | Última actualización |
+|---------|--------------|--------------|-------------------------|------------------------|--------------|----------------------|
+| Importación de documentos | - | - | - | - | - | - |
+| Gestión de documentos | - | - | - | - | - | - |
+| Indexación de documentos | - | - | - | - | - | - |
+| Flujo Q&A | - | - | - | - | - | - |
+| Respuestas con grounding | - | - | - | - | - | - |
 
-## Architectural Capas
+## Capas arquitectónicas
 
-| Capa | Grade | Boundary Enforcement | Agent Legibility | Key Gaps | Last Updated |
-|-------|-------|---------------------|-----------------|----------|-------------|
-| Main Proceso | - | - | - | - | - |
+| Capa | Calificación | Enforcement de límites | Legibilidad para agents | Huecos clave | Última actualización |
+|------|--------------|------------------------|-------------------------|--------------|----------------------|
+| Proceso main | - | - | - | - | - |
 | Preload | - | - | - | - | - |
 | Renderer | - | - | - | - | - |
 | Services | - | - | - | - | - |
 
-## Cambio History
+## Historial de cambios
 
 ### YYYY-MM-DD
 
 - Cambios:
-- Domains promoted:
-- Domoted:
-- New gaps identified:
-- Gaps closed:
+- Dominios promovidos:
+- Degradados:
+- Huecos nuevos identificados:
+- Huecos cerrados:

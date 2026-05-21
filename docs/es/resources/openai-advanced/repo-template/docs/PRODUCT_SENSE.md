@@ -1,26 +1,24 @@
 # PRODUCT_SENSE.md
 
-This archivo captures durable product judgment that agents cannot infer de forma fiable
-from código alone.
+Este archivo captura juicio de producto duradero que los agents no pueden inferir de forma fiable solo desde el código.
 
-## Product Core
+## Núcleo de producto
 
-- Primary usuario: `[replace]`
-- Job to be terminado: `[replace]`
-- Main frustration to remove: `[replace]`
-- Calidad bar for acceptance: `[replace]`
+- Usuario principal: `[replace]`
+- Trabajo a completar: `[replace]`
+- Frustración principal a eliminar: `[replace]`
+- Barra de calidad para aceptación: `[replace]`
 
-## Product Reglas
+## Reglas de producto
 
-- Favor user-visible reliability over feature count.
-- Treat ambiguous behavior as a spec gap, not as permission to guess.
-- If implementation cambios what usuarios see or trust, update the matching spec.
-- Usar product specs for concrete flows, and usar this archivo for cross-cutting
-  product priorities.
+- Prioriza fiabilidad visible para el usuario frente a cantidad de funcionalidades.
+- Trata el comportamiento ambiguo como hueco de spec, no como permiso para adivinar.
+- Si la implementación cambia lo que los usuarios ven o confían, actualiza la spec correspondiente.
+- Usa specs de producto para flujos concretos y este archivo para prioridades transversales de producto.
 
-## No-Go Patterns
+## Patrones prohibidos
 
-- Hidden destructive actions
-- Silent fallo without usuario feedback
-- Unclear fuente de verdad for visible estado
-- Funcionalidades that cannot be explained in one sentence
+- Acciones destructivas ocultas.
+- Fallo silencioso sin feedback de usuario.
+- Fuente de verdad poco clara para estado visible.
+- Funcionalidades que no pueden explicarse en una frase.

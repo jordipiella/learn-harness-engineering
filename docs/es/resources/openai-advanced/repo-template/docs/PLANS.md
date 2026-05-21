@@ -1,35 +1,34 @@
 # PLANS.md
 
-This archivo defines how execution plans are created, updated, completed, and
-archived.
+Este archivo define cómo se crean, actualizan, completan y archivan los planes de ejecución.
 
-## When A Plan Is Required
+## Cuándo se requiere un plan
 
-Crear an execution plan when work:
+Crea un plan de ejecución cuando el trabajo:
 
-- spans more than one sesión
-- cambios more than one subsystem
-- has non-trivial verificación or rollout risk
-- depends on open decisions that should be logged
+- atraviesa más de una sesión
+- cambia más de un subsistema
+- tiene verificación no trivial o riesgo de rollout
+- depende de decisiones abiertas que deben registrarse
 
-## Plan Locations
+## Ubicaciones de planes
 
-- `docs/exec-plans/active/`: plans currently driving work
-- `docs/exec-plans/completed/`: terminado plans kept for future agent contexto
-- `docs/exec-plans/tech-debt-tracker.md`: deferred work and follow-ups
+- `docs/exec-plans/active/`: planes que actualmente guían trabajo.
+- `docs/exec-plans/completed/`: planes terminados conservados para contexto futuro de agents.
+- `docs/exec-plans/tech-debt-tracker.md`: trabajo pospuesto y follow-ups.
 
-## Minimum Plan Secciones
+## Secciones mínimas de un plan
 
-- objective
-- alcance and out-of-alcance
-- verificación ruta
-- risks and blockers
-- progress log
-- open decisions
+- objetivo
+- scope y fuera de scope
+- ruta de verificación
+- riesgos y bloqueos
+- log de progreso
+- decisiones abiertas
 
-## Operating Reglas
+## Reglas operativas
 
-- One active plan should have one clearly owned current paso.
-- Update the plan as work progresses; do not treat it as static prose.
-- If a decision cambios implementation direction, record it in the plan.
-- Move terminado plans to `completed/` so agents can still discover prior contexto.
+- Un plan activo debería tener un único paso actual claramente asignado.
+- Actualiza el plan a medida que avanza el trabajo; no lo trates como prosa estática.
+- Si una decisión cambia la dirección de implementación, regístrala en el plan.
+- Mueve planes terminados a `completed/` para que los agents puedan descubrir contexto previo.

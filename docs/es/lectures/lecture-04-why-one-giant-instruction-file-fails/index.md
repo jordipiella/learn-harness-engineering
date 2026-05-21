@@ -1,65 +1,65 @@
 [Versión en chino →](../../../zh/lectures/lecture-04-why-one-giant-instruction-file-fails/)
 
-> Ejemplos de código: [código/](https://github.com/walkinglabs/learn-harness-engineering/blob/main/docs/es/lectures/lecture-04-why-one-giant-instruction-file-fails/code/)
+> Ejemplos de código: [code/](https://github.com/walkinglabs/learn-harness-engineering/blob/main/docs/es/lectures/lecture-04-why-one-giant-instruction-file-fails/code/)
 > Proyecto práctico: [Proyecto 02. Agent-readable workspace](./../../projects/project-02-agent-readable-workspace/index.md)
 
-# Lección 04. Split Instrucciones Across Archivos
+# Lección 04. Dividir las instrucciones entre varios archivos
 
-You got serious about harness ingeniería — good for you. You created an `AGENTS.md` and packed every rule, constraint, and lesson learned you could think of into it. One month later the archivo bloated to 300 lines, two months 450 lines, three months 600 lines. Then you notice the agent's performance is actually getting worse — on a simple bug arreglar, the agent burns tons of contexto processing irrelevant deployment instrucciones; a critical security constraint buried at line 300 gets ignored outright; three contradictory código style reglas mean the agent picks one at random each time.
+Te tomaste en serio la ingeniería de harnesses. Creaste un `AGENTS.md` y metiste en él todas las reglas, restricciones y lecciones aprendidas que se te ocurrieron. Un mes después el archivo tenía 300 líneas; dos meses después, 450; tres meses después, 600. Entonces notas que el rendimiento del agent está empeorando: en una corrección sencilla, consume muchísimo contexto procesando instrucciones de despliegue irrelevantes; una restricción crítica de seguridad enterrada en la línea 300 se ignora por completo; tres reglas contradictorias de estilo hacen que el agent elija una al azar cada vez.
 
-This is the "giant instrucción archivo" trap. It's like overpacking a suitcase — everything seems useful, so you cram it all in until the zipper is about to burst. Finding your cambio of underwear means emptying the entire bag. You carried a full suitcase, but you actually usado maybe a third of what's inside.
+Esta es la trampa del "archivo de instrucciones gigante". Es como preparar una maleta metiendo cosas "por si acaso": todo parece útil, así que lo comprimes todo hasta que la cremallera casi revienta. Para encontrar una muda tienes que vaciar la maleta entera. Llevabas una maleta completa, pero en realidad usaste quizá un tercio de lo que había dentro.
 
-## The Vicious Cycle at the Root
+## El ciclo vicioso de fondo
 
-The most common vicious cycle goes like this: agent hace a mistake, you say "añadir a rule to prevent this," añadir it to AGENTS.md, it works temporarily, agent hace a diferente mistake, añadir another rule, repeat, archivo bloats out of control.
+El ciclo vicioso más común es este: el agent comete un error, tú dices "añade una regla para evitarlo", la añades a `AGENTS.md`, funciona temporalmente, el agent comete otro error distinto, añades otra regla, repites, y el archivo crece sin control.
 
-This isn't your fault. It's a very natural reaction — "añadir a rule" each time something goes incorrecto feels reasonable, like tossing one more thing into your bag every time you leave the house "just in case." But the cumulative effect is disastrous. Let's look at what goes incorrecto specifically.
+No es culpa tuya. Es una reacción natural: "añadir una regla" cada vez que algo sale mal parece razonable, como meter una cosa más en la maleta cada vez que sales de casa "por si acaso". Pero el efecto acumulado es desastroso. Veamos qué falla exactamente.
 
-**Contexto budget gets eaten alive.** The agent's contexto window is finite. Say your agent has a 200K token window (Claude's standard). A bloated instrucción archivo might eat 10-20K tokens. Seems like there's still plenty of room? But a complex tarea might need to leer dozens of source archivos, herramienta execution salida also takes contexto, and conversation history accumulates. By the time the agent needs to entender the código, the budget is already tight — like a suitcase so full of "just in case" items that there's no room for your laptop.
+**El presupuesto de contexto se consume rápidamente.** La ventana de contexto del agent es finita. Supongamos que tu agent tiene una ventana de 200K tokens, el estándar de Claude. Un archivo de instrucciones inflado puede consumir 10-20K tokens. ¿Parece que todavía queda mucho espacio? En una tarea compleja, el agent puede necesitar leer decenas de archivos fuente, la salida de las herramientas también ocupa contexto y el historial de conversación se acumula. Cuando por fin necesita entender el código, el presupuesto ya está apretado: como una maleta tan llena de cosas "por si acaso" que no queda sitio para el portátil.
 
-**Lost in the middle.** The "Lost in the Middle" paper (Liu et al., 2023) clearly demonstrated that LLMs utilize information in the middle of long texts significantly less effectively than at the beginning or end. Your AGENTS.md is 600 lines, and line 300 says "all database queries must usar parameterized queries" — that's a security hard constraint. But it's buried in the middle, and the agent will almost certainly ignore it. Like that bottle of sunscreen at the bottom of your overstuffed suitcase — you know it's there, you dig three times, can't find it, end up buying another one.
+**Lost in the middle.** El artículo "Lost in the Middle" (Liu et al., 2023) demostró con claridad que los LLM aprovechan la información situada en mitad de textos largos de forma bastante menos eficaz que la información del principio o del final. Tu `AGENTS.md` tiene 600 líneas y en la línea 300 dice "all database queries must use parameterized queries": una restricción dura de seguridad. Pero está enterrada en el medio, y es muy probable que el agent la ignore. Como ese protector solar en el fondo de la maleta sobrecargada: sabes que está ahí, rebuscas tres veces, no lo encuentras y acabas comprando otro.
 
-**Priority conflicts.** The archivo mixes non-negotiable hard constraints ("never usar eval()"), important diseño guidelines ("prefer functional style"), and a específico historical lesson ("fixed a WebSocket memory leak last week, watch for similar patterns"). These three reglas have completely diferente importance levels, but they look identical in the archivo. The agent has no fiable signal to distinguish — like your passport and charging cable jumbled together in the suitcase, no way to tell which is more urgent.
+**Conflictos de prioridad.** El archivo mezcla restricciones duras no negociables ("never use eval()"), directrices importantes de diseño ("prefer functional style") y una lección histórica concreta ("la semana pasada corregimos una fuga de memoria en WebSocket; vigila patrones similares"). Estas tres reglas tienen niveles de importancia completamente distintos, pero en el archivo se ven iguales. El agent no tiene una señal fiable para distinguirlas: como llevar el pasaporte y el cable de carga revueltos en la maleta sin ninguna pista de cuál es más urgente.
 
-**Maintenance decay.** Large archivos are inherently hard to maintain. Outdated instrucciones rarely get deleted — because the consequences of deletion are uncertain ("maybe something else depends on this rule?"), while adding new instrucciones feels free. The resultado: the archivo only grows, never shrinks, and signal-to-noise ratio continuously declines. This is exactly like technical debt accumulation in software.
+**Deterioro de mantenimiento.** Los archivos grandes son difíciles de mantener por naturaleza. Las instrucciones obsoletas rara vez se borran, porque las consecuencias de borrarlas son inciertas ("¿y si otra cosa depende de esta regla?"), mientras que añadir instrucciones nuevas parece gratis. Resultado: el archivo solo crece, nunca se reduce, y la relación señal-ruido cae continuamente. Es exactamente la acumulación de deuda técnica aplicada a las instrucciones.
 
-**Contradiction accumulation.** Instrucciones added at diferente times empezar contradicting each other — one says "usar TypeScript strict mode," another says "some legacy archivos allow any types." The agent randomly picks one to follow each time. Like your mom saying "dress warm" and your dad saying "don't wear too much," and you standing at the door not knowing who to listen to.
+**Acumulación de contradicciones.** Las instrucciones añadidas en momentos distintos empiezan a contradecirse: una dice "usa TypeScript en modo estricto", otra dice "algunos archivos heredados permiten tipos `any`". El agent elige al azar cuál seguir cada vez. Como si una persona te dijera "abrígate" y otra "no te pongas demasiada ropa", y tú te quedaras en la puerta sin saber a quién hacer caso.
 
-## Core Concepts
+## Conceptos clave
 
-- **Instrucción Bloat**: When an instrucción archivo occupies more than 10-15% of the contexto window, it starts crowding out budget for código lectura and tarea reasoning. A 600-line `AGENTS.md` might consume 10,000-20,000 tokens — that's 8-15% of a 128K window eaten before the agent even starts.
-- **Lost in the Middle Effect**: Liu et al.'s 2023 research proved that LLMs usar information in the middle of long texts significantly less effectively than information at the beginning or end. A critical constraint buried at line 300 of a 600-line archivo has a very high probability of being effectively ignored.
-- **Instrucción Signal-to-Noise Ratio (SNR)**: The proportion of instrucciones in a archivo that are relevant to the current tarea. Being forced to leer 50 lines of deployment instrucciones during a bug arreglar — that's low SNR.
-- **Routing Archivo**: A short entry archivo whose core function is pointing the agent to more detailed docs, not containing everything itself. 50-200 lines is plenty.
-- **Progressive Disclosure**: Give resumen information first, detailed information when needed. Good harness diseño is like good UI diseño — don't dump all options on the usuario at once.
-- **Priority Ambiguity**: When all instrucciones appear in the mismo format and location, the agent can't distinguish non-negotiable hard constraints from suggestive soft guidelines.
+- **Inflación de instrucciones**: cuando un archivo de instrucciones ocupa más del 10-15% de la ventana de contexto, empieza a desplazar el presupuesto necesario para leer código y razonar sobre la tarea. Un `AGENTS.md` de 600 líneas puede consumir 10.000-20.000 tokens: entre el 8% y el 15% de una ventana de 128K antes de que el agent siquiera empiece.
+- **Efecto Lost in the Middle**: la investigación de Liu et al. de 2023 probó que los LLM usan la información situada en mitad de textos largos bastante peor que la del principio o el final. Una restricción crítica en la línea 300 de un archivo de 600 líneas tiene una probabilidad muy alta de quedar efectivamente ignorada.
+- **Relación señal-ruido de instrucciones (SNR)**: proporción de instrucciones de un archivo que son relevantes para la tarea actual. Tener que leer 50 líneas de instrucciones de despliegue durante una corrección de bug es una SNR baja.
+- **Archivo enrutador**: archivo de entrada corto cuya función principal es dirigir al agent hacia documentación más detallada, no contenerlo todo. Entre 50 y 200 líneas suele bastar.
+- **Divulgación progresiva**: dar primero la visión general y mostrar los detalles cuando hacen falta. Un buen diseño de harness se parece a un buen diseño de UI: no vuelca todas las opciones sobre el usuario de una vez.
+- **Ambigüedad de prioridad**: cuando todas las instrucciones aparecen con el mismo formato y en la misma ubicación, el agent no puede distinguir las restricciones duras no negociables de las recomendaciones flexibles.
 
-## Instrucción Arquitectura
+## Arquitectura de instrucciones
 
 ```mermaid
 flowchart LR
-    Mono["One 600-line AGENTS.md"] --> MonoLoad["Even a small bug fix<br/>must read deploy rules and old notes"]
-    MonoLoad --> MonoRisk["Important rules buried in the middle<br/>are easy to miss"]
+    Mono["Un AGENTS.md de 600 líneas"] --> MonoLoad["Incluso un bug pequeño<br/>debe leer reglas de despliegue y notas antiguas"]
+    MonoLoad --> MonoRisk["Las reglas importantes enterradas en el medio<br/>son fáciles de pasar por alto"]
 
-    Router["Short AGENTS.md"] --> Topics["Load API / DB / testing docs<br/>only when this task needs them"]
-    Topics --> RoutedResult["More context left for code reading<br/>and verification"]
+    Router["AGENTS.md corto"] --> Topics["Carga documentos de API / BD / testing<br/>solo cuando la tarea los necesita"]
+    Topics --> RoutedResult["Queda más contexto para leer código<br/>y verificar"]
 ```
 
 ```mermaid
 flowchart TB
-    File["600-line instruction file"] --> Top["Top section<br/>quick start + hard constraints"]
-    File --> Mid["Middle section<br/>critical security rule at line 300"]
-    File --> Bot["Bottom section<br/>explicit end-of-file checklist"]
-    Top --> Seen["High chance of recall"]
+    File["Archivo de instrucciones de 600 líneas"] --> Top["Sección superior<br/>arranque rápido + restricciones duras"]
+    File --> Mid["Sección intermedia<br/>regla crítica de seguridad en la línea 300"]
+    File --> Bot["Sección final<br/>checklist explícita de cierre"]
+    Top --> Seen["Alta probabilidad de recordarse"]
     Bot --> Seen
-    Mid --> Missed["High chance of being diluted or missed"]
+    Mid --> Missed["Alta probabilidad de diluirse o perderse"]
 ```
 
-## How to Split
+## Cómo dividir
 
-Core principle: keep frequently-needed information at hand, tuck away occasionally-needed information, and leave behind what you'll never usar.
+Principio central: conserva a mano la información que se necesita con frecuencia, aparta la que solo se necesita ocasionalmente y elimina lo que no se va a usar.
 
-The entry archivo `AGENTS.md` stays at 50-200 lines, containing only the most frequently usado items — proyecto resumen (one or two sentences), first-run comandos (`hacer setup && hacer prueba`), global hard constraints (no more than 15 non-negotiable reglas), and links to topic documents (one-line description + applicability condición).
+El archivo de entrada `AGENTS.md` debe quedarse en 50-200 líneas y contener solo lo más usado: resumen del proyecto en una o dos frases, comandos iniciales (`make setup && make test`), restricciones globales duras (no más de 15 reglas no negociables) y enlaces a documentos temáticos con una descripción de una línea y una condición de aplicabilidad.
 
 ```markdown
 # AGENTS.md
@@ -78,55 +78,55 @@ Python 3.11 FastAPI backend, PostgreSQL 15 database.
 - All PRs must pass pytest + mypy --strict + ruff check
 
 ## Topic Docs
-- `docs/api-patterns.md` — lectura requerida al añadir endpoints
-- `docs/database-rules.md` — requerido al modificar operaciones de base de datos
-- `docs/testing-standards.md` — referencia al escribir pruebas
+- [API Design Patterns](docs/api-patterns.md) — lectura obligatoria al añadir endpoints
+- [Database Rules](docs/database-rules.md) — obligatorio al modificar operaciones de base de datos
+- [Testing Standards](docs/testing-standards.md) — referencia al escribir pruebas
 ```
 
-Each topic document is 50-150 lines, organized by subject in the `docs/` directory or siguiente to the corresponding module. The agent only reads them when needed. Like packing cubes in a suitcase — underwear in one cube, toiletries in another, chargers in a third. Finding things doesn't require emptying the whole bag.
+Cada documento temático ocupa 50-150 líneas y se organiza por tema dentro de `docs/` o junto al módulo correspondiente. El agent solo los lee cuando los necesita. Como los organizadores dentro de una maleta: ropa interior en uno, artículos de aseo en otro, cargadores en un tercero. Encontrar algo no requiere vaciar la maleta entera.
 
-Some information is better placed directly in the código — type definitions, interface comments, explanations in config archivos. The agent naturally sees these when lectura código, no need to duplicate in instrucciones.
+Parte de la información encaja mejor directamente en el código: definiciones de tipos, comentarios de interfaces, explicaciones en archivos de configuración. El agent la ve de forma natural al leer el código, sin necesidad de duplicarla en instrucciones.
 
-Every instrucción should have a source ("why was this rule added?"), an applicability condición ("when is this rule needed?"), and an expiry condición ("under what circumstances can this rule be removed?"). Audit regularly, remove outdated, redundant, and contradictory entries. Manage your instrucciones like you manage código dependencies — unused dependencies should be deleted, otherwise they just slow the system down.
+Cada instrucción debería tener una fuente ("¿por qué se añadió esta regla?"), una condición de aplicabilidad ("¿cuándo se necesita?") y una condición de caducidad ("¿en qué circunstancias puede retirarse?"). Audita con regularidad y elimina entradas obsoletas, redundantes o contradictorias. Gestiona las instrucciones como gestionas las dependencias de código: las dependencias sin uso deben borrarse; si no, solo ralentizan el sistema.
 
-If an instrucción must be in the entry archivo, put it at the top or bottom — never the middle. The "lost in the middle" effect tells us that LLMs usar information at the extremes significantly better than in the center. But the better approach is to move instrucciones to topic documents for on-demand loading.
+Si una instrucción debe estar en el archivo de entrada, colócala arriba o abajo, nunca en medio. El efecto "lost in the middle" nos dice que los LLM aprovechan mucho mejor la información de los extremos que la del centro. Pero el enfoque mejor es mover las instrucciones a documentos temáticos para cargarlas bajo demanda.
 
-Both OpenAI and Anthropic implicitly soporte the splitting approach. OpenAI says entry archivos should be "short and routing-oriented," Anthropic says long-running agent control information should be "concise and high-priority." Both are saying the mismo thing: don't stuff everything into one archivo. A suitcase needs organizing, not just brute-force cramming.
+Tanto OpenAI como Anthropic respaldan implícitamente este enfoque de división. OpenAI dice que los archivos de entrada deben ser "short and routing-oriented"; Anthropic dice que la información de control para agents de larga duración debe ser "concise and high-priority". Están diciendo lo mismo: no metas todo en un único archivo. La maleta necesita organización, no más fuerza bruta.
 
-## Real-World Ejemplo
+## Ejemplo real
 
-A SaaS equipo's `AGENTS.md` ballooned from 50 lines to 600. Contents mixed tech stack versions, coding standards, historical bug arreglar notes, API usage guías, deployment procedures, and equipo members' personal preferences — the entire suitcase bursting at the seams.
+El `AGENTS.md` de un equipo SaaS pasó de 50 líneas a 600. Mezclaba versiones del stack técnico, estándares de código, notas históricas de bugs corregidos, guías de uso de API, procedimientos de despliegue y preferencias personales de miembros del equipo: una maleta entera a punto de reventar.
 
-Agent performance iniciado declining noticeably: during simple bug arregla the agent spent lots of contexto processing irrelevant deployment instrucciones; the security constraint "all database queries must usar parameterized queries" was buried at line 300 and frequently ignored; three contradictory código style reglas caused random agent behavior.
+El rendimiento del agent empezó a caer de forma visible: durante correcciones sencillas, gastaba mucho contexto procesando instrucciones de despliegue irrelevantes; la restricción de seguridad "all database queries must use parameterized queries" estaba enterrada en la línea 300 y se ignoraba con frecuencia; tres reglas contradictorias de estilo producían comportamiento aleatorio.
 
-The equipo executed a "suitcase reorganization":
-1. `AGENTS.md` trimmed to 80 lines: only proyecto resumen, ejecutar comandos, and 15 global hard constraints
-2. Created topic documents: `docs/api-patterns.md` (120 lines), `docs/database-rules.md` (60 lines), `docs/testing-standards.md` (80 lines)
-3. Added topic document links in the routing archivo
-4. Historical notes either converted to prueba cases or deleted
+El equipo ejecutó una "reorganización de la maleta":
+1. `AGENTS.md` reducido a 80 líneas: solo resumen del proyecto, comandos de ejecución y 15 restricciones globales duras.
+2. Documentos temáticos creados: `docs/api-patterns.md` (120 líneas), `docs/database-rules.md` (60 líneas), `docs/testing-standards.md` (80 líneas).
+3. Enlaces a documentos temáticos añadidos al archivo enrutador.
+4. Notas históricas convertidas en casos de prueba o eliminadas.
 
-After refactoring: mismo tarea set éxito rate went from 45% to 72%. Security constraint compliance went from 60% to 95% — because it moved from the archivo middle to the routing archivo top, no longer "lost in the middle."
+Después de la refactorización, la tasa de éxito del mismo conjunto de tareas pasó del 45% al 72%. El cumplimiento de la restricción de seguridad pasó del 60% al 95%, porque se movió desde el medio del archivo hasta la parte superior del archivo enrutador y dejó de estar "lost in the middle".
 
 ## Ideas clave
 
-- "Añadir a rule" is short-term pain relief, long-term poison. Before adding a rule, ask: would this be better in a topic document? Don't just keep cramming things into the suitcase.
-- The entry archivo is a router, not an encyclopedia. 50-200 lines with resumen, hard constraints, and links only.
-- Leverage the "lost in the middle" effect: important info goes at the top or bottom; unimportant info moves to topic documents.
-- Manage instrucción bloat like technical debt. Regular audits, every instrucción needs a source, applicability condición, and expiry condición.
-- After splitting, SNR improves and the agent spends more contexto budget on real tareas instead of processing irrelevant instrucciones.
+- "Añadir una regla" alivia el dolor a corto plazo y envenena el sistema a largo plazo. Antes de añadir una regla, pregunta: ¿encajaría mejor en un documento temático? No sigas metiendo cosas en la maleta.
+- El archivo de entrada es un enrutador, no una enciclopedia. Entre 50 y 200 líneas con resumen, restricciones duras y enlaces.
+- Aprovecha el efecto "lost in the middle": la información importante va arriba o abajo; la menos importante se mueve a documentos temáticos.
+- Gestiona la inflación de instrucciones como deuda técnica. Auditorías periódicas; cada instrucción necesita fuente, condición de aplicabilidad y condición de caducidad.
+- Después de dividir, mejora la SNR y el agent dedica más presupuesto de contexto a la tarea real en vez de procesar instrucciones irrelevantes.
 
 ## Lecturas adicionales
 
-- [OpenAI: Harness Ingeniería](https://openai.com/index/harness-engineering/)
+- [OpenAI: Harness Engineering](https://openai.com/index/harness-engineering/)
 - [Anthropic: Effective Harnesses for Long-Running Agents](https://www.anthropic.com/engineering/effective-harnesses-for-long-running-agents)
-- [Lost in the Middle: How Language Modelos Usar Long Contexts](https://arxiv.org/abs/2307.03172)
-- [HumanLayer: Harness Ingeniería for Coding Agents](https://humanlayer.dev/articles/harness-engineering-for-coding-agents/)
+- [Lost in the Middle: How Language Models Use Long Contexts](https://arxiv.org/abs/2307.03172)
+- [HumanLayer: Harness Engineering for Coding Agents](https://humanlayer.dev/articles/harness-engineering-for-coding-agents/)
 - [Nielsen Norman Group: Progressive Disclosure](https://www.nngroup.com/articles/progressive-disclosure/)
 
 ## Ejercicios
 
-1. **SNR audit**: Take your current entry instrucción archivo and lista all instrucción entries. Pick 5 diferente common tarea types and mark whether each instrucción is relevant to that tarea. Calculate SNR for each tarea type. Instrucciones that are noise for most tareas should move to topic documents.
+1. **Auditoría de SNR**: toma tu archivo de instrucciones de entrada actual y lista todas sus instrucciones. Elige 5 tipos comunes de tarea y marca si cada instrucción es relevante para cada tarea. Calcula la SNR para cada tipo de tarea. Las instrucciones que son ruido para la mayoría de tareas deben moverse a documentos temáticos.
 
-2. **Progressive disclosure refactor**: If you have an instrucción archivo over 300 lines, split it into: (a) a routing archivo under 100 lines, (b) 3-5 topic documents. Ejecutar the mismo set of tareas (at least 5) before and after, comparar éxito rates.
+2. **Refactorización con divulgación progresiva**: si tienes un archivo de instrucciones de más de 300 líneas, divídelo en: (a) un archivo enrutador de menos de 100 líneas, (b) 3-5 documentos temáticos. Ejecuta el mismo conjunto de tareas, al menos 5, antes y después; compara las tasas de éxito.
 
-3. **Lost in the middle verificación**: In a long instrucción archivo, place a critical constraint at the top, middle, and bottom respectively, ejecutando the mismo tarea set each time (at least 5 ejecuta per position). See if there's a difference in compliance rate. You might be surprised by how potente the position effect is.
+3. **Verificación de lost in the middle**: en un archivo de instrucciones largo, coloca una restricción crítica arriba, en medio y abajo respectivamente, ejecutando el mismo conjunto de tareas cada vez, con al menos 5 ejecuciones por posición. Comprueba si cambia la tasa de cumplimiento. Puede sorprenderte la fuerza del efecto de posición.

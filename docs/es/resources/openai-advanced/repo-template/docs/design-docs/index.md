@@ -1,21 +1,21 @@
-# Diseño Docs Index
+# Índice de docs de diseño
 
-Usar this index as the discoverable map of diseño history.
+Usa este índice como mapa descubrible del historial de diseño.
 
-## Accepted
+## Aceptados
 
-- `core-beliefs.md`: agent-first operating beliefs and durable proyecto norms
+- `core-beliefs.md`: creencias operativas agent-first y normas duraderas del proyecto.
 
-## Proposed
+## Propuestos
 
-- `[añadir new diseño doc paths here]`
+- `[add new design doc paths here]`
 
-## Deprecated
+## Deprecados
 
-- `[move old or superseded diseño docs here with replacement links]`
+- `[move old or superseded design docs here with replacement links]`
 
-## Maintenance Reglas
+## Reglas de mantenimiento
 
-- Every diseño doc should have an owner or update trigger.
-- Remove stale docs or mark them deprecated instead of letting them drift.
-- Link active execution plans to the diseño docs they depend on.
+- Cada doc de diseño debería tener owner o disparador de actualización.
+- Elimina docs obsoletos o márcalos como deprecados en vez de dejarlos derivar.
+- Enlaza planes de ejecución activos a los docs de diseño de los que dependen.

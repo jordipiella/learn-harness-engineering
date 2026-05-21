@@ -1,8 +1,8 @@
-# Código for Lección 11
+# Código de la Lección 11
 
-Usar this carpeta for ejemplos of:
+Usa esta carpeta para ejemplos de:
 
-- planificador outputs
-- evaluador rubrics
-- generador/evaluador loops
+- salidas del planner
+- rúbricas de evaluador
+- bucles generador/evaluador
 - single-agent vs multi-role comparisons

@@ -1,57 +1,55 @@
 # ARCHITECTURE.md
 
-This archivo is the top-level map of the system. It should stay concise and point
-to deeper documents when needed.
+Este archivo es el mapa de nivel superior del sistema. Debe mantenerse conciso y apuntar a documentos más profundos cuando haga falta.
 
-## System Shape
+## Forma del sistema
 
-- Product: `[replace with product name]`
-- Primary usuario flujo de trabajo: `[replace with main flujo de trabajo]`
-- Runtime surfaces: `[desktop / web / cli / services / workers]`
-- Fuente of truth for product behavior: `docs/product-specs/`
+- Producto: `[replace with product name]`
+- Workflow principal de usuario: `[replace with main workflow]`
+- Superficies de runtime: `[desktop / web / cli / services / workers]`
+- Fuente de verdad del comportamiento de producto: `docs/product-specs/`
 
-## Domain Map
+## Mapa de dominios
 
-| Domain | Purpose | Primary Entry Points | Related Spec |
-|--------|---------|----------------------|--------------|
-| `[domain-a]` | `[what it owns]` | `[modules / routes / comandos]` | `[spec ruta]` |
-| `[domain-b]` | `[what it owns]` | `[modules / routes / comandos]` | `[spec ruta]` |
+| Dominio | Propósito | Puntos de entrada principales | Spec relacionada |
+|---------|-----------|-------------------------------|------------------|
+| `[domain-a]` | `[what it owns]` | `[modules / routes / commands]` | `[spec path]` |
+| `[domain-b]` | `[what it owns]` | `[modules / routes / commands]` | `[spec path]` |
 
-## Capa Modelo
+## Modelo de capas
 
-Usar a fixed directional modelo so agents do not invent ad hoc arquitectura:
+Usa un modelo direccional fijo para que los agents no inventen arquitectura ad hoc:
 
 `Types -> Config -> Repo -> Service -> Runtime -> UI`
 
-Cross-cutting concerns should enter through explícito provider or adapter
-límites instead of reaching across capas directly.
+Las preocupaciones transversales deben entrar por límites explícitos de provider o adapter en vez de atravesar capas directamente.
 
-## Hard Dependency Reglas
+## Reglas duras de dependencias
 
-- Lower capas must not depend on higher capas.
-- UI must not bypass runtime or service contracts.
-- Datos access must enter through repositorios or equivalent adapters.
-- Shared utilities must remain generic and must not accumulate domain logic.
-- New dependencies should be justified in the matching plan or diseño doc.
+- Las capas inferiores no deben depender de capas superiores.
+- UI no debe saltarse contratos de runtime o service.
+- El acceso a datos debe entrar por repositorios o adapters equivalentes.
+- Las utilidades compartidas deben seguir siendo genéricas y no acumular lógica de dominio.
+- Las dependencias nuevas deben justificarse en el plan o documento de diseño correspondiente.
 
-## Cross-Cutting Interfaces
+## Interfaces transversales
 
-| Concern | Approved Boundary | Notes |
-|--------|-------------------|-------|
-| Logging and tracing | `[provider / utility ruta]` | `[estructurado only, no ad hoc console usar]` |
-| Auth | `[provider ruta]` | `[token/sesión reglas]` |
-| External APIs | `[client or provider ruta]` | `[rate limit / retry guidance]` |
+| Preocupación | Límite aprobado | Notas |
+|--------------|-----------------|-------|
+| Logging y tracing | `[provider / utility path]` | `[structured only, no ad hoc console use]` |
+| Auth | `[provider path]` | `[token/session rules]` |
+| APIs externas | `[client or provider path]` | `[rate limit / retry guidance]` |
 | Feature flags | `[flag boundary]` | `[ownership]` |
 
-## Current Hot Spots
+## Hot spots actuales
 
-- `[area that is hardest for agents to cambio safely]`
-- `[area with weak límites or fragile pruebas]`
+- `[area that is hardest for agents to change safely]`
+- `[area with weak boundaries or fragile tests]`
 
-## Cambio Checklist
+## Checklist de cambio
 
-When you touch architecture-relevant código:
+Cuando toques código relevante para arquitectura:
 
-1. Update this archivo if the domain map or allowed límites changed.
-2. Update the related diseño doc in `docs/design-docs/` if the reasoning changed.
-3. Añadir or update an executable check if the rule should be enforced mechanically.
+1. Actualiza este archivo si cambió el mapa de dominios o los límites permitidos.
+2. Actualiza el documento de diseño relacionado en `docs/design-docs/` si cambió el razonamiento.
+3. Añade o actualiza un check ejecutable si la regla debe imponerse mecánicamente.

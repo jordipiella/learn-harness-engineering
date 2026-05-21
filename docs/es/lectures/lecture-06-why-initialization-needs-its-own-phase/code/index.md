@@ -1,8 +1,8 @@
-# Código for Lección 06
+# Código de la Lección 06
 
-Usar this carpeta for ejemplos of:
+Usa esta carpeta para ejemplos de:
 
 - initializer outputs
 - init scripts
-- progress archivos
+- archivos de progreso
 - first-run scaffolding

@@ -1,43 +1,43 @@
-# Proyecto 06: Runtime Observability and Debugging (Capstone)
+# Proyecto 06: Observabilidad en runtime y depuración (capstone)
 
-Capstone proyecto: construir and benchmark a completo harness, then ejecutar cleanup loops to verificar calidad and maintainability.
+Proyecto final: construye y mide un harness completo, luego ejecuta bucles de limpieza para verificar calidad y mantenibilidad.
 
-## Directory Guía
+## Guía de directorios
 
-| Directory | Meaning |
+| Directorio | Significado |
 |------|------|
-| `inicial/` | **Starting point**: completo product código, but the harness is intentionally weakened (only basic AGENTS.md, with no feature_list.json, sesión traspaso, or clean-state checklist). |
-| `solución/` | **Referencia implementation**: maximum harness, with all artifact archivos present, high quality-document scores, benchmark scripts, and cleanup scanners. |
+| `starter/` | **Punto de partida**: código de producto completo, pero con el harness debilitado intencionalmente (solo `AGENTS.md` básico, sin `feature_list.json`, `session-handoff.md` ni `clean-state-checklist.md`). |
+| `solution/` | **Implementación de referencia**: harness máximo, con todos los artefactos presentes, puntuaciones altas en `quality-document.md`, scripts de benchmark y scanners de limpieza. |
 
-## How to Usar
+## Cómo usarlo
 
 ```sh
 cd starter
 npm install
-# Run the benchmark suite with the weak harness and record the results
+# Ejecuta la suite de benchmark con el harness débil y registra los resultados
 
 cd ../solution
 npm install
-# Run the same benchmark with the complete harness
-# Execute cleanup loops
-# Compare score changes in quality-document.md
+# Ejecuta el mismo benchmark con el harness completo
+# Ejecuta bucles de limpieza
+# Compara cambios de puntuación en quality-document.md
 
-# Run benchmark tests
+# Ejecutar pruebas de benchmark
 ./scripts/benchmark.sh
 
-# Run cleanup scan
+# Ejecutar scanner de limpieza
 ./scripts/cleanup-scanner.sh
 ```
 
-## Funcionalidades Covered
+## Funcionalidades cubiertas
 
-- Import documents
-- Construir or refresh the index
-- Answer questions with citations
-- Runtime feedback
-- Readable, restartable repositorio estado
+- Importar documentos
+- Construir o refrescar el índice
+- Responder preguntas con citas
+- Feedback en runtime
+- Estado de repositorio legible y reiniciable
 
-## Related Lecciones
+## Lecciones relacionadas
 
 - [Lección 11: Por qué la observabilidad pertenece al interior del harness](../../docs/es/lectures/lecture-11-why-observability-belongs-inside-the-harness/index.md)
 - [Lección 12: Por qué cada sesión debe dejar un estado limpio](../../docs/es/lectures/lecture-12-why-every-session-must-leave-a-clean-state/index.md)

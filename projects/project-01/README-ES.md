@@ -1,42 +1,42 @@
 # Proyecto 01: Baseline vs Minimal Harness
 
-Comparar how a weak harness (prompt only) and an explícito harness (rule archivos plus verificación mechanisms) affect the finalización rate of AI coding-agent tareas.
+Compara cómo un harness débil (solo prompt) y un harness explícito (archivos de reglas más mecanismos de verificación) afectan a la tasa de finalización de tareas con AI coding agents.
 
-## Directory Guía
+## Guía de directorios
 
-| Directory | Meaning |
+| Directorio | Significado |
 |------|------|
-| `inicial/` | **Starting point**: only a vago `task-prompt.md`, with no AGENTS.md and no feature_list.json. This is the "weak harness" version you give to the agent. |
-| `solución/` | **Referencia implementation**: the mismo application código, but with completo harness archivos (AGENTS.md, feature_list.json, init.sh, claude-progress.md). This is the "explícito harness" version. |
+| `starter/` | **Punto de partida**: solo un `task-prompt.md` vago, sin `AGENTS.md` ni `feature_list.json`. Esta es la versión de "harness débil" que entregas al agent. |
+| `solution/` | **Implementación de referencia**: el mismo código de aplicación, pero con archivos de harness completos (`AGENTS.md`, `feature_list.json`, `init.sh`, `claude-progress.md`). Esta es la versión de "harness explícito". |
 
-## How to Usar
+## Cómo usarlo
 
 ```sh
-# 1. Run the agent task once with starter (weak harness)
+# 1. Ejecuta la tarea del agent una vez con starter (harness débil)
 cd starter
 npm install
-# Give the contents of task-prompt.md as the prompt to Claude Code / Codex
-# Ask the agent to complete: window startup, document list, QA panel, data directory
+# Entrega el contenido de task-prompt.md como prompt a Claude Code / Codex
+# Pide al agent completar: arranque de ventana, lista de documentos, panel QA, directorio de datos
 
-# 2. Run the same task with solution (explicit harness)
+# 2. Ejecuta la misma tarea con solution (harness explícito)
 cd ../solution
 npm install
-# Ask the agent to read AGENTS.md and follow the rules for the same task
+# Pide al agent leer AGENTS.md y seguir las reglas para la misma tarea
 
-# 3. Compare the two results
-# - Was the task completed?
-# - How many retries were needed?
-# - Did the agent claim "done" too early?
+# 3. Compara los dos resultados
+# - ¿Se completó la tarea?
+# - ¿Cuántos reintentos hicieron falta?
+# - ¿El agent declaró "terminado" demasiado pronto?
 ```
 
-## Funcionalidades Covered
+## Funcionalidades cubiertas
 
-- Electron window starts successfully
-- UI shows the document-list area
-- UI shows the QA panel
-- App crea and uses a local datos directory
+- La ventana de Electron arranca correctamente
+- La UI muestra el área de lista de documentos
+- La UI muestra el panel QA
+- La app crea y usa un directorio local de datos
 
-## Related Lecciones
+## Lecciones relacionadas
 
 - [Lección 01: Por qué los agents capaces siguen fallando](../../docs/es/lectures/lecture-01-why-capable-agents-still-fail/index.md)
 - [Lección 02: Qué es realmente un harness](../../docs/es/lectures/lecture-02-what-a-harness-actually-is/index.md)

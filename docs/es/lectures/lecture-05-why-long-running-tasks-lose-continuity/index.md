@@ -1,79 +1,79 @@
 [Versión en chino →](../../../zh/lectures/lecture-05-why-long-running-tasks-lose-continuity/)
 
-> Ejemplos de código: [código/](https://github.com/walkinglabs/learn-harness-engineering/blob/main/docs/es/lectures/lecture-05-why-long-running-tasks-lose-continuity/code/)
-> Proyecto práctico: [Proyecto 03. Multi-sesión continuity](./../../projects/project-03-multi-session-continuity/index.md)
+> Ejemplos de código: [code/](https://github.com/walkinglabs/learn-harness-engineering/blob/main/docs/es/lectures/lecture-05-why-long-running-tasks-lose-continuity/code/)
+> Proyecto práctico: [Proyecto 03. Multi-session continuity](./../../projects/project-03-multi-session-continuity/index.md)
 
-# Lección 05. Keep Contexto Alive Across Sessions
+# Lección 05. Mantener vivo el contexto entre sesiones
 
-You ask Claude Código to implement a completo feature. It ejecuta for 30 minutes, does most of the work, but contexto is ejecutando low. You empezar a new sesión to continue — and discover it doesn't remember what decisions were made last time, why option A was chosen over option B, which archivos were already modified, or what estado the pruebas are in. It spends 15 minutes re-exploring the proyecto, and might be inconsistent with the anterior approach.
+Le pides a Claude Code que implemente una funcionalidad completa. Trabaja durante 30 minutos, hace casi todo, pero el contexto se está agotando. Abres una sesión nueva para continuar y descubres que no recuerda qué decisiones se tomaron, por qué se eligió la opción A en vez de la B, qué archivos ya se modificaron ni en qué estado están las pruebas. Dedica 15 minutos a explorar de nuevo el proyecto y puede acabar siendo inconsistente con el enfoque anterior.
 
-Imagine if you were a craftsman who forgot everything each morning upon waking. You'd have to reacquaint yourself with the entire construction site — which wall is half-built, why red bricks were chosen over blue ones, where the plumbing ejecuta got to. Worse, you might tear out a window that was already installed yesterday, simply because you didn't remember it was terminado.
+Imagina que fueras un constructor que olvidara todo cada mañana al despertar. Tendrías que volver a familiarizarte con toda la obra: qué pared está a medio hacer, por qué se eligieron ladrillos rojos en vez de azules, por dónde pasan las tuberías. Peor aún: podrías arrancar una ventana instalada ayer simplemente porque no recuerdas que ya estaba hecha.
 
-This is exactly the predicament agents de programación con IA face in cross-sesión tareas. This lección explains why agents "black out" during long tareas, and how estructurado estado persistence can hacer them like a craftsman who keeps a fiable diario journal — still amnesiac, but the journal remembers everything.
+Esta es exactamente la situación a la que se enfrentan los agents de programación en tareas que atraviesan varias sesiones. Esta lección explica por qué los agents "se quedan en blanco" durante tareas largas y cómo la persistencia estructurada de estado puede convertirlos en constructores con un diario diario fiable: siguen teniendo amnesia, pero el diario lo recuerda todo.
 
-## Contexto Windows: Not Infinite
+## Las ventanas de contexto no son infinitas
 
-Contexto windows are finite. This isn't solvable by modelo upgrades — even if window sizes grow to 1M tokens, complex tareas will still exhaust them. Because agents aren't just generating código; they're comprensión codebases, tracking their own decision history, processing herramienta salida, and maintaining conversation contexto. All this information grows faster than window expansion.
+Las ventanas de contexto son finitas. Esto no se resuelve solo con modelos más grandes: aunque las ventanas crezcan a 1M tokens, las tareas complejas seguirán agotándolas. Los agents no solo generan código; entienden bases de código, siguen su propio historial de decisiones, procesan salida de herramientas y mantienen contexto conversacional. Toda esa información crece más rápido que el tamaño de la ventana.
 
-A deeper problema: information the agent produces isn't uniformly important. Intermediate reasoning pasos contain the "why" of decisions — why option B was chosen over A, why this biblioteca instead of that one, why a particular optimization was skipped. The final salida only contains the "what" — the código itself. Compaction strategies usually preserve the latter but lose the former. The siguiente sesión sees the código but doesn't know why it's written that way, and might "optimize" away a deliberate diseño decision.
+Hay un problema más profundo: la información que produce el agent no tiene toda la misma importancia. Los pasos intermedios de razonamiento contienen el "por qué" de las decisiones: por qué se eligió la opción B sobre la A, por qué se usó una biblioteca en vez de otra, por qué se descartó una optimización. El resultado final contiene solo el "qué": el código. Las estrategias de compactación suelen preservar lo segundo y perder lo primero. La siguiente sesión ve el código, pero no sabe por qué está escrito así, y quizá "optimice" eliminando una decisión deliberada.
 
-Anthropic discovered something fascinating in their long-running agent research: when agents sense contexto is ejecutando low, they exhibit "premature convergence" behavior — rushing to finish current work, skipping verificación pasos, or choosing a simple solución over the optimal one. It's like realizing time is ejecutando out on an exam and quickly guessing on the remaining multiple-choice questions. Anthropic calls this "contexto anxiety."
+Anthropic descubrió algo llamativo en su investigación sobre agents de larga duración: cuando los agents perciben que el contexto se agota, muestran un comportamiento de "convergencia prematura": se apresuran a terminar el trabajo actual, saltan pasos de verificación o eligen una solución simple en lugar de la óptima. Es como darte cuenta de que se acaba el tiempo en un examen y marcar deprisa las respuestas restantes. Anthropic lo llama "ansiedad de contexto".
 
-## Session Continuity Flow
+## Flujo de continuidad de sesión
 
-Without continuity artifacts, every new sesión is a disaster:
+Sin artefactos de continuidad, cada nueva sesión empieza mal:
 
 ```mermaid
 flowchart LR
-    S1["Session 1<br/>feature is half done"] --> End1["Context is nearly full<br/>session ends"]
-    End1 --> S2["Session 2 starts fresh"]
-    S2 --> Guess["Re-read folders, rerun tests,<br/>guess why the code was written this way"]
-    Guess --> Drift["Work gets repeated<br/>and recovery is slow"]
+    S1["Sesión 1<br/>funcionalidad a medio hacer"] --> End1["Contexto casi lleno<br/>la sesión termina"]
+    End1 --> S2["La sesión 2 empieza desde cero"]
+    S2 --> Guess["Relee carpetas, relanza pruebas,<br/>adivina por qué el código está así"]
+    Guess --> Drift["Se repite trabajo<br/>y la recuperación es lenta"]
 ```
 
-With continuity artifacts, new sesións can pick up quickly:
+Con artefactos de continuidad, las sesiones nuevas retoman rápido:
 
 ```mermaid
 flowchart LR
-    Work["Session 1 work"] --> Progress["PROGRESS.md<br/>done / in progress / next step"]
-    Work --> Decisions["DECISIONS.md<br/>why this approach was chosen"]
-    Work --> Verify["Verification notes<br/>which tests pass and fail"]
-    Work --> Commit["Git checkpoint<br/>exact repo state"]
+    Work["Trabajo de sesión 1"] --> Progress["PROGRESS.md<br/>hecho / en curso / siguiente paso"]
+    Work --> Decisions["DECISIONS.md<br/>por qué se eligió este enfoque"]
+    Work --> Verify["Notas de verificación<br/>qué pruebas pasan y fallan"]
+    Work --> Commit["Checkpoint de Git<br/>estado exacto del repo"]
 
-    Progress --> Rebuild["Session 2 rebuild"]
+    Progress --> Rebuild["Reconstrucción en sesión 2"]
     Decisions --> Rebuild
     Verify --> Rebuild
     Commit --> Rebuild
 
-    Rebuild --> Resume["New session picks up quickly"]
+    Rebuild --> Resume["La nueva sesión retoma rápido"]
 ```
 
-## Core Concepts
+## Conceptos clave
 
-- **Contexto windows are finite**: No matter what window size is claimed (128K, 200K, 1M), long tareas will eventually exhaust them. After exhaustion, either compaction (losing information) or reset (new sesión) is required. Both lose something.
-- **Continuity artifacts**: Persisted estado archivos that let a new sesión unambiguously resume where the last one left off. The basic form: progress log + verificación record + siguiente actions. That craftsman's journal.
-- **Rebuild cost**: The time a new sesión needs to reach an executable estado. Good harnesses can compress rebuild cost from 15 minutes to 3 minutes.
-- **Drift**: The gap between the agent's comprensión and the real estado of the código repositorio. Every sesión boundary introduces drift; without control, it compounds.
-- **Contexto anxiety**: A phenomenon observed by Anthropic — agents exhibit premature convergence behavior when approaching perceived contexto limits, ending tareas early to avoid information loss. It's an irrational recurso anxiety.
-- **Compaction vs reset**: Compaction summarizes contexto within the mismo sesión (keeps "what," may lose "why"); reset opens a new sesión rebuilding from persisted estado (limpio but depends on artifact completeness).
+- **Las ventanas de contexto son finitas**: no importa qué tamaño se prometa, 128K, 200K o 1M; las tareas largas acabarán agotándolas. Tras el agotamiento hace falta compactación, que pierde información, o reinicio, que abre una sesión nueva. Ambas opciones pierden algo.
+- **Artefactos de continuidad**: archivos de estado persistido que permiten a una sesión nueva retomar sin ambigüedad donde terminó la anterior. La forma básica: registro de progreso + registro de verificación + próximas acciones. El diario del constructor.
+- **Coste de reconstrucción**: tiempo que necesita una sesión nueva para llegar a un estado ejecutable. Un buen harness puede reducirlo de 15 minutos a 3.
+- **Deriva**: brecha entre la comprensión del agent y el estado real del repositorio. Cada límite de sesión introduce deriva; sin control, se acumula.
+- **Ansiedad de contexto**: fenómeno observado por Anthropic en el que los agents muestran convergencia prematura al acercarse a límites percibidos de contexto y terminan tareas antes de tiempo para evitar perder información. Es una ansiedad irracional por recursos.
+- **Compactación frente a reinicio**: la compactación resume contexto dentro de la misma sesión, mantiene el "qué" pero puede perder el "por qué"; el reinicio abre una sesión nueva que reconstruye desde estado persistido, limpia pero dependiente de la completitud de los artefactos.
 
-## What Happens When Continuity Breaks
+## Qué ocurre cuando se rompe la continuidad
 
-The anterior sesión spent significant contexto budget analyzing three approaches and choosing option B. This sesión's agent doesn't know about that analysis and might re-decide based on incomplete information — potentially choosing option A. Like the amnesiac craftsman who doesn't remember why red bricks were chosen, looks at the blue ones today and thinks they're prettier, and tears down yesterday's wall to rebuild.
+La sesión anterior gastó mucho contexto analizando tres enfoques y eligiendo la opción B. El agent de esta sesión no conoce ese análisis y puede decidir otra vez con información incompleta, quizá eligiendo la opción A. Como el constructor amnésico que no recuerda por qué se eligieron ladrillos rojos, mira hoy los azules, piensa que quedan mejor y derriba la pared de ayer para reconstruirla.
 
-Even worse is duplicate work. The agent isn't sure whether certain work was already completed and does it again. Or worse — does half of it, discovers a conflict with the existing implementation, and has to rework. On a construction site, two equipos can't construir the mismo wall simultaneously — but without progress records, the new crew has no idea someone is already working on it.
+Peor aún es el trabajo duplicado. El agent no está seguro de si algo ya se completó y lo hace de nuevo. O peor: hace la mitad, descubre un conflicto con la implementación existente y tiene que rehacerlo. En una obra, dos equipos no pueden construir la misma pared a la vez; sin registros de progreso, el nuevo equipo no sabe que alguien ya está trabajando ahí.
 
-Over several sesións, the implementation direction may have silently drifted from the original requirements. Each new sesión has a slightly diferente comprensión of the proyecto objetivos. Like a game of telephone — after ten people pass the message, "pick me up a coffee" might become "buy me a coffee machine."
+A lo largo de varias sesiones, la dirección de implementación puede haberse alejado silenciosamente de los requisitos originales. Cada sesión nueva entiende los objetivos del proyecto de forma ligeramente distinta. Como el juego del teléfono: después de diez personas, "tráeme un café" puede convertirse en "cómprame una cafetera".
 
-There's also the verificación gap. The anterior sesión's verificación resultados (which pruebas pass, which fail, why they fail) weren't recorded. The new sesión has to re-run all verificación to entender the current estado. Every sesión re-diagnoses from scratch, every time wasting precious contexto.
+También está la brecha de verificación. Los resultados de la sesión anterior, qué pruebas pasan, cuáles fallan y por qué, no quedaron registrados. La nueva sesión tiene que relanzar toda la verificación para entender el estado actual. Cada sesión diagnostica desde cero y desperdicia contexto valioso.
 
-Both OpenAI and Anthropic emphasize estructurado estado persistence in their documentation. OpenAI's harness ingeniería article treats the repositorio as an "operational record" — every operation's resultados should leave traceable evidence in the repo. Anthropic's agents de larga duración documentation specifically recommends "traspaso archivos" — estructurado documents containing current estado, known issues, and siguiente actions.
+Tanto OpenAI como Anthropic enfatizan la persistencia estructurada de estado en su documentación. El artículo de OpenAI sobre harness engineering trata el repositorio como "registro operativo": los resultados de cada operación deben dejar evidencia trazable en el repo. La documentación de Anthropic sobre agents de larga duración recomienda específicamente archivos de handoff: documentos estructurados con estado actual, problemas conocidos y próximas acciones.
 
-## A Journal for the Amnesiac Craftsman
+## Un diario para el constructor amnésico
 
-Core approach: **Treat the agent like a brilliant engineer with amnesia.** Before it "clocks out," it must escribir down critical information so the siguiente "shift" agent can pick up quickly.
+Enfoque central: **trata al agent como un ingeniero brillante con amnesia**. Antes de "fichar la salida", debe anotar la información crítica para que el agent del siguiente "turno" pueda retomar rápido.
 
-**Herramienta 1: Progress archivo (PROGRESS.md).** The most basic continuity artifact — the core of the journal:
+**Herramienta 1: archivo de progreso (`PROGRESS.md`).** El artefacto de continuidad más básico, el núcleo del diario:
 
 ```markdown
 # Project Progress
@@ -101,7 +101,7 @@ Core approach: **Treat the agent like a brilliant engineer with amnesia.** Befor
 3. Update API documentation
 ```
 
-**Herramienta 2: Decision log (DECISIONS.md).** Record important diseño decisions and reasons. No need for detailed diseño documents — just "what decision, why, when" — the memos in the journal:
+**Herramienta 2: registro de decisiones (`DECISIONS.md`).** Registra decisiones de diseño importantes y sus razones. No hace falta un documento de diseño detallado; basta con "qué decisión, por qué, cuándo": las notas del diario:
 
 ```markdown
 # Design Decisions
@@ -112,9 +112,9 @@ Core approach: **Treat the agent like a brilliant engineer with amnesia.** Befor
 - Constraint: Cache TTL of 5 minutes, active invalidation on write
 ```
 
-**Herramienta 3: Git commits as checkpoints.** Commit after completing each atomic unit of work. Commit messages should explain what was terminado and why. These are free, automatically versioned estado snapshots.
+**Herramienta 3: commits de Git como checkpoints.** Haz commit después de completar cada unidad atómica de trabajo. Los mensajes de commit deberían explicar qué se hizo y por qué. Son snapshots de estado gratuitos y versionados automáticamente.
 
-**Herramienta 4: init.sh or harness inicialización flow.** Specify in `AGENTS.md` the "clock-in" and "clock-out" routines:
+**Herramienta 4: `init.sh` o flujo de inicialización del harness.** Especifica en `AGENTS.md` las rutinas de "entrada" y "salida":
 
 ```markdown
 ## At session start (clock in)
@@ -129,52 +129,52 @@ Core approach: **Treat the agent like a brilliant engineer with amnesia.** Befor
 3. Commit all completed work
 ```
 
-**Mixed strategy**: Not every tarea needs a contexto reset. Short tareas (under 30 minutes) can completo within one sesión. Long tareas (spanning sesións) must usar progress archivos and decision logs for continuity. Decision criterion: if a tarea needs more than 60% of the window, empezar preparing traspaso.
+**Estrategia mixta**: no todas las tareas necesitan reiniciar contexto. Las tareas cortas, de menos de 30 minutos, pueden completarse en una sola sesión. Las tareas largas, que atraviesan sesiones, deben usar archivos de progreso y registros de decisiones para mantener continuidad. Criterio práctico: si una tarea necesita más del 60% de la ventana, empieza a preparar el handoff.
 
-### Deep Dive on Contexto Anxiety
+### Análisis más profundo de la ansiedad de contexto
 
-Anthropic's March 2026 research further revealed the específico manifestations of contexto anxiety: on Sonnet 4.5, when contexto approaches the window limit, the agent shows potente "premature convergence" behavior. It's like realizing time is almost up on an exam and quickly filling in random answers on the multiple choice.
+La investigación de Anthropic de marzo de 2026 reveló además las manifestaciones concretas de la ansiedad de contexto: en Sonnet 4.5, cuando el contexto se acerca al límite de la ventana, el agent muestra una fuerte "convergencia prematura". Es como darte cuenta de que casi se acaba el tiempo en un examen y rellenar respuestas al azar en las preguntas de opción múltiple.
 
-Two strategies address this:
+Dos estrategias la abordan:
 
-**Compaction**: Summarizing early conversation within the mismo sesión. Advantage: maintains continuity, the agent can see "what." Disadvantage: "why" is often lost in summaries — why option B was chosen over A, why a particular optimization was skipped. More critically, compaction doesn't eliminate contexto anxiety — the agent knows contexto was once large, and psychologically still tends to rush to closure.
+**Compactación**: resumir la conversación temprana dentro de la misma sesión. Ventaja: mantiene continuidad y el agent puede ver el "qué". Desventaja: en los resúmenes suele perderse el "por qué": por qué se eligió la opción B sobre la A, por qué se descartó una optimización. Más importante todavía: la compactación no elimina la ansiedad de contexto; el agent sabe que el contexto fue grande y psicológicamente tiende a cerrar deprisa.
 
-**Contexto reset**: Completely clearing contexto, opening a new sesión, rebuilding from persisted artifacts. Advantage: limpio mental estado — the new sesión has no "I'm ejecutando out of time" anxiety. Disadvantage: depends on the completeness of traspaso artifacts. If the journal is faltante critical information, the new sesión may waste time going in the incorrecto direction.
+**Reinicio de contexto**: limpiar por completo el contexto, abrir una sesión nueva y reconstruir desde artefactos persistidos. Ventaja: estado mental limpio; la nueva sesión no tiene la ansiedad de "me estoy quedando sin tiempo". Desventaja: depende de la completitud de los artefactos de handoff. Si al diario le falta información crítica, la nueva sesión puede desperdiciar tiempo en una dirección equivocada.
 
-Anthropic's real datos: for Sonnet 4.5, contexto anxiety is severe enough that compaction alone isn't sufficient — contexto reset becomes a critical component of harness diseño. But for Opus 4.5, this behavior is greatly diminished, and compaction can manage contexto without relying on resets. This means: **harness diseño needs específico comprensión of the target modelo, not a one-size-fits-all plantilla.**
+Datos reales de Anthropic: para Sonnet 4.5, la ansiedad de contexto es lo bastante severa como para que la compactación por sí sola no baste; el reinicio de contexto se convierte en un componente crítico del diseño de harness. En cambio, para Opus 4.5 este comportamiento disminuye mucho y la compactación puede gestionar el contexto sin depender de reinicios. Esto significa que **el diseño de harness necesita entender el modelo objetivo, no aplicar una plantilla universal**.
 
-> Fuente: [Anthropic: Harness diseño for long-running application development](https://www.anthropic.com/engineering/harness-design-long-running-apps)
+> Fuente: [Anthropic: Harness design for long-running application development](https://www.anthropic.com/engineering/harness-design-long-running-apps)
 
-## Real-World Ejemplo
+## Ejemplo real
 
-An agent was tasked with implementing a blog system with usuario authentication — 12 feature points, estimated 5 sesións needed.
+Se encargó a un agent implementar un sistema de blog con autenticación de usuarios: 12 puntos de funcionalidad y una estimación de 5 sesiones.
 
-**Baseline without the journal**: Session 1 implemented the usuario modelo and basic routes. Session 2 iniciado without the agent remembering the auth middleware's interface contract, spending ~15 minutes inferring the anterior diseño intent. By sesión 3, accumulated drift caused the agent to empezar reimplementing already-completed funcionalidades. By sesión 5, the repo contained lots of redundant código but the core auth feature still hadn't passed end-to-end pruebas. Only 7 of 12 feature points completed, 3 with hidden correctness issues. Like the craftsman who never escribe in his journal — by day five, the construction site is chaos, some walls built twice, some that should have been built never iniciado.
+**Baseline sin diario**: la sesión 1 implementó el modelo de usuario y rutas básicas. La sesión 2 empezó sin recordar el contrato de interfaz del middleware de autenticación, gastando unos 15 minutos en inferir la intención de diseño previa. Para la sesión 3, la deriva acumulada hizo que el agent empezara a reimplementar funcionalidades ya completadas. En la sesión 5, el repositorio contenía mucho código redundante, pero la funcionalidad central de autenticación aún no pasaba pruebas end-to-end. Solo se completaron 7 de 12 puntos, 3 con problemas ocultos de corrección. Como el constructor que nunca escribe en su diario: al quinto día la obra es un caos, algunas paredes están construidas dos veces y otras ni siquiera se empezaron.
 
-**With the journal**: Usando progress archivos, decision logs, verificación records, and git checkpoints. Estado report updated automatically at each sesión end. Session 2's rebuild cost dropped to ~3 minutes. By sesión 5, all 12 feature points completed and verified.
+**Con diario**: usando archivos de progreso, registros de decisiones, registros de verificación y checkpoints de Git. El informe de estado se actualizaba automáticamente al final de cada sesión. El coste de reconstrucción de la sesión 2 bajó a unos 3 minutos. En la sesión 5, los 12 puntos estaban completos y verificados.
 
-Quantitative comparación: rebuild time reduced ~78%, feature finalización rate from 58% to 100%, hidden defect rate from 43% down to 8%. The craftsman is still amnesiac, but with the journal, each day starts from where yesterday stopped, not from zero.
+Comparación cuantitativa: el tiempo de reconstrucción se redujo aproximadamente un 78%, la tasa de finalización de funcionalidades pasó del 58% al 100% y la tasa de defectos ocultos bajó del 43% al 8%. El constructor sigue siendo amnésico, pero con el diario cada día empieza donde terminó el anterior, no desde cero.
 
 ## Ideas clave
 
-- Contexto windows are a finite recurso. Long tareas will span sesións, and sesións will lose information — like the craftsman who forgets each day, this is objective reality.
-- The solución isn't bigger windows — it's better estado persistence. Progress archivos + decision logs + git checkpoints — give the amnesiac craftsman a fiable journal.
-- Treat the agent like an engineer with amnesia: before "clocking out," escribir down what was terminado, why, and what's siguiente.
-- Rebuild cost is the key metric. Good harnesses should get new sesións to an executable estado within 3 minutes.
-- Mixed strategy: short tareas within sesións, long tareas with estructurado artifacts for continuity.
+- Las ventanas de contexto son un recurso finito. Las tareas largas cruzarán sesiones, y las sesiones perderán información: como el constructor que olvida cada día, es una realidad objetiva.
+- La solución no son ventanas más grandes, sino mejor persistencia de estado. Archivos de progreso + registros de decisiones + checkpoints de Git: dale al constructor amnésico un diario fiable.
+- Trata al agent como un ingeniero con amnesia: antes de "fichar la salida", escribe qué se hizo, por qué y qué viene después.
+- El coste de reconstrucción es la métrica clave. Un buen harness debería llevar una nueva sesión a un estado ejecutable en menos de 3 minutos.
+- Estrategia mixta: tareas cortas dentro de una sesión; tareas largas con artefactos estructurados de continuidad.
 
 ## Lecturas adicionales
 
 - [Anthropic: Effective Harnesses for Long-Running Agents](https://www.anthropic.com/engineering/effective-harnesses-for-long-running-agents)
-- [OpenAI: Harness Ingeniería](https://openai.com/index/harness-engineering/)
-- [Lost in the Middle: How Language Modelos Usar Long Contexts](https://arxiv.org/abs/2307.03172)
-- [Claude Código Documentation](https://docs.anthropic.com/es/docs/claude-code)
-- [HumanLayer: Harness Ingeniería for Coding Agents](https://humanlayer.dev/articles/harness-engineering-for-coding-agents/)
+- [OpenAI: Harness Engineering](https://openai.com/index/harness-engineering/)
+- [Lost in the Middle: How Language Models Use Long Contexts](https://arxiv.org/abs/2307.03172)
+- [Claude Code Documentation](https://docs.anthropic.com/en/docs/claude-code)
+- [HumanLayer: Harness Engineering for Coding Agents](https://humanlayer.dev/articles/harness-engineering-for-coding-agents/)
 
 ## Ejercicios
 
-1. **Continuity loss measurement**: Pick a development tarea needing at least 3 sesións. Without providing any continuity artifacts, record at each sesión empezar how much contexto the agent spends "figuring out what happened last time." After each sesión, crear a progress archivo and let the siguiente sesión empezar from it. Comparar rebuild costs with and without progress archivos.
+1. **Medición de pérdida de continuidad**: elige una tarea de desarrollo que necesite al menos 3 sesiones. Sin dar artefactos de continuidad, registra al inicio de cada sesión cuánto contexto gasta el agent en "averiguar qué pasó la vez anterior". Después de cada sesión, crea un archivo de progreso y deja que la siguiente empiece desde él. Compara los costes de reconstrucción con y sin archivos de progreso.
 
-2. **Handoff plantilla diseño**: Diseño a minimal traspaso plantilla with four fields: repo estado (commit hash), runtime estado (prueba pass rate), blockers, siguiente actions. Let a completely fresh agent sesión restore proyecto estado usando only this plantilla. Record ambiguities encountered during restoration, iterate to improve the plantilla.
+2. **Diseño de plantilla de handoff**: diseña una plantilla mínima de handoff con cuatro campos: estado del repo, con hash de commit; estado de runtime, con tasa de pruebas que pasan; bloqueos; próximas acciones. Haz que una sesión completamente nueva restaure el estado del proyecto usando solo esta plantilla. Registra las ambigüedades encontradas durante la restauración e itera para mejorarla.
 
-3. **Mixed strategy experiment**: In a 5-sesión development tarea, comparar three strategies: (a) always empezar fresh sesións + progress archivos, (b) do as much as possible in one sesión (contexto compaction), (c) mixed strategy (short tareas in-sesión, long tareas across sesións + progress archivos). Comparar rebuild time, feature finalización rate, and decision consistency.
+3. **Experimento de estrategia mixta**: en una tarea de desarrollo de 5 sesiones, compara tres estrategias: (a) empezar siempre sesiones frescas + archivos de progreso, (b) hacer todo lo posible en una sola sesión con compactación de contexto, (c) estrategia mixta, con tareas cortas dentro de sesión y tareas largas entre sesiones + archivos de progreso. Compara tiempo de reconstrucción, tasa de finalización de funcionalidades y consistencia de decisiones.

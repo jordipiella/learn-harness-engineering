@@ -1,8 +1,8 @@
-# Código for Lección 10
+# Código de la Lección 10
 
-Usar this carpeta for ejemplos of:
+Usa esta carpeta para ejemplos de:
 
-- arquitectura constraints
-- structural pruebas
+- restricciones de arquitectura
+- pruebas estructurales
 - taste invariants
 - remediation-oriented lint messages

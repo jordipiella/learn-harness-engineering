@@ -1,30 +1,30 @@
 # Session Handoff
 
-## Verified Now
+## Verificado ahora
 
-- What is currently working:
-- What verificación actually ran:
+- Qué funciona actualmente:
+- Qué verificación se ejecutó realmente:
 
-## Changed This Session
+## Cambiado en esta sesión
 
-- Código or behavior added:
-- Infrastructure or harness cambios:
+- Código o comportamiento añadido:
+- Cambios de infraestructura o harness:
 
-## Broken Or Unverified
+## Roto o sin verificar
 
-- Known defect:
-- Unverified ruta:
-- Risk for the siguiente sesión:
+- Defecto conocido:
+- Ruta sin verificar:
+- Riesgo para la siguiente sesión:
 
-## Siguiente Best Paso
+## Siguiente mejor paso
 
-- Highest-priority unfinished feature:
-- Why it is siguiente:
-- What counts as passing:
-- What must not cambio during that paso:
+- Funcionalidad incompleta de mayor prioridad:
+- Por qué es la siguiente:
+- Qué cuenta como passing:
+- Qué no debe cambiar durante ese paso:
 
 ## Comandos
 
-- Startup:
-- Verification:
-- Focused depurar comando:
+- Arranque:
+- Verificación:
+- Comando de depuración enfocado:

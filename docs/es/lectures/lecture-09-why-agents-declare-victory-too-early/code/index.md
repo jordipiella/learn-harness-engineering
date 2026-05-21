@@ -1,8 +1,8 @@
-# Código for Lección 09
+# Código de la Lección 09
 
-Usar this carpeta for ejemplos of:
+Usa esta carpeta para ejemplos de:
 
 - logs as feedback
 - runtime-state visibility
 - clean-state checks
-- recovery ejemplos
+- ejemplos de recuperación

@@ -1,18 +1,18 @@
-# Benchmark Comparación Plantilla
+# Plantilla de comparación benchmark
 
 Harness A:
 
-- finalización rate
+- completion rate
 - average retries
-- errores caught before human revisión
+- errors caught before human review
 
 Harness B:
 
-- finalización rate
+- completion rate
 - average retries
-- errores caught before human revisión
+- errors caught before human review
 
 Interpretation:
 
-- Which harness changed the resultado?
-- Which harness changed the cost of getting the resultado?
+- Which harness changed the result?
+- Which harness changed the cost of getting the result?

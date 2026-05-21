@@ -1,45 +1,42 @@
-# SOP: Encode Unseen Knowledge Into The Repo
+# SOP: codificar conocimiento invisible dentro del repo
 
-Usar this SOP when important contexto still lives in Google Docs, chat threads,
-tickets, or people's heads.
+Usa este SOP cuando el contexto importante todavía vive en Google Docs, hilos de chat, tickets o la cabeza de las personas.
 
 ## Objetivo
 
-Hacer agent-invisible knowledge discoverable in the codebase so a fresh sesión
-can act on it without relying on prior conversation.
+Hacer que el conocimiento invisible para el agent sea descubrible en el codebase para que una sesión fresca pueda actuar sobre él sin depender de conversación previa.
 
-## Trigger Signals
+## Señales de activación
 
-- The agent keeps asking how the system works.
-- Humans say "we decided this in Slack" or "follow what X said last week."
-- Reviews referencia product or security reglas that are not written in-repo.
-- New sesións repeat discovery work that should already be settled.
+- El agent sigue preguntando cómo funciona el sistema.
+- Humanos dicen "esto lo decidimos en Slack" o "sigue lo que dijo X la semana pasada".
+- Las revisiones hacen referencia a reglas de producto o seguridad que no están escritas en el repo.
+- Las sesiones nuevas repiten trabajo de descubrimiento que ya debería estar resuelto.
 
-## Execution SOP
+## SOP de ejecución
 
-1. Lista the invisible knowledge sources: docs, chats, tacit equipo reglas, verbal decisions.
-2. For each source, ask: is this arquitectura, product behavior, security policy,
-   reliability expectation, plan contexto, or referencia material?
-3. Encode it into the matching repo artifact:
+1. Lista las fuentes de conocimiento invisible: docs, chats, reglas tácitas de equipo, decisiones verbales.
+2. Para cada fuente, pregunta: ¿es arquitectura, comportamiento de producto, política de seguridad, expectativa de fiabilidad, contexto de plan o material de referencia?
+3. Codifícalo en el artefacto de repo correspondiente:
    - arquitectura -> `ARCHITECTURE.md`
-   - product behavior -> `docs/product-specs/`
-   - diseño rationale -> `docs/design-docs/`
-   - execution estado -> `docs/exec-plans/`
-   - repeated external references -> `docs/references/`
-   - calidad or reliability expectations -> `docs/QUALITY_SCORE.md` or `docs/RELIABILITY.md`
-4. Replace vago statements with operationally useful wording.
-5. Remove or deprecate stale copies so the repo keeps one discoverable truth.
+   - comportamiento de producto -> `docs/product-specs/`
+   - rationale de diseño -> `docs/design-docs/`
+   - estado de ejecución -> `docs/exec-plans/`
+   - referencias externas repetidas -> `docs/references/`
+   - expectativas de calidad o fiabilidad -> `docs/QUALITY_SCORE.md` o `docs/RELIABILITY.md`
+4. Sustituye frases vagas por redacción operativamente útil.
+5. Elimina o depreca copias obsoletas para que el repo mantenga una única verdad descubrible.
 
-## Good Encoding Reglas
+## Buenas reglas de codificación
 
-- Escribir for discoverability, not for literary completeness.
-- Prefer short documents with claro filenames.
-- Link related artifacts together.
-- Store durable reglas, not meeting transcripts.
-- Update the repo in the mismo sesión that the decision is made.
+- Escribe para descubribilidad, no para completitud literaria.
+- Prefiere documentos cortos con nombres de archivo claros.
+- Enlaza artefactos relacionados.
+- Almacena reglas duraderas, no transcripciones de reuniones.
+- Actualiza el repo en la misma sesión en la que se toma la decisión.
 
-## Definition Of Terminado
+## Definition Of Done
 
-- A fresh agent can discover the relevant rule without asking a human.
-- The mismo fact is not scattered across multiple contradictory archivos.
-- The new artifact lives close to the código or flujo de trabajo it governs.
+- Un agent fresco puede descubrir la regla relevante sin preguntar a un humano.
+- El mismo hecho no está disperso en varios archivos contradictorios.
+- El nuevo artefacto vive cerca del código o workflow que gobierna.

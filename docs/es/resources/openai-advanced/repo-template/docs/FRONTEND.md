@@ -1,24 +1,23 @@
 # FRONTEND.md
 
-This archivo defines stable frontend expectations so agents do not invent UI
-patterns unpredictably.
+Este archivo define expectativas estables de frontend para que los agents no inventen patrones de UI de forma impredecible.
 
-## UI Principles
+## Principios de UI
 
-- Optimize for claridad before novelty.
-- Keep interaction flows discoverable and restartable.
-- Prefer a small number of reusable components over one-off variants.
-- Accessibility checks are part of normal verificación, not polish work.
+- Optimiza por claridad antes que novedad.
+- Mantén los flujos de interacción descubribles y reiniciables.
+- Prefiere un número pequeño de componentes reutilizables frente a variantes únicas.
+- Los checks de accesibilidad son parte de la verificación normal, no trabajo de pulido.
 
 ## Guardrails
 
-- Document the diseño system or component biblioteca in `docs/references/`.
-- Record key user-facing states: empty, loading, éxito, error, retry.
-- Keep copy, keyboard behavior, and visual hierarchy consistent across flows.
-- When a UI bug is fixed, añadir or update the matching validation paso.
+- Documenta el design system o biblioteca de componentes en `docs/references/`.
+- Registra estados clave de usuario: vacío, carga, éxito, error, reintento.
+- Mantén consistentes el copy, comportamiento de teclado y jerarquía visual entre flujos.
+- Cuando se corrija un bug de UI, añade o actualiza el paso de validación correspondiente.
 
-## Verification Expectations
+## Expectativas de verificación
 
-- Capture evidence for critical usuario journeys.
-- Record browser or runtime validation pasos in the relevant plan.
-- If visual regressions are common, standardize screenshot or DOM checks.
+- Captura evidencia para recorridos críticos de usuario.
+- Registra pasos de validación de navegador o runtime en el plan relevante.
+- Si las regresiones visuales son comunes, estandariza checks de screenshot o DOM.

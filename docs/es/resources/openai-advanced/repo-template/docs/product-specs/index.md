@@ -1,14 +1,13 @@
-# Product Specs Index
+# Índice de specs de producto
 
-Usar this carpeta for current user-facing behavior specs.
+Usa esta carpeta para specs actuales de comportamiento visible para el usuario.
 
-## Active Specs
+## Specs activas
 
 - `new-user-onboarding.md`
 
 ## Reglas
 
-- Specs should describe user-visible behavior and acceptance criterios.
-- If implementation diverges from the spec, update one of them in the mismo
-  sesión.
-- Keep this index current so a fresh agent can discover product alcance quickly.
+- Las specs deben describir comportamiento visible para el usuario y criterios de aceptación.
+- Si la implementación diverge de la spec, actualiza una de las dos en la misma sesión.
+- Mantén este índice actualizado para que un agent fresco pueda descubrir rápidamente el scope de producto.

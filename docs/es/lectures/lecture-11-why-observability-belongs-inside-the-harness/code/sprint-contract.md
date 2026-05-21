@@ -1,12 +1,12 @@
-# Sprint Contract Ejemplo
+# Ejemplo de sprint contract
 
-Sprint objetivo:
+Objetivo del sprint:
 
-- Añadir visible citations to grounded Q&A resultados
+- Add visible citations to grounded Q&A results
 
-Terminado means:
+Done means:
 
-- Usuario asks a question
+- User asks a question
 - App returns an answer
 - At least one citation is shown
 - Clicking a citation opens the source location in the document view

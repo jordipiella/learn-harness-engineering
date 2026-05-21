@@ -1,9 +1,9 @@
-# Core Beliefs
+# Creencias centrales
 
-- The repositorio is the sistema de registro for agents.
-- `AGENTS.md` is a router, not an encyclopedia.
-- Verification evidence matters more than confidence.
-- One bounded tarea is better than many half-finished tareas.
-- Repeated human feedback should become reusable harness reglas.
-- Cleanup and simplification are part of shipping, not afterthoughts.
-- If an agent cannot discover a fact in-repo, treat that fact as operationally unavailable.
+- El repositorio es el sistema de registro para los agents.
+- `AGENTS.md` es un enrutador, no una enciclopedia.
+- La evidencia de verificación importa más que la confianza.
+- Una tarea acotada es mejor que muchas tareas a medio hacer.
+- El feedback humano repetido debe convertirse en reglas reutilizables de harness.
+- La limpieza y la simplificación son parte de entregar, no ocurrencias posteriores.
+- Si un agent no puede descubrir un hecho dentro del repo, trata ese hecho como operacionalmente no disponible.

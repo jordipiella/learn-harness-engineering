@@ -1,72 +1,73 @@
 [Versión en chino →](../../../zh/lectures/lecture-06-why-initialization-needs-its-own-phase/)
 
-> Ejemplos de código: [código/](https://github.com/walkinglabs/learn-harness-engineering/blob/main/docs/es/lectures/lecture-06-why-initialization-needs-its-own-phase/code/)
-> Proyecto práctico: [Proyecto 03. Multi-sesión continuity](./../../projects/project-03-multi-session-continuity/index.md)
+> Ejemplos de código: [code/](https://github.com/walkinglabs/learn-harness-engineering/blob/main/docs/es/lectures/lecture-06-why-initialization-needs-its-own-phase/code/)
+> Proyecto práctico: [Proyecto 03. Multi-session continuity](./../../projects/project-03-multi-session-continuity/index.md)
 
-# Lección 06. Initialize Before Every Agent Session
+# Lección 06. Inicializar antes de cada sesión del agent
 
-You empezar a new agent sesión and say "añadir a search feature." It jumps straight into coding — admirable enthusiasm. After 20 minutes it discovers the prueba framework isn't configured properly, spends another 10 fixing that, then the database migration script format is incorrecto, more fiddling. The search feature eventually gets added, but the whole sesión was inefficient — most time went to "figuring out how this proyecto works" rather than escritura the search feature.
+Inicias una nueva sesión de agent y dices "añade una funcionalidad de búsqueda". El agent salta directamente a programar, con un entusiasmo admirable. Tras 20 minutos descubre que el framework de pruebas no está bien configurado, dedica otros 10 a arreglarlo, luego ve que el formato del script de migraciones de base de datos es incorrecto y sigue ajustando cosas. La búsqueda acaba añadida, pero toda la sesión fue ineficiente: la mayor parte del tiempo se fue en "averiguar cómo funciona este proyecto" en lugar de escribir la funcionalidad.
 
-The better approach: before letting the agent empezar working, usar a separate phase to get the base entorno ready, verificación comandos passing, and proyecto estructura understood. It's like construyendo a house — you don't pour the foundation and put up walls simultaneously. If you do, the walls go up before the foundation has cured, and the whole construyendo has to be torn down and iniciado over. Pour the foundation first, let it cure, then construir the walls — limpio and efficient.
+El enfoque mejor: antes de dejar que el agent empiece a trabajar, usa una fase separada para preparar el entorno base, hacer que los comandos de verificación pasen y entender la estructura del proyecto. Es como construir una casa: no viertes los cimientos y levantas las paredes a la vez. Si lo haces, las paredes suben antes de que el hormigón haya fraguado y todo el edificio acaba teniendo que derribarse y empezar de nuevo. Primero se vierten los cimientos, se dejan fraguar y después se levantan las paredes: limpio y eficiente.
 
-This lección explains why inicialización must be a separate phase, not mixed in with implementation.
+Esta lección explica por qué la inicialización debe ser una fase separada, no mezclada con la implementación.
 
-## Foundation and Walls: Two Fundamentally Diferente Jobs
+## Cimientos y paredes: dos trabajos fundamentalmente distintos
 
-Initialization and implementation have completely diferente optimization targets. The implementation phase optimizes for: maximizing the quantity and calidad of verified funcionalidades. The inicialización phase optimizes for: maximizing the reliability and efficiency of all subsequent implementation.
+Inicialización e implementación tienen objetivos de optimización completamente distintos. La fase de implementación optimiza por maximizar la cantidad y calidad de funcionalidades verificadas. La fase de inicialización optimiza por maximizar la fiabilidad y eficiencia de toda la implementación posterior.
 
-When you mix inicialización and implementation, the agent faces a multi-objective optimization problema — simultaneously construyendo infrastructure and escritura feature código. Without explícito priority setting, the agent naturally gravitates toward escritura código (because that's directly visible salida) while sacrificing infrastructure (because its value only shows in subsequent sesións). It's like telling a construction crew to simultaneously pour the foundation and construir the walls — they'll probably rush to construir walls because walls are visible and demonstrable. But a house with a bad foundation has systemic problemas down the line.
+Cuando mezclas inicialización e implementación, el agent se enfrenta a un problema de optimización multiobjetivo: construir infraestructura y escribir código de funcionalidad al mismo tiempo. Sin prioridades explícitas, el agent gravita de forma natural hacia escribir código, porque es el resultado visible, y sacrifica infraestructura, porque su valor solo se nota en sesiones posteriores. Es como decirle a una cuadrilla que vierta los cimientos y levante las paredes simultáneamente: probablemente se apresurará a levantar paredes porque son visibles y demostrables. Pero una casa con malos cimientos tendrá problemas sistémicos después.
 
-## Initialization Lifecycle
+## Ciclo de vida de inicialización
 
 ```mermaid
 flowchart TB
-    subgraph Wrong["Mixed session (wrong)"]
-        W1["Start feature work immediately"] --> W2["Discover env and test gaps mid-task"]
-        W2 --> W3["Accumulate unverified code"]
-        W3 --> W4["Next session must rediscover project state"]
+    subgraph Wrong["Sesión mezclada (incorrecta)"]
+        W1["Empezar funcionalidad inmediatamente"] --> W2["Descubrir huecos de entorno y pruebas a media tarea"]
+        W2 --> W3["Acumular código sin verificar"]
+        W3 --> W4["La siguiente sesión debe redescubrir el estado del proyecto"]
     end
 
-    subgraph Right["Dedicated initialization (right)"]
-        R1["Session 1: environment runnable"] --> R2["Example test passing"]
-        R2 --> R3["Bootstrap contract + task list written"]
-        R3 --> R4["Clean checkpoint committed"]
-        R4 --> R5["Later sessions start directly on verified tasks"]
+    subgraph Right["Inicialización dedicada (correcta)"]
+        R1["Sesión 1: entorno ejecutable"] --> R2["Prueba de ejemplo pasando"]
+        R2 --> R3["Contrato bootstrap + lista de tareas escritos"]
+        R3 --> R4["Checkpoint limpio commiteado"]
+        R4 --> R5["Sesiones posteriores empiezan directamente en tareas verificadas"]
     end
 ```
 
-## What Happens When You Mix Them
+## Qué ocurre cuando las mezclas
 
-The most direct problema: the foundation doesn't set properly. The agent spends 80% of its effort on feature código and 20% casually setting up some infrastructure. The prueba framework is configured but never verified, lint reglas are set but too loose, no progress archivo created. These defects aren't obvious in the first sesión (because the agent still remembers what it did), but they surface in the second sesión — the new agent doesn't know how to ejecutar, prueba, or where things stand. Shoddy foundation, shaky construyendo.
+El problema más directo: los cimientos no quedan asentados. El agent gasta el 80% de su esfuerzo en código de funcionalidad y el 20% en configurar infraestructura de manera casual. El framework de pruebas queda configurado pero nunca verificado, las reglas de lint existen pero son demasiado laxas, no se crea archivo de progreso. Estos defectos no son obvios en la primera sesión, porque el agent aún recuerda lo que hizo, pero aparecen en la segunda: el nuevo agent no sabe cómo ejecutar, cómo probar ni en qué punto está el trabajo. Cimientos deficientes, edificio inestable.
 
-A more hidden cost is "unverified accumulation" — feature código written before the prueba framework is configured is código without verificación. When you finally go back to añadir pruebas for that código, you might discover the diseño was incorrecto from the empezar — had you known, you would have implemented it differently. Like tiling over wet concrete — when you discover the floor isn't level, all the tiles have to be pried up and redone.
+Un coste más oculto es la "acumulación no verificada": código de funcionalidad escrito antes de configurar el framework de pruebas es código sin verificación. Cuando por fin vuelves para añadir pruebas, quizá descubres que el diseño estaba mal desde el principio; de haberlo sabido, lo habrías implementado de otra forma. Como poner baldosas sobre hormigón húmedo: cuando descubres que el suelo no está nivelado, tienes que arrancarlo todo.
 
-Session budget is being wasted too. Initialization work (configuring entornos, setting up pruebas, comprensión proyecto estructura) consumes significant budget, leaving less for real feature implementation. Resultado: the first sesión only completes half the funcionalidades, and the second sesión has to empezar over comprensión the proyecto. Budget spent on the foundation, but the foundation isn't solid either — neither objetivo achieved.
+También se desperdicia presupuesto de sesión. El trabajo de inicialización, configurar entornos, pruebas y estructura del proyecto, consume mucho presupuesto y deja menos para la implementación real. Resultado: la primera sesión solo completa la mitad de las funcionalidades, y la segunda tiene que empezar de nuevo entendiendo el proyecto. Se gastó presupuesto en los cimientos, pero ni siquiera quedaron sólidos: no se logró ninguno de los dos objetivos.
 
-The most easily overlooked problema is implícito assumption landmines. Decisions the agent hace during inicialización (which prueba framework, how to organize directories, dependency gestión) — if not explicitly recorded, subsequent sesións can't entender these choices. Worse, subsequent sesións might hacer contradictory choices. The first construction crew usado a concrete foundation, the second crew doesn't know and drove wooden pilings into it — the foundation cracks.
+El problema más fácil de pasar por alto son las minas de suposiciones implícitas. Las decisiones que toma el agent durante la inicialización, framework de pruebas, organización de directorios, gestión de dependencias, si no se registran explícitamente, las sesiones posteriores no pueden entenderlas. Peor aún: pueden tomar decisiones contradictorias. La primera cuadrilla usó cimientos de hormigón; la segunda no lo sabe y clava pilotes de madera en ellos. Los cimientos se agrietan.
 
-Anthropic's long-running application development research explicitly recommends separating inicialización from implementation. Their experimental datos: proyectos usando a dedicado inicialización phase showed 31% higher feature finalización rates in multi-sesión scenarios compared to mixed approaches. The key insight — time invested in the inicialización phase is fully recovered in the siguiente 3-4 sesións. The more solid the foundation, the faster the walls go up.
+La investigación de Anthropic sobre desarrollo de aplicaciones de larga duración recomienda explícitamente separar inicialización e implementación. Sus datos experimentales: los proyectos con una fase de inicialización dedicada mostraron tasas de finalización de funcionalidades un 31% mayores en escenarios multisessión frente a enfoques mezclados. La idea clave: el tiempo invertido en inicialización se recupera por completo en las siguientes 3-4 sesiones. Cuanto más sólidos los cimientos, más rápido suben las paredes.
 
-OpenAI's Codex harness ingeniería guía also emphasizes the "repositorio as operational record" principle — establish claro operational estructura from the first ejecutar, or every new sesión has to re-infer proyecto conventions.
+La guía de OpenAI sobre harness engineering para Codex también enfatiza el principio de "repositorio como registro operativo": establece una estructura operativa clara desde la primera ejecución o cada sesión nueva tendrá que volver a inferir las convenciones del proyecto.
 
-## Core Concepts
+## Conceptos clave
 
-- **Initialization Phase**: The first phase in the agent's lifecycle — no feature implementation, only establishing prerequisites for all subsequent implementation phases. The salida isn't código, it's infrastructure.
-- **Bootstrap Contract**: The condiciones under which a proyecto can be unambiguously operated by a fresh agent sesión — can empezar, can prueba, can see progress, can pick up siguiente pasos. Four condiciones, all required.
-- **Cold Empezar vs Warm Empezar**: Cold empezar is from an empty directory where the agent must guess proyecto estructura; warm empezar is from a plantilla or existing proyecto where infrastructure is already in place. Warm empezar far outperforms cold empezar — like starting work on a site with ejecutando water and electricity versus beginning from a barren wasteland.
-- **Handoff Readiness**: The proyecto is in a estado at any given moment where a fresh agent can take over. No verbal explanation needed — just repo contents.
-- **Time to First Verification**: The time from proyecto empezar until the first feature point passes verificación. This is the core metric for measuring inicialización efficiency.
-- **Downstream Usability**: The best measure of inicialización calidad — the proportion of subsequent sesións that can successfully execute tareas without relying on implícito knowledge.
+- **Fase de inicialización**: primera fase del ciclo de vida del agent. No implementa funcionalidades; solo establece prerrequisitos para todas las fases posteriores. Su salida no es código de negocio, sino infraestructura.
+- **Contrato bootstrap**: condiciones bajo las cuales una sesión fresca de agent puede operar el proyecto sin ambigüedad: puede arrancar, puede probar, puede ver el progreso y puede retomar los siguientes pasos. Cuatro condiciones, todas obligatorias.
+- **Cold start frente a warm start**: cold start parte de un directorio vacío donde el agent debe adivinar la estructura; warm start parte de una plantilla o proyecto existente donde la infraestructura ya está colocada. Warm start supera por mucho a cold start, como empezar en una obra con agua y electricidad frente a un solar vacío.
+- **Preparación para handoff**: el proyecto está en un estado en el que una sesión fresca puede tomar el relevo en cualquier momento. Sin explicación verbal: solo con el contenido del repo.
+- **Tiempo hasta la primera verificación**: tiempo desde el inicio del proyecto hasta que el primer punto de funcionalidad pasa verificación. Es la métrica central para medir la eficiencia de inicialización.
+- **Usabilidad aguas abajo**: mejor medida de calidad de la inicialización: proporción de sesiones posteriores que pueden ejecutar tareas correctamente sin depender de conocimiento implícito.
 
-## How to Do Initialization Right
+## Cómo inicializar bien
 
-**Treat inicialización as a dedicado phase.** The first sesión does only inicialización — no business feature código at all. Initialization produces:
+**Trata la inicialización como una fase dedicada.** La primera sesión solo hace inicialización, sin código de funcionalidad de negocio. La inicialización produce:
 
-**1. Runnable entorno.** The proyecto starts, dependencies are installed, no entorno issues. Foundation poured, no cracks.
+**1. Entorno ejecutable.** El proyecto arranca, las dependencias están instaladas y no hay problemas de entorno. Cimientos vertidos, sin grietas.
 
-**2. Verifiable prueba framework.** At least one ejemplo prueba passes. This proves the prueba framework itself is properly configured — like standing a pillar on the foundation to prove it can bear weight.
+**2. Framework de pruebas verificable.** Al menos una prueba de ejemplo pasa. Esto demuestra que el framework de pruebas está bien configurado: como poner un pilar sobre los cimientos para probar que soportan carga.
 
-**3. Bootstrap contract document.** A claro document telling subsequent sesións:
+**3. Documento de contrato bootstrap.** Un documento claro que diga a sesiones posteriores:
+
 ```markdown
 # Initialization Contract
 
@@ -89,7 +90,8 @@ OpenAI's Codex harness ingeniería guía also emphasizes the "repositorio as ope
 - tests/ — Test files
 ```
 
-**4. Tarea breakdown.** Split the entire proyecto into an ordered tarea lista, each tarea with claro acceptance criterios:
+**4. Desglose de tareas.** Divide todo el proyecto en una lista ordenada de tareas, cada una con criterios de aceptación claros:
+
 ```markdown
 # Task Breakdown
 
@@ -107,11 +109,11 @@ OpenAI's Codex harness ingeniería guía also emphasizes the "repositorio as ope
 - ...
 ```
 
-**5. Git commit as checkpoint.** After inicialización completes, commit a limpio checkpoint. All subsequent work starts from this checkpoint.
+**5. Commit de Git como checkpoint.** Cuando termine la inicialización, haz commit de un checkpoint limpio. Todo el trabajo posterior empieza desde ahí.
 
-**Warm empezar strategy**: Don't empezar from an empty directory. Usar a proyecto plantilla (create-react-app, fastapi-template, etc.) to preset standard directory estructura, dependency configuration, and prueba framework. Bake common inicialización pasos into the plantilla, leaving only project-specific inicialización work. Like starting work on a site with ejecutando water and electricity — ten thousand times better than beginning from a barren wasteland.
+**Estrategia de warm start**: no empieces desde un directorio vacío. Usa una plantilla de proyecto, por ejemplo `create-react-app` o `fastapi-template`, para preconfigurar estructura de directorios, dependencias y framework de pruebas. Hornea los pasos comunes de inicialización dentro de la plantilla y deja solo la inicialización específica del proyecto. Como empezar una obra con agua y electricidad: muchísimo mejor que partir de un solar vacío.
 
-**Initialization finalización criterios**: Not "how much código was written," but whether the bootstrap contract's four condiciones are met — can empezar, can prueba, can see progress, can pick up siguiente pasos. Usar this checklist to validate inicialización:
+**Criterios de finalización de inicialización**: no "cuánto código se escribió", sino si se cumplen las cuatro condiciones del contrato bootstrap: puede arrancar, puede probar, puede ver progreso, puede retomar siguientes pasos. Usa esta checklist para validar la inicialización:
 
 ```markdown
 ## Initialization Acceptance Checklist
@@ -122,36 +124,36 @@ OpenAI's Codex harness ingeniería guía also emphasizes the "repositorio as ope
 - [ ] Everything committed to git
 ```
 
-## Real-World Ejemplo
+## Ejemplo real
 
-Two inicialización approaches for a React frontend proyecto:
+Dos enfoques de inicialización para un proyecto frontend en React:
 
-**Mixed approach (pouring foundation and construyendo walls simultaneously)**: The agent simultaneously created proyecto scaffolding and implemented the first feature in sesión 1. At sesión end, the repo had runnable código but: no explícito empezar/prueba comando documentation, no progress tracking archivo, no tarea breakdown. Session 2 spent ~20 minutes inferring proyecto estructura, prueba framework, and construir proceso — like a new construction crew arriving at a site, not knowing how far the foundation got or where the plumbing ejecuta are, having to dig holes one by one to find out.
+**Enfoque mezclado (verter cimientos y levantar paredes a la vez)**: el agent creó el andamiaje del proyecto e implementó la primera funcionalidad simultáneamente en la sesión 1. Al terminar, el repo tenía código ejecutable, pero no tenía documentación explícita de comandos de arranque/prueba, archivo de progreso ni desglose de tareas. La sesión 2 gastó unos 20 minutos infiriendo estructura, framework de pruebas y proceso de build: como una nueva cuadrilla que llega a una obra sin saber hasta dónde llegaron los cimientos ni por dónde pasan las tuberías, y tiene que cavar agujeros uno por uno para averiguarlo.
 
-**Dedicado inicialización (foundation first)**: Session 1 did only inicialización — created directory estructura from a plantilla, configured the prueba framework (Vitest + React Pruebas Biblioteca), wrote and verified one ejemplo prueba, created the bootstrap contract document and tarea breakdown archivo, committed the initial checkpoint. Session 2's rebuild time was under 3 minutes, and it iniciado working directly from the tarea lista — the crew arrives, glances at the blueprint, and knows exactly where to pick up.
+**Inicialización dedicada (cimientos primero)**: la sesión 1 solo hizo inicialización: creó estructura desde una plantilla, configuró el framework de pruebas, Vitest + React Testing Library, escribió y verificó una prueba de ejemplo, creó el contrato bootstrap y el desglose de tareas, y commiteó el checkpoint inicial. El coste de reconstrucción de la sesión 2 fue inferior a 3 minutos, y empezó a trabajar directamente desde la lista de tareas: la cuadrilla llega, mira el plano y sabe exactamente dónde retomar.
 
-Full proyecto cycle comparación: the mixed approach's total rebuild time (across all sesións) was ~60% more than the dedicado inicialización approach. The extra 20 minutes spent on inicialización was recovered many times over in subsequent sesións. Like a solid foundation making the walls go up faster — slow is fast.
+Comparación del ciclo completo: el tiempo total de reconstrucción del enfoque mezclado, acumulado entre sesiones, fue alrededor de un 60% mayor que con la inicialización dedicada. Los 20 minutos adicionales invertidos en inicialización se recuperaron muchas veces en sesiones posteriores. Como unos cimientos sólidos que permiten levantar paredes más rápido: ir despacio es ir rápido.
 
 ## Ideas clave
 
-- Initialization and implementation have diferente optimization targets — mixing them just drags both down. Pour the foundation first, then construir the walls.
-- Initialization's salida isn't código, it's infrastructure: runnable entorno, verifiable pruebas, bootstrap contract, tarea breakdown.
-- Validate inicialización with the bootstrap contract's four condiciones: can empezar, can prueba, can see progress, can pick up siguiente pasos.
-- Warm empezar beats cold empezar. Usar proyecto plantillas to preset standardized infrastructure.
-- Time invested in inicialización is fully recovered in the siguiente 3-4 sesións. This isn't extra cost — it's upfront investment. The more solid the foundation, the faster the construyendo goes up.
+- Inicialización e implementación tienen objetivos de optimización distintos. Mezclarlas solo perjudica a ambas. Primero vierte los cimientos; después levanta las paredes.
+- La salida de la inicialización no es código, sino infraestructura: entorno ejecutable, pruebas verificables, contrato bootstrap y desglose de tareas.
+- Valida la inicialización con las cuatro condiciones del contrato bootstrap: puede arrancar, puede probar, puede ver progreso, puede retomar siguientes pasos.
+- Warm start supera a cold start. Usa plantillas de proyecto para preconfigurar infraestructura estándar.
+- El tiempo invertido en inicialización se recupera por completo en las siguientes 3-4 sesiones. No es coste extra: es inversión inicial. Cuanto más sólidos los cimientos, más rápido sube el edificio.
 
 ## Lecturas adicionales
 
 - [Anthropic: Effective Harnesses for Long-Running Agents](https://www.anthropic.com/engineering/effective-harnesses-for-long-running-agents)
-- [OpenAI: Harness Ingeniería](https://openai.com/index/harness-engineering/)
-- [HumanLayer: Harness Ingeniería for Coding Agents](https://humanlayer.dev/articles/harness-engineering-for-coding-agents/)
-- [Infrastructure as Código — Martin Fowler](https://martinfowler.com/bliki/InfrastructureAsCode.html)
+- [OpenAI: Harness Engineering](https://openai.com/index/harness-engineering/)
+- [HumanLayer: Harness Engineering for Coding Agents](https://humanlayer.dev/articles/harness-engineering-for-coding-agents/)
+- [Infrastructure as Code — Martin Fowler](https://martinfowler.com/bliki/InfrastructureAsCode.html)
 - [SWE-agent: Agent-Computer Interfaces](https://github.com/princeton-nlp/SWE-agent)
 
 ## Ejercicios
 
-1. **Bootstrap contract diseño**: Escribir a completo bootstrap contract for a proyecto you're developing. Then open a completely fresh agent sesión, show it only repo contents (no verbal contexto), and have it try to empezar the proyecto, ejecutar pruebas, and entender current progress. Record every problema it encounters — each one corresponds to a faltante clause in your bootstrap contract.
+1. **Diseño de contrato bootstrap**: escribe un contrato bootstrap completo para un proyecto que estés desarrollando. Luego abre una sesión de agent completamente fresca, muéstrale solo el contenido del repo, sin contexto verbal, y pídele que intente arrancar el proyecto, ejecutar pruebas y entender el progreso actual. Registra cada problema que encuentre: cada uno corresponde a una cláusula ausente en tu contrato bootstrap.
 
-2. **Comparación experiment**: Pick a moderately complex new proyecto. Approach A: let the agent initialize and do first implementation simultaneously. Approach B: spend one sesión on dedicado inicialización, empezar implementation in sesión 2. After 4 sesións, comparar: time to first verificación, rebuild cost, feature finalización rate.
+2. **Experimento de comparación**: elige un proyecto nuevo de complejidad moderada. Enfoque A: deja que el agent inicialice e implemente la primera funcionalidad simultáneamente. Enfoque B: dedica una sesión a inicialización y empieza a implementar en la sesión 2. Después de 4 sesiones, compara: tiempo hasta la primera verificación, coste de reconstrucción y tasa de finalización de funcionalidades.
 
-3. **Initialization acceptance checklist**: Diseño an inicialización acceptance checklist for your proyecto. Have a fresh agent sesión execute each checklist item and record which pass and which fail. The failing items are where your harness needs strengthening.
+3. **Checklist de aceptación de inicialización**: diseña una checklist de aceptación de inicialización para tu proyecto. Haz que una sesión fresca ejecute cada punto y registra cuáles pasan y cuáles fallan. Los fallos indican dónde necesita fortalecerse tu harness.

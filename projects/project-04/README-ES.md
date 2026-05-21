@@ -1,36 +1,36 @@
-# Proyecto 04: Runtime Observability and Structural Control
+# Proyecto 04: Observabilidad en runtime y control estructural
 
-Introduce runtime observabilidad and structural boundary checks while debugging a seeded runtime defect.
+Introduce observabilidad en runtime y comprobaciones de límites estructurales mientras depuras un defecto sembrado en runtime.
 
-## Directory Guía
+## Guía de directorios
 
-| Directory | Meaning |
+| Directorio | Significado |
 |------|------|
-| `inicial/` | **Starting point**: based on the P3 solución, with logging and structural boundary funcionalidades still to implement. `IndexingService` contains a hidden seeded bug: archivos longer than 1000 characters produce empty chunks. There is no architecture-check script. |
-| `solución/` | **Referencia implementation**: estructurado logging module, arquitectura boundary-check script, and the seeded bug fixed. |
+| `starter/` | **Punto de partida**: basado en la solución de P3, con logging y funcionalidades de límites estructurales todavía por implementar. `IndexingService` contiene un bug sembrado oculto: los archivos de más de 1000 caracteres producen chunks vacíos. No hay script de comprobación arquitectónica. |
+| `solution/` | **Implementación de referencia**: módulo de logging estructurado, script de comprobación de límites arquitectónicos y bug sembrado corregido. |
 
-## How to Usar
+## Cómo usarlo
 
 ```sh
 cd starter
 npm install
-# 1. Observe whether the agent can locate the bug through logs
-# 2. Import a large file and check whether chunking behaves incorrectly
+# 1. Observa si el agent puede localizar el bug mediante logs
+# 2. Importa un archivo grande y comprueba si el chunking se comporta incorrectamente
 
 cd ../solution
 npm install
-# Compare how structured logs speed up diagnosis
+# Compara cómo los logs estructurados aceleran el diagnóstico
 ```
 
-## Funcionalidades Covered
+## Funcionalidades cubiertas
 
-- Startup logs
-- Import and indexing logs
-- Visible QA fallo ruta
-- Explícito límites between main, preload, renderer, and services capas
-- Debugging a seeded runtime defect
+- Logs de arranque
+- Logs de importación e indexación
+- Ruta visible de fallo de QA
+- Límites explícitos entre capas main, preload, renderer y services
+- Depuración de un defecto sembrado en runtime
 
-## Related Lecciones
+## Lecciones relacionadas
 
 - [Lección 07: Por qué los agents se exceden y no terminan](../../docs/es/lectures/lecture-07-why-agents-overreach-and-under-finish/index.md)
 - [Lección 08: Por qué las listas de funcionalidades son primitivas del harness](../../docs/es/lectures/lecture-08-why-feature-lists-are-harness-primitives/index.md)

@@ -1,33 +1,32 @@
 # RELIABILITY.md
 
-This archivo defines how the system proves it is healthy and restartable.
+Este archivo define cómo demuestra el sistema que está sano y es reiniciable.
 
-## Standard Paths
+## Rutas estándar
 
-- Bootstrap: `[comando]`
-- Verification: `[comando]`
-- Empezar app or service: `[comando]`
-- Depurar or inspect runtime: `[comando]`
+- Bootstrap: `[command]`
+- Verificación: `[command]`
+- Arrancar app o servicio: `[command]`
+- Depurar o inspeccionar runtime: `[command]`
 
-## Required Runtime Signals
+## Señales de runtime requeridas
 
-- estructurado logs for startup and critical flows
-- health checks for key services
-- trace or timing datos for slow paths when available
-- user-visible error states for recoverable fallos
+- logs estructurados para arranque y flujos críticos
+- health checks para servicios clave
+- datos de trazas o tiempos para rutas lentas cuando estén disponibles
+- estados de error visibles para el usuario en fallos recuperables
 
-## Golden Journeys
+## Recorridos dorados
 
 - `[journey 1]`
 - `[journey 2]`
 - `[journey 3]`
 
-Each golden journey should have a repeatable verificación ruta and claro fallo
-signals.
+Cada recorrido dorado debería tener una ruta de verificación repetible y señales de fallo claras.
 
-## Reliability Reglas
+## Reglas de fiabilidad
 
-- No feature is completo if the system cannot restart cleanly afterward.
-- Runtime fallos should be diagnosable from repo-local signals.
-- If a repeated fallo mode appears, añadir a benchmark or guardrail for it.
-- Cleanup is part of reliability, not a separate concern.
+- Ninguna funcionalidad está completa si el sistema no puede reiniciarse limpiamente después.
+- Los fallos de runtime deberían poder diagnosticarse desde señales locales al repo.
+- Si aparece un modo de fallo repetido, añade un benchmark o guardrail para él.
+- La limpieza es parte de la fiabilidad, no una preocupación separada.

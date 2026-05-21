@@ -1,22 +1,22 @@
-[Versión en chino →](../../../zh/projects/project-05-grounded-qa-verification/)
+[中文版本 →](../../../zh/projects/project-05-grounded-qa-verification/)
 
-> Related lecciones: [Lección 09. Stop agents from declaring victory early](./../../lectures/lecture-09-why-agents-declare-victory-too-early/index.md) · [Lección 10. Only a de pipeline completo ejecutar counts as real verificación](./../../lectures/lecture-10-why-end-to-end-testing-changes-results/index.md)
-> Plantilla archivos: [plantillas/](https://github.com/walkinglabs/learn-harness-engineering/blob/main/docs/es/resources/templates/)
+> Lecciones relacionadas: [Lección 09. Evita que los agents declaren victoria demasiado pronto](./../../lectures/lecture-09-why-agents-declare-victory-too-early/index.md) · [Lección 10. Solo una ejecución de pipeline completo cuenta como verificación real](./../../lectures/lecture-10-why-end-to-end-testing-changes-results/index.md)
+> Archivos de plantilla: [templates/](https://github.com/walkinglabs/learn-harness-engineering/blob/main/docs/es/resources/templates/)
 
-# Proyecto 05. Hacer the Agent Verificar Its Own Work
+# Proyecto 05. Haz que el agent verifique su propio trabajo
 
-## What You Do
+## Qué haces
 
-Implement role separation — a generador that implements, an evaluador that reviews, and optionally a planificador. Ejecutar three times to measure the effect of each added role.
+Implementas separación de roles: un generator que implementa, un evaluator que revisa y, opcionalmente, un planner. Ejecutas tres veces para medir el efecto de cada rol añadido.
 
-Choose a substantive feature upgrade (multi-turn conversation, citation panel redesign, or document filtering) and keep it consistent across all ejecuta.
+Elige una mejora sustantiva de funcionalidad (historial conversacional multi-turn, rediseño del panel de citas o filtrado de documentos) y mantenla constante en todas las ejecuciones.
 
 ## Herramientas
 
-- Claude Código or Codex
+- Claude Code o Codex
 - Git
 - Node.js + Electron
 
-## Harness Mechanism
+## Mecanismo de harness
 
-Self-verificación + grounded Q&A + evidence-based finalización
+Autoverificación + Q&A fundamentada + finalización basada en evidencia

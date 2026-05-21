@@ -1,64 +1,64 @@
-# Habilidades
+# Skills
 
 [中文版](./README-CN.md) · [한국어](./README-KO.md)
 
-This directory contains reusable AI agent skills for the Aprender Harness Ingeniería proyecto. Each skill is a self-contained prompt plantilla that can be loaded by agents de programación con IA (Claude Código, Codex, Cursor, Windsurf, etc.) to perform specialized tareas.
+Este directorio contiene skills reutilizables para AI agents dentro del proyecto Learn Harness Engineering. Cada skill es una plantilla de prompt autocontenida que pueden cargar agents de programación con IA (Claude Code, Codex, Cursor, Windsurf, etc.) para realizar tareas especializadas.
 
-## Available Habilidades
+## Skills disponibles
 
 ### harness-creator
 
-Producción harness ingeniería skill for agents de programación con IA. Helps crear, assess, and improve agent harness archivos (AGENTS.md, lista de funcionalidadess, verificación flujos de trabajo, sesión continuity mechanisms).
+Skill de Harness Engineering preparada para producción para agents de programación con IA. Ayuda a crear, evaluar y mejorar archivos de harness para agents (`AGENTS.md`, listas de funcionalidades, workflows de verificación y mecanismos de continuidad entre sesiones).
 
-- **5 referencia patterns**: Memory Persistence, Contexto Ingeniería, Herramienta Registry, Multi-Agent Coordination, Lifecycle & Bootstrap
-- **Plantillas**: AGENTS.md, feature-list.json, init.sh, progress.md
-- **5 built-in eval prueba cases**
-- **Bilingual**: English + 中文
+- **5 patrones de referencia**: persistencia de memoria, ingeniería de contexto, registro de herramientas, coordinación multi-agent, ciclo de vida y bootstrap
+- **Plantillas**: `AGENTS.md`, `feature-list.json`, `init.sh`, `progress.md`
+- **5 casos de evaluación integrados**
+- **Bilingüe**: English + 中文
 
-See [harness-creator/README.md](harness-creator/README.md) for full documentation.
+Consulta [harness-creator/README.md](harness-creator/README.md) para la documentación completa.
 
-## How harness-creator Was Built
+## Cómo se construyó harness-creator
 
-The `harness-creator` skill was developed usando the **skill-creator** methodology — Anthropic's official meta-skill for creating, pruebas, and iterating on agent skills. The skill-creator proporciona a estructurado flujo de trabajo (draft → prueba → evaluate → iterate) with built-in eval runners, graders, and a benchmark viewer.
+La skill `harness-creator` se desarrolló con la metodología **skill-creator**, la meta-skill oficial de Anthropic para crear, probar e iterar skills de agents. `skill-creator` proporciona un workflow estructurado (draft → test → evaluate → iterate) con runners de evaluación, graders y un visor de benchmarks.
 
-- **skill-creator source**: [anthropics/skills — skill-creator](https://github.com/anthropics/skills/tree/main/skills/skill-creator)
-- **Anthropic Claude Código skills docs**: [anthropics/claude-code — plugin-dev/skills](https://github.com/anthropics/claude-code/tree/main/plugins/plugin-dev/skills)
+- **Fuente de skill-creator**: [anthropics/skills — skill-creator](https://github.com/anthropics/skills/tree/main/skills/skill-creator)
+- **Documentación de skills de Anthropic Claude Code**: [anthropics/claude-code — plugin-dev/skills](https://github.com/anthropics/claude-code/tree/main/plugins/plugin-dev/skills)
 
-## Directory Estructura
+## Estructura de directorios
 
-```
+```text
 skills/
-├── README.md                    # This file
-├── README-CN.md                 # Chinese version
-└── harness-creator/             # Harness engineering skill
-    ├── SKILL.md                 # Main skill definition (bilingual)
-    ├── SKILL.md.en              # English-only version
-    ├── README.md                # Detailed documentation
-    ├── metadata.json            # Skill metadata & triggers
-    ├── evals/                   # Test cases
-    ├── templates/               # Scaffold templates
-    └── references/              # Deep-dive pattern docs
+├── README.md                    # Este archivo
+├── README-CN.md                 # Versión china
+└── harness-creator/             # Skill de Harness Engineering
+    ├── SKILL.md                 # Definición principal de la skill (bilingüe)
+    ├── SKILL.md.en              # Versión solo en inglés
+    ├── README.md                # Documentación detallada
+    ├── metadata.json            # Metadatos y disparadores de la skill
+    ├── evals/                   # Casos de prueba
+    ├── templates/               # Plantillas de scaffolding
+    └── references/              # Documentos de patrones en profundidad
 ```
 
-## How Habilidades Work
+## Cómo funcionan las skills
 
-Each skill follows a standard estructura:
+Cada skill sigue una estructura estándar:
 
-1. **SKILL.md** — The entry point. Contains YAML frontmatter (name, description for triggering) and Markdown instrucciones for the agent.
-2. **references/** — Additional docs loaded into contexto as needed.
-3. **plantillas/** — Starting plantillas that the skill can generate for usuarios.
+1. **SKILL.md**: punto de entrada. Contiene frontmatter YAML (nombre y descripción para activación) e instrucciones Markdown para el agent.
+2. **references/**: documentación adicional que se carga en contexto cuando hace falta.
+3. **templates/**: plantillas iniciales que la skill puede generar para usuarios.
 
-Habilidades usar progressive disclosure — the agent first sees only the name + description, then loads the full SKILL.md body when triggered, and reads bundled recursos only when needed.
+Las skills usan divulgación progresiva: el agent ve primero solo el nombre y la descripción; cuando la skill se activa, carga el cuerpo completo de `SKILL.md` y lee recursos incluidos solo cuando son necesarios.
 
-## Security Audit
+## Auditoría de seguridad
 
-All archivos in this directory have been audited for security:
+Todos los archivos de este directorio se han auditado por seguridad:
 
-- No backdoors, hidden URLs, or encoded payloads
-- No datos exfiltration or hardcoded credentials
-- No comando injection vulnerabilities
-- `init.sh` ejecuta only standard npm lifecycle comandos
+- Sin backdoors, URLs ocultas ni payloads codificados
+- Sin exfiltración de datos ni credenciales hardcodeadas
+- Sin vulnerabilidades de inyección de comandos
+- `init.sh` ejecuta únicamente comandos estándar del ciclo de vida de npm
 
-## License
+## Licencia
 
 MIT

@@ -1,7 +1,7 @@
-# Código for Lección 05
+# Código de la Lección 05
 
-Usar this carpeta for ejemplos of:
+Usa esta carpeta para ejemplos de:
 
-- broken multi-sesión tareas
-- faltante continuity artifacts
+- tareas multisessión rotas
+- artefactos de continuidad ausentes
 - continuity recovery patterns

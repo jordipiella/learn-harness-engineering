@@ -1,6 +1,6 @@
 # Continuity Checklist
 
-- Can a fresh agent identify recent work in under five minutes?
-- Is the current stable startup ruta documented?
-- Is unfinished work clearly identified?
-- Is the siguiente best tarea visible without lectura old chat logs?
+- ¿Puede un agent fresco identificar el trabajo reciente en menos de cinco minutos?
+- ¿Está documentada la ruta estable de arranque actual?
+- ¿El trabajo inacabado está claramente identificado?
+- ¿La siguiente mejor tarea es visible sin leer logs antiguos de chat?

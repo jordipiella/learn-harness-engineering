@@ -1,8 +1,8 @@
-# Código for Lección 07
+# Código de la Lección 07
 
-Usar this carpeta for ejemplos of:
+Usa esta carpeta para ejemplos de:
 
-- one-shot fallos
-- oversized tarea prompts
-- incremental tarea shaping
-- estructurado feature surfaces
+- fallos de una sola pasada
+- prompts de tarea demasiado grandes
+- conformación incremental de tareas
+- superficies de funcionalidades estructuradas

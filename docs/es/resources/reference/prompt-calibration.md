@@ -1,25 +1,23 @@
-# Prompt Calibration
+# Calibración de prompts
 
-Root instrucciones should define the operating frame, not every possible move.
+Las instrucciones raíz deben definir el marco operativo, no cada movimiento posible.
 
-## Keep In The Root Archivo
+## Mantener en el archivo raíz
 
-- repositorio purpose and alcance
-- startup ruta
-- verificación ruta
-- non-negotiable constraints
-- required estado artifacts
-- end-of-sesión reglas
+- propósito y scope del repositorio
+- ruta de arranque
+- ruta de verificación
+- restricciones no negociables
+- artefactos de estado requeridos
+- reglas de fin de sesión
 
-## Move Out Of The Root Archivo
+## Mover fuera del archivo raíz
 
-- long historical edge cases
-- topic-specific implementation details
-- local arquitectura notes that belong near the código
-- ejemplos that only apply to one subsystem
+- casos límite históricos largos
+- detalles de implementación específicos de un tema
+- notas de arquitectura local que pertenecen cerca del código
+- ejemplos que solo aplican a un subsistema
 
-## Working Rule
+## Regla de trabajo
 
-The root archivo should help a fresh sesión orient itself quickly. If the archivo is
-becoming a dumping ground for every past fallo, split the detail into smaller
-documents and link to them instead.
+El archivo raíz debe ayudar a una sesión fresca a orientarse rápido. Si se convierte en un vertedero para cada fallo pasado, divide el detalle en documentos más pequeños y enlázalos desde ahí.

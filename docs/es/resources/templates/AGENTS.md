@@ -1,55 +1,50 @@
 # AGENTS.md
 
-This repositorio is designed for long-running coding-agent work. The objetivo is not
-to maximize raw código salida. The objetivo is to leave the repo in a estado where the
-siguiente sesión can continue without guessing.
+Este repositorio está diseñado para trabajo de larga duración con coding agents. El objetivo no es maximizar la salida bruta de código, sino dejar el repo en un estado donde la siguiente sesión pueda continuar sin adivinar.
 
-## Startup Flujo de trabajo
+## Workflow de arranque
 
-Before escritura código:
+Antes de escribir código:
 
-1. Confirm the working directory with `pwd`.
-2. Leer `claude-progress.md` for the latest verified estado and siguiente paso.
-3. Leer `feature_list.json` and choose the highest-priority unfinished feature.
-4. Revisión recent commits with `git log --oneline -5`.
-5. Ejecutar `./init.sh`.
-6. Ejecutar the required smoke or end-to-end verificación before starting new work.
+1. Confirma el directorio de trabajo con `pwd`.
+2. Lee `claude-progress.md` para ver el último estado verificado y el siguiente paso.
+3. Lee `feature_list.json` y elige la funcionalidad incompleta de mayor prioridad.
+4. Revisa commits recientes con `git log --oneline -5`.
+5. Ejecuta `./init.sh`.
+6. Ejecuta la verificación smoke o end-to-end requerida antes de empezar trabajo nuevo.
 
-If baseline verificación is already failing, arreglar that first. Do not stack new
-feature work on top of a broken starting estado.
+Si la verificación baseline ya falla, corrige eso primero. No apiles funcionalidad nueva sobre un estado inicial roto.
 
-## Working Reglas
+## Reglas de trabajo
 
-- Work on one feature at a time.
-- Do not mark a feature completo just because código was added.
-- Keep cambios within the selected feature alcance unless a blocker forces a
-  narrow supporting arreglar.
-- Do not silently cambio verificación reglas during implementation.
-- Prefer durable repo artifacts over chat summaries.
+- Trabaja en una funcionalidad cada vez.
+- No marques una funcionalidad como completa solo porque se añadió código.
+- Mantén los cambios dentro del scope de la funcionalidad seleccionada, salvo que un bloqueo obligue a una corrección de apoyo estrecha.
+- No cambies silenciosamente reglas de verificación durante la implementación.
+- Prefiere artefactos duraderos del repo a resúmenes de chat.
 
-## Required Artifacts
+## Artefactos requeridos
 
-- `feature_list.json`: fuente de verdad for feature estado
-- `claude-progress.md`: sesión log and current verified status
-- `init.sh`: standard startup and verificación ruta
-- `sesión-traspaso.md`: optional compact traspaso for larger sesións
+- `feature_list.json`: fuente de verdad del estado de funcionalidades.
+- `claude-progress.md`: log de sesión y estado verificado actual.
+- `init.sh`: ruta estándar de arranque y verificación.
+- `session-handoff.md`: handoff compacto opcional para sesiones grandes.
 
-## Definition Of Terminado
+## Definition Of Done
 
-A feature is terminado only when all of the following are true:
+Una funcionalidad está terminada solo cuando todo esto es cierto:
 
-- the target behavior is implemented
-- the required verificación actually ran
-- evidence is recorded in `feature_list.json` or `claude-progress.md`
-- the repositorio remains restartable from the standard startup ruta
+- el comportamiento objetivo está implementado
+- la verificación requerida se ejecutó realmente
+- la evidencia quedó registrada en `feature_list.json` o `claude-progress.md`
+- el repositorio sigue siendo reiniciable desde la ruta estándar de arranque
 
-## End Of Session
+## Fin de sesión
 
-Before ending a sesión:
+Antes de terminar una sesión:
 
-1. Update `claude-progress.md`.
-2. Update `feature_list.json`.
-3. Record any unresolved risk or blocker.
-4. Commit with a descriptive message once the work is in a safe estado.
-5. Leave the repo limpio enough for the siguiente sesión to ejecutar `./init.sh`
-   immediately.
+1. Actualiza `claude-progress.md`.
+2. Actualiza `feature_list.json`.
+3. Registra cualquier riesgo o bloqueo sin resolver.
+4. Haz commit con un mensaje descriptivo cuando el trabajo esté en estado seguro.
+5. Deja el repo lo bastante limpio para que la siguiente sesión pueda ejecutar `./init.sh` de inmediato.

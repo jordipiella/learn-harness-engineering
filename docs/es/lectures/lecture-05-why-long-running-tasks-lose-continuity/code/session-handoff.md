@@ -1,17 +1,17 @@
-# Session Handoff Ejemplo
+# Ejemplo de Session Handoff
 
 ## Completed
 
-- Added markdown import soporte
-- Added a basic document lista in the renderer
+- Added markdown import support
+- Added a basic document list in the renderer
 
 ## Broken or Unverified
 
-- Import tiene éxito for `.md` but falla for large `.txt` archivos
+- Import succeeds for `.md` but fails for large `.txt` files
 - The app starts, but the detail view has not been wired up
 
-## Siguiente Best Paso
+## Next Best Step
 
-- Arreglar `.txt` import ruta
-- Verificar import end-to-end
-- Then añadir the document detail panel
+- Fix `.txt` import path
+- Verify import end-to-end
+- Then add the document detail panel

@@ -1,84 +1,84 @@
 [Versión en chino →](../../../zh/lectures/lecture-11-why-observability-belongs-inside-the-harness/)
 
-> Ejemplos de código: [código/](https://github.com/walkinglabs/learn-harness-engineering/blob/main/docs/es/lectures/lecture-11-why-observability-belongs-inside-the-harness/code/)
-> Proyecto práctico: [Proyecto 06. Completo harness (Capstone)](./../../projects/project-06-runtime-observability-and-debugging/index.md)
+> Ejemplos de código: [code/](https://github.com/walkinglabs/learn-harness-engineering/blob/main/docs/es/lectures/lecture-11-why-observability-belongs-inside-the-harness/code/)
+> Proyecto práctico: [Proyecto 06. Complete harness (Capstone)](./../../projects/project-06-runtime-observability-and-debugging/index.md)
 
-# Lección 11. Hacer the Agent's Runtime Observable
+# Lección 11. Hacer observable el runtime del agent
 
-## What Problema Does This Lección Solve?
+## ¿Qué problema resuelve esta lección?
 
-You ask an agent to implement a feature. It ejecuta for 20 minutes, modifies a bunch of archivos, then tells you "terminado, but two pruebas are failing." You ask why they're failing — "not sure, might be a timing issue." You ask which critical paths it changed — "let me look at the código..."
+Le pides a un agent que implemente una funcionalidad. Trabaja durante 20 minutos, modifica varios archivos y luego dice: "hecho, pero fallan dos pruebas". Le preguntas por qué fallan: "no estoy seguro, quizá sea un problema de timing". Le preguntas qué rutas críticas cambió: "déjame mirar el código...".
 
-This isn't about the agent lacking capability. It's about your harness not providing enough observabilidad. **Without observabilidad, agents hacer decisions under uncertainty, evaluations become subjective judgments, and retries become blind wandering.** Both OpenAI and Anthropic define reliability as an evidence problema — the harness must expose runtime behavior and evaluation signals in a form that can guía the siguiente decision.
+Esto no va de que al agent le falte capacidad. Va de que tu harness no proporciona suficiente observabilidad. **Sin observabilidad, los agents toman decisiones con incertidumbre, las evaluaciones se vuelven juicios subjetivos y los reintentos se convierten en exploración a ciegas.** Tanto OpenAI como Anthropic definen la fiabilidad como un problema de evidencia: el harness debe exponer comportamiento de runtime y señales de evaluación en una forma que guíe la siguiente decisión.
 
-## Core Concepts
+## Conceptos clave
 
-- **Runtime observabilidad**: System-level signals — logs, traces, proceso events, health checks. Answers "what did the system do."
-- **Proceso observabilidad**: Visibility into harness decision artifacts — plans, scoring rubrics, acceptance criterios. Answers "why should this cambio be accepted."
-- **Tarea trace**: A completo decision-path record from tarea empezar to finalización, analogous to request tracing in distributed sistemas. Every paso the agent takes, with contexto, is recorded.
-- **Sprint contract**: A short-term agreement negotiated before coding begins — specifying tarea alcance, verificación standards, and exclusions. The core herramienta for proceso observabilidad.
-- **Evaluador rúbrica**: Transforms calidad evaluation from subjective judgment into evidence-based estructurado scoring. Hace diferente evaluators produce similar resultados for the mismo salida.
-- **Layered observabilidad**: System-layer and process-layer observabilidad designed simultaneously and reinforcing each other. Runtime signals explain behavior; proceso artifacts explain intent.
+- **Observabilidad de runtime**: señales a nivel de sistema: logs, trazas, eventos de proceso, health checks. Responde "qué hizo el sistema".
+- **Observabilidad de proceso**: visibilidad sobre artefactos de decisión del harness: planes, rúbricas de puntuación, criterios de aceptación. Responde "por qué debería aceptarse este cambio".
+- **Traza de tarea**: registro completo del camino de decisión desde el inicio hasta la finalización, análogo al tracing de requests en sistemas distribuidos. Cada paso del agent, con contexto, queda registrado.
+- **Sprint contract**: acuerdo de corto plazo negociado antes de programar: especifica scope de tarea, estándares de verificación y exclusiones. Es la herramienta central de observabilidad de proceso.
+- **Rúbrica de evaluador**: transforma la evaluación de calidad de juicio subjetivo a puntuación estructurada basada en evidencia. Hace que evaluadores distintos produzcan resultados similares para la misma salida.
+- **Observabilidad por capas**: observabilidad de sistema y observabilidad de proceso diseñadas simultáneamente y reforzándose entre sí. Las señales de runtime explican comportamiento; los artefactos de proceso explican intención.
 
-## Layered Observability
+## Observabilidad por capas
 
 ```mermaid
 flowchart LR
-    Contract["Write down the task first<br/>what to change / what not to change / pass criteria"] --> Generator["Generator"]
-    Generator --> Signals["Collect app logs, traces,<br/>and health checks while it runs"]
-    Contract --> Review["Check the result item by item<br/>behavior / tests / boundaries"]
+    Contract["Escribir primero la tarea<br/>qué cambiar / qué no cambiar / criterios de paso"] --> Generator["Generador"]
+    Generator --> Signals["Recolectar logs, trazas<br/>y health checks mientras ejecuta"]
+    Contract --> Review["Comprobar el resultado punto por punto<br/>comportamiento / pruebas / límites"]
     Signals --> Review
-    Review --> Verdict["Point to the failed check<br/>and where to fix it"]
+    Review --> Verdict["Señalar el check fallido<br/>y dónde corregirlo"]
     Verdict --> Generator
 ```
 
-## Why This Happens
+## Por qué ocurre esto
 
-### The Real Cost of Faltante Observability
+### El coste real de no tener observabilidad
 
-When a harness lacks observabilidad, four types of problemas systematically appear:
+Cuando un harness carece de observabilidad, aparecen sistemáticamente cuatro tipos de problemas:
 
-**Cannot distinguish "correcto" from "looks correcto"**: A function looks perfectly right during código revisión — correcto syntax, sound logic. But at runtime, an edge case handling error produces incorrect resultados under específico inputs. Only runtime traces can reveal that the real execution ruta deviated from expectations.
+**No puede distinguir "correcto" de "parece correcto"**: una función se ve perfecta en code review, con sintaxis correcta y lógica razonable. Pero en runtime, un error de manejo de caso límite produce resultados incorrectos con ciertos inputs. Solo las trazas de runtime muestran que la ruta real de ejecución se desvió de lo esperado.
 
-**Evaluation becomes mysticism**: Without scoring rubrics and acceptance criterios, evaluators (human or agent) rely on implícito assumptions. The mismo salida might get wildly diferente evaluations from diferente assessors. Calidad assessment becomes non-reproducible.
+**La evaluación se vuelve mística**: sin rúbricas de puntuación ni criterios de aceptación, evaluadores humanos o agents se apoyan en supuestos implícitos. La misma salida puede recibir evaluaciones muy distintas de personas distintas. La evaluación de calidad deja de ser reproducible.
 
-**Retries become blind guesses**: When the agent doesn't know why something falló, retry direction is random. It might try repeatedly in the incorrecto direction — fixing unrelated código paths while ignoring the real fallo root cause. Every blind retry costs tokens and time.
+**Los reintentos son apuestas a ciegas**: cuando el agent no sabe por qué falló algo, la dirección del reintento es aleatoria. Puede intentarlo una y otra vez en la dirección equivocada, arreglando rutas de código irrelevantes mientras ignora la causa raíz real. Cada reintento ciego cuesta tokens y tiempo.
 
-**Session traspaso information cliff**: When incomplete work is handed to the siguiente sesión, faltante observabilidad means the new sesión must diagnose system estado from scratch. Anthropic's long-running agent observations show this redundant diagnosis can consume 30-50% of total sesión time.
+**Precipicio de información en el handoff de sesión**: cuando el trabajo incompleto pasa a la siguiente sesión, la falta de observabilidad obliga a la nueva sesión a diagnosticar el estado desde cero. Las observaciones de Anthropic sobre agents de larga duración muestran que este diagnóstico redundante puede consumir entre el 30% y el 50% del tiempo total de sesión.
 
-### A Real Claude Código Scenario
+### Un escenario realista con Claude Code
 
-Imagine a harness usando a "planner-generator-evaluator" three-role flujo de trabajo, executing an "añadir dark mode to the app" tarea.
+Imagina un harness con flujo de tres roles, planner-generator-evaluator, ejecutando una tarea "añadir dark mode a la app".
 
-**Without observabilidad**: The planificador outputs a vago description. The generador implements dark mode based on that vagueness, but it doesn't match the planificador's implícito expectations. The evaluador rejects based on their own implícito standards but can't articulate what's specifically incorrecto. The generador retries blindly based on vago rejection reasons. The cycle repeats 3-4 times, taking about 45 minutes, producing a barely acceptable salida.
+**Sin observabilidad**: el planner produce una descripción vaga. El generador implementa dark mode a partir de esa vaguedad, pero no coincide con las expectativas implícitas del planner. El evaluador rechaza según sus propios estándares implícitos, pero no puede articular qué está mal exactamente. El generador reintenta a ciegas a partir de razones vagas. El ciclo se repite 3-4 veces, tarda unos 45 minutos y produce una salida apenas aceptable.
 
-**With full observabilidad**: The planificador outputs a sprint contract — listing which components to modify, verificación standards for each, and exclusions (no print styles). The generador implements according to the contract. Runtime observabilidad records each component's style loading and application proceso. The evaluador uses a scoring rúbrica to evaluate dimension by dimension, with específico evidence citations. One iteration produces a high-quality resultado, in about 15 minutes.
+**Con observabilidad completa**: el planner produce un sprint contract que lista componentes a modificar, estándares de verificación de cada uno y exclusiones, por ejemplo no tocar estilos de impresión. El generador implementa según el contrato. La observabilidad de runtime registra cómo se cargan y aplican los estilos en cada componente. El evaluador usa una rúbrica para evaluar dimensión por dimensión con citas de evidencia concretas. Una iteración produce un resultado de alta calidad en unos 15 minutos.
 
-3x efficiency difference. The only cambio is observabilidad.
+Diferencia de eficiencia de 3x. Lo único que cambió fue la observabilidad.
 
-### Why Agents Can't Solve This Themselves
+### Por qué los agents no pueden resolverlo solos
 
-You might be thinking: "Can't the agent just print its own logs?" The problemas are:
+Quizá pienses: "¿No puede el agent imprimir sus propios logs?". Los problemas son:
 
-1. The agent doesn't know what it doesn't know — it won't proactively record signals it doesn't realize it needs.
-2. Log formats are inconsistent — diferente sesións usar diferente log formats, making systematic analysis impossible.
-3. Proceso observabilidad can't be solved by logs — sprint contracts and scoring rubrics are estructurado artifacts that need harness-level soporte.
+1. El agent no sabe lo que no sabe; no registrará proactivamente señales que no percibe como necesarias.
+2. Los formatos de log son inconsistentes; distintas sesiones usan formatos distintos y el análisis sistemático se vuelve imposible.
+3. La observabilidad de proceso no se resuelve con logs; los sprint contracts y las rúbricas son artefactos estructurados que necesitan soporte a nivel de harness.
 
-## How to Do It Right
+## Cómo hacerlo bien
 
-### 1. Construir Runtime Signal Collection into the Harness
+### 1. Integrar recolección de señales de runtime en el harness
 
-Don't rely on the agent to print its own logs. The harness should automatically collect these signals:
+No dependas de que el agent imprima sus propios logs. El harness debería recopilar automáticamente estas señales:
 
-- **Application lifecycle**: Startup, ready, ejecutando, shutdown phase states
-- **Feature ruta execution**: Records of critical ruta execution, including entry points, checkpoints, and exits
-- **Datos flow**: Records of datos flowing between components
-- **Recurso utilization**: Abnormal recurso usage patterns (e.g., continuously growing memory)
-- **Errors and exceptions**: Full error contexto, not just error messages
+- **Ciclo de vida de la aplicación**: fases de startup, ready, running y shutdown.
+- **Ejecución de rutas de funcionalidad**: registros de rutas críticas, con puntos de entrada, checkpoints y salidas.
+- **Flujo de datos**: registros de datos que fluyen entre componentes.
+- **Uso de recursos**: patrones anómalos, por ejemplo memoria que crece continuamente.
+- **Errores y excepciones**: contexto completo del error, no solo mensajes.
 
-### 2. Implement Sprint Contracts
+### 2. Implementar sprint contracts
 
-Before each tarea starts, the generador and evaluador (which may be diferente invocations of the mismo agent) negotiate a contract:
+Antes de cada tarea, el generador y el evaluador, que pueden ser invocaciones distintas del mismo agent, negocian un contrato:
 
 ```markdown
 # Sprint Contract: Dark Mode Support
@@ -98,9 +98,9 @@ Before each tarea starts, the generador and evaluador (which may be diferente in
 - Not handling third-party component dark mode
 ```
 
-### 3. Establish an Evaluador Rúbrica
+### 3. Establecer una rúbrica de evaluador
 
-Turn "is it good or not" into quantifiable scoring:
+Convierte "¿está bien o no?" en puntuación cuantificable:
 
 ```markdown
 # Scoring Rubric
@@ -112,43 +112,44 @@ Turn "is it good or not" into quantifiable scoring:
 | Test coverage | Main + edge cases | Main flow only | Only skeleton | No tests |
 ```
 
-### 4. Standardize with OpenTelemetry
+### 4. Estandarizar con OpenTelemetry
 
-Crear a trace for each harness sesión, a span for each tarea, and sub-spans for each verificación paso. Usar standard attributes to annotate key information. This way observabilidad datos integrates with standard toolchains (Jaeger, Zipkin).
+Crea una traza para cada sesión del harness, un span por tarea y sub-spans para cada paso de verificación. Usa atributos estándar para anotar información clave. Así los datos de observabilidad se integran con toolchains estándar como Jaeger o Zipkin.
 
-## Real-World Case
+## Caso real
 
-A harness usando a planner-generator-evaluator flujo de trabajo, executing "añadir dark mode soporte":
+Un harness con flujo planner-generator-evaluator ejecutando "añadir soporte de dark mode":
 
-**Unobservable version**: 3-4 rounds of blind retries, 45 minutes, barely acceptable salida. Evaluador says "it doesn't feel right" but can't say what specifically. Generador wastes significant time in incorrecto directions.
+**Versión no observable**: 3-4 rondas de reintentos a ciegas, 45 minutos, salida apenas aceptable. El evaluador dice "no se siente bien", pero no puede decir qué específicamente. El generador desperdicia mucho tiempo en direcciones equivocadas.
 
-**Fully observable version**:
-- Sprint contract clarifies alcance, standards, and exclusions
-- Runtime traces record each component's style loading proceso
-- Scoring rúbrica proporciona dimension-by-dimension estructurado evaluation
-- One iteration produces high-quality resultados, 15 minutes
+**Versión plenamente observable**:
 
-3x efficiency improvement, more stable calidad, reproducible evaluations.
+- El sprint contract aclara scope, estándares y exclusiones.
+- Las trazas de runtime registran el proceso de carga de estilos de cada componente.
+- La rúbrica de puntuación ofrece evaluación estructurada dimensión por dimensión.
+- Una iteración produce un resultado de alta calidad en 15 minutos.
+
+Mejora de eficiencia de 3x, calidad más estable y evaluaciones reproducibles.
 
 ## Ideas clave
 
-- **Observability is a harness arquitectura property** — not a feature added after the fact, but a core capability that must be considered during diseño.
-- **Both observabilidad capas are essential** — runtime signals explain "what happened," proceso artifacts explain "why it was terminado this way."
-- **Sprint contracts front-load alignment** — preventing "the generador built something the evaluador immediately rejects for foreseeable reasons."
-- **Scoring rubrics hacer evaluation reproducible** — diferente evaluators produce similar scores for the mismo salida.
-- **Faltante observabilidad wastes 30-50% of sesión time on redundant diagnosis.**
+- **La observabilidad es una propiedad de arquitectura del harness**: no una funcionalidad añadida después, sino una capacidad central que debe considerarse en el diseño.
+- **Ambas capas de observabilidad son esenciales**: las señales de runtime explican "qué pasó"; los artefactos de proceso explican "por qué se hizo así".
+- **Los sprint contracts adelantan la alineación**: evitan que el generador construya algo que el evaluador rechaza inmediatamente por motivos previsibles.
+- **Las rúbricas hacen reproducible la evaluación**: evaluadores distintos producen puntuaciones similares para la misma salida.
+- **La falta de observabilidad desperdicia entre el 30% y el 50% del tiempo de sesión en diagnóstico redundante.**
 
 ## Lecturas adicionales
 
-- [Observability Ingeniería - Charity Majors](https://www.honeycomb.io/blog/observabilidad-engineering-book) — Teoría and práctica framework for modern observabilidad ingeniería
-- [Dapper - Google (Sigelman et al.)](https://research.google/pubs/pub36356/) — Groundbreaking práctica in large-scale distributed tracing
-- [Harness Diseño - Anthropic](https://www.anthropic.com/engineering/harness-design-long-running-apps) — Introducing sprint contracts and evaluador rubrics
-- [Site Reliability Ingeniería - Google](https://sre.google/sre-book/table-of-contents/) — Systematic application of observabilidad in producción sistemas
+- [Observability Engineering - Charity Majors](https://www.honeycomb.io/blog/observability-engineering-book) — marco teórico y práctico de la ingeniería de observabilidad moderna.
+- [Dapper - Google (Sigelman et al.)](https://research.google/pubs/pub36356/) — práctica pionera en tracing distribuido a gran escala.
+- [Harness Design - Anthropic](https://www.anthropic.com/engineering/harness-design-long-running-apps) — introducción de sprint contracts y rúbricas de evaluador.
+- [Site Reliability Engineering - Google](https://sre.google/sre-book/table-of-contents/) — aplicación sistemática de observabilidad en sistemas de producción.
 
 ## Ejercicios
 
-1. **Observability Gap Analysis**: Audit your current harness for system-layer and process-layer observabilidad. Find system states that can't be distinguished from existing signals, and propose additions.
+1. **Análisis de brechas de observabilidad**: audita tu harness actual para observabilidad de sistema y de proceso. Encuentra estados del sistema que no puedan distinguirse con las señales existentes y propón nuevas señales.
 
-2. **Sprint Contract Práctica**: Escribir a sprint contract for a real tarea. Have the agent execute according to the contract, and comparar efficiency and calidad with and without the contract.
+2. **Práctica de sprint contract**: escribe un sprint contract para una tarea real. Haz que el agent ejecute según el contrato y compara eficiencia y calidad con y sin contrato.
 
-3. **Tarea Trace Construction**: Record every paso of an agent's operations during a completo coding tarea. Annotate with OpenTelemetry semantic conventions. Analyze information bottlenecks in the trace — which pasos lack sufficient signal soporte for decisions.
+3. **Construcción de traza de tarea**: registra cada paso de las operaciones de un agent durante una tarea completa de programación. Anota con convenciones semánticas de OpenTelemetry. Analiza cuellos de botella de información en la traza: qué pasos carecen de señal suficiente para tomar decisiones.

@@ -1,7 +1,7 @@
-# Tech Debt Tracker
+# Tracker de deuda técnica
 
-Usar this archivo for debt that is real, acknowledged, and intentionally deferred.
+Usa este archivo para deuda real, reconocida y pospuesta intencionalmente.
 
-| Date | Area | Debt | Why Deferred | Risk | Siguiente Trigger |
-|------|------|------|--------------|------|--------------|
+| Fecha | Área | Deuda | Por qué se pospone | Riesgo | Siguiente disparador |
+|-------|------|-------|--------------------|--------|----------------------|
 | YYYY-MM-DD | `[area]` | `[debt]` | `[reason]` | `[risk]` | `[when to revisit]` |

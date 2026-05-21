@@ -1,9 +1,9 @@
-# Cleanup Loop Ejemplo
+# Ejemplo de cleanup loop
 
-Recurring cleanup tareas:
+Recurring cleanup tasks:
 
 - scan for stale docs
 - scan for structural violations
-- update calidad grades
+- update quality grades
 - open targeted cleanup PRs
 - rerun a fixed benchmark slice after cleanup

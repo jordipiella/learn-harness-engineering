@@ -1,8 +1,8 @@
-# Código for Lección 12
+# Código de la Lección 12
 
-Usar this carpeta for ejemplos of:
+Usa esta carpeta para ejemplos de:
 
 - benchmark slices
-- cleanup tareas
-- entropy reduction ejemplos
-- repeatable harness ejecuta
+- cleanup tasks
+- ejemplos de reducción de entropía
+- ejecuciones repetibles de harness

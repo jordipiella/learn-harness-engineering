@@ -1,24 +1,24 @@
-# Evaluador Rúbrica
+# Rúbrica de evaluador
 
-Usar this rúbrica after implementation and before final acceptance.
+Usa esta rúbrica después de la implementación y antes de la aceptación final.
 
-| Category | Question | Score (0-2) | Notes |
+| Categoría | Pregunta | Puntuación (0-2) | Notas |
 | --- | --- | --- | --- |
-| Correctness | Does the implemented behavior match the requested feature? |  |  |
-| Verification | Did the required checks actually ejecutar, with evidence? |  |  |
-| Scope discipline | Did the sesión stay inside the chosen feature alcance? |  |  |
-| Reliability | Does the resultado survive restart or rerun without repair? |  |  |
-| Maintainability | Is the código and documentation claro enough for the siguiente sesión? |  |  |
-| Handoff readiness | Can a fresh sesión continue work from repo artifacts only? |  |  |
+| Corrección | ¿El comportamiento implementado coincide con la funcionalidad solicitada? |  |  |
+| Verificación | ¿Los checks requeridos se ejecutaron realmente, con evidencia? |  |  |
+| Disciplina de scope | ¿La sesión se mantuvo dentro de la funcionalidad elegida? |  |  |
+| Fiabilidad | ¿El resultado sobrevive a reinicio o nueva ejecución sin reparación? |  |  |
+| Mantenibilidad | ¿El código y la documentación son lo bastante claros para la siguiente sesión? |  |  |
+| Preparación para handoff | ¿Una sesión fresca puede continuar usando solo artefactos del repo? |  |  |
 
-## Verdict
+## Veredicto
 
-- Accept
-- Revise
-- Block
+- Aceptar
+- Revisar
+- Bloquear
 
-## Required Follow-Up
+## Seguimiento requerido
 
-- Faltante evidence:
-- Required arregla:
-- Siguiente revisión trigger:
+- Evidencia faltante:
+- Correcciones requeridas:
+- Disparador de siguiente revisión:

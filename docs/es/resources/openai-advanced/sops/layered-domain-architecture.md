@@ -1,50 +1,47 @@
-# SOP: Layered Domain Arquitectura
+# SOP: arquitectura de dominio por capas
 
-Usar this SOP when the agent keeps violating límites, duplicating logic across
-capas, or producing código that becomes hard to revisión after a few sesións.
+Usa este SOP cuando el agent siga violando límites, duplicando lógica entre capas o produciendo código que se vuelve difícil de revisar después de unas pocas sesiones.
 
 ## Objetivo
 
-Hacer domain límites explícito enough that agents can move quickly without
-silently degrading estructura.
+Hacer que los límites de dominio sean lo bastante explícitos para que los agents avancen rápido sin degradar silenciosamente la estructura.
 
-## Target Modelo
+## Modelo objetivo
 
-Within a business domain, prefer this directional flow:
+Dentro de un dominio de negocio, prefiere este flujo direccional:
 
 `Types -> Config -> Repo -> Service -> Runtime -> UI`
 
-Cross-cutting concerns should enter through explícito providers or adapters.
-Shared utils stay outside the domain and should not accumulate domain logic.
+Las preocupaciones transversales deben entrar mediante providers o adapters explícitos. Los utils compartidos quedan fuera del dominio y no deben acumular lógica de dominio.
 
-## Setup Checklist
+## Checklist de configuración
 
-- Define the current domains in `ARCHITECTURE.md`.
-- Escribir allowed dependency directions in `ARCHITECTURE.md`.
-- Record cross-cutting interfaces such as auth, telemetry, and external APIs.
-- Añadir one short note for the hardest current boundary violation.
-- Decide what should be enforced mechanically by lint, pruebas, or scripts.
+- Define los dominios actuales en `ARCHITECTURE.md`.
+- Escribe las direcciones de dependencia permitidas en `ARCHITECTURE.md`.
+- Registra interfaces transversales como auth, telemetry y APIs externas.
+- Añade una nota corta para la violación de límite actual más difícil.
+- Decide qué debe imponerse mecánicamente mediante lint, pruebas o scripts.
 
-## Execution SOP
+## SOP de ejecución
 
-1. Map the codebase into domains before touching implementation style.
-2. For each domain, identify the allowed capa sequence.
-3. Identify all cross-cutting concerns and route them through providers or adapters.
-4. Move ambiguous shared logic either into the owning domain or into truly generic utils.
-5. Document the reglas in `ARCHITECTURE.md`.
-6. Añadir one executable guardrail for the highest-cost violation.
-7. Update calidad scoring after the cambio.
+1. Mapea el codebase en dominios antes de tocar estilo de implementación.
+2. Para cada dominio, identifica la secuencia de capas permitida.
+3. Identifica todas las preocupaciones transversales y enrútalas por providers o adapters.
+4. Mueve lógica compartida ambigua al dominio propietario o a utils realmente genéricos.
+5. Documenta las reglas en `ARCHITECTURE.md`.
+6. Añade un guardrail ejecutable para la violación de mayor coste.
+7. Actualiza la puntuación de calidad después del cambio.
 
-## Definition Of Terminado
+## Definition Of Done
 
-- A fresh agent can tell which capa owns a cambio.
-- UI código no longer reaches into repo or external side effects directly.
-- Cross-cutting concerns have named entry points.
-- At least one important boundary is enforced mechanically.
+- Un agent fresco puede decir qué capa posee un cambio.
+- El código de UI ya no alcanza directamente repositorios ni efectos externos.
+- Las preocupaciones transversales tienen puntos de entrada nombrados.
+- Al menos un límite importante se impone mecánicamente.
 
-## Repo Artifacts To Update
+## Artefactos del repo a actualizar
 
 - `ARCHITECTURE.md`
 - `docs/QUALITY_SCORE.md`
-- `docs/design-docs/` when the rationale changed
-- `docs/PLANS.md` or the active execution plan
+- `docs/design-docs/` cuando cambie el rationale
+- `docs/PLANS.md` o el plan de ejecución activo

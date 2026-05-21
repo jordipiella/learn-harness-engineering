@@ -1,24 +1,21 @@
-# Avanzado Repo Plantilla
+# Plantilla avanzada de repo
 
-Copy this inicial into a real repositorio when you want an OpenAI-style
-agent-first documentation surface instead of only a minimal harness.
+Copia este inicial en un repositorio real cuando quieras una superficie de documentación agent-first al estilo OpenAI en vez de solo un harness mínimo.
 
-## Copy Order
+## Orden de copia
 
-1. Copy `AGENTS.md` and `ARCHITECTURE.md` to the repo root.
-2. Copy the whole `docs/` tree.
-3. Fill in `docs/PRODUCT_SENSE.md`, `docs/QUALITY_SCORE.md`, and
-   `docs/RELIABILITY.md` first.
-4. Añadir your first active plan under `docs/exec-plans/active/`.
-5. Keep the entrypoint archivos short and route detail into the linked docs.
+1. Copia `AGENTS.md` y `ARCHITECTURE.md` a la raíz del repo.
+2. Copia todo el árbol `docs/`.
+3. Rellena primero `docs/PRODUCT_SENSE.md`, `docs/QUALITY_SCORE.md` y `docs/RELIABILITY.md`.
+4. Añade tu primer plan activo bajo `docs/exec-plans/active/`.
+5. Mantén cortos los archivos de entrada y enruta el detalle hacia los documentos enlazados.
 
-## What This Plantilla Optimizes For
+## Qué optimiza esta plantilla
 
-- durable repo-local contexto
-- progressive disclosure instead of one giant instrucción archivo
-- explícito plan lifecycle
-- calidad tracking over time
-- readable límites for agents and humans
+- contexto duradero local al repo
+- divulgación progresiva en vez de un único archivo gigante de instrucciones
+- ciclo de vida explícito de planes
+- seguimiento de calidad a lo largo del tiempo
+- límites legibles para agents y humanos
 
-Treat every archivo here as a inicial. Replace placeholders, ejemplos, and sample
-comandos with your real proyecto specifics before relying on it.
+Trata cada archivo como punto de partida. Sustituye placeholders, ejemplos y comandos de muestra por los detalles reales de tu proyecto antes de depender de él.

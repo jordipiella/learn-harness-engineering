@@ -1,8 +1,8 @@
-# Código for Lección 02
+# Código de la Lección 02
 
-Usar this carpeta for small ejemplos that distinguish:
+Usa esta carpeta para ejemplos pequeños que distinguen:
 
-- modelo behavior
-- harness behavior
-- prompt-only setups
-- environment-backed agent setups
+- comportamiento del modelo
+- comportamiento del harness
+- configuraciones solo con prompt
+- configuraciones de agent respaldadas por entorno
